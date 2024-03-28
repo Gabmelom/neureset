@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/arrow-down.svg</file>
+        <file>icons/arrow-up.svg</file>
+        <file>icons/house.svg</file>
+        <file>icons/pause.svg</file>
+        <file>icons/play.svg</file>
+        <file>icons/play-pause.svg</file>
+        <file>icons/power-off.svg</file>
+        <file>icons/stop.svg</file>
+        <file>icons/battery-exclamation.svg</file>
+        <file>icons/battery-full.svg</file>
+        <file>icons/battery-half.svg</file>
+        <file>icons/battery-low.svg</file>
+        <file>icons/battery-three-quarters.svg</file>
+    </qresource>
+</RCC>
