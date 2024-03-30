@@ -1,0 +1,58 @@
+@startuml
+actor        operator as op
+actor        patient as pa
+participant  Headset as hd
+participant  Device as dev
+participant  MainWindow as main
+participant  anElectrode as el
+
+op -> main : select "New session"
+activate main
+main -> dev : startSession()
+deactivate main
+
+
+alt Normal case
+  activate dev
+  dev -> hd : readBaseline()
+  activate hd
+  return 21 EEG baselines
+
+  loop over 21 EEGs
+    dev -> hd : readEEGBaseline(i)
+    activate hd
+    return ith EEG baseline
+  end
+
+else EEG Connection lost
+  pa -> hd: dislodge electrode
+  hd -> dev: connection lost signal
+  dev -> main: connection lost signal
+  dev -> dev: pause session timer
+  main -> main: flash light
+  activate main
+  main -> main: emit sound warning
+  
+  alt Connection re-established
+    dev -> dev: resume session
+    main -> main: stop flashing light
+    main -> main: stop sound warning
+    deactivate main
+
+  else Connection NOT re-established
+    dev -> main: stop session (SIGNAL)
+    activate main
+    main -> main: return to home page
+    main-> dev: stopSession()
+    dev -> main: stop session (SIGNAL)
+    main -> dev: turnOff()
+    deactivate dev
+    main -> main: display device turned off
+
+    deactivate main
+    
+  end
+
+end
+
+@enduml
