@@ -26,8 +26,8 @@ alt Normal case
 
 else EEG Connection lost
   pa -> hd: dislodge electrode
-  hd -> dev: connection lost signal
-  dev -> main: connection lost signal
+  hd -> dev: connection lost (SIGNAL)
+  dev -> main: connection lost (SIGNAL)
   dev -> dev: pause session timer
   main -> main: flash light
   activate main
@@ -44,7 +44,7 @@ else EEG Connection lost
     activate main
     main -> main: return to home page
     main-> dev: stopSession()
-    dev -> main: stop session (SIGNAL)
+    dev -> main: turn off (SIGNAL)
     main -> dev: turnOff()
     deactivate dev
     main -> main: display device turned off
