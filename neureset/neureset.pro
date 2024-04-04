@@ -10,11 +10,13 @@ CONFIG += c++11
 
 SOURCES += \
     Headset.cpp \
+    SessionLog.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     Headset.h \
+    SessionLog.h \
     mainwindow.h
 
 FORMS += \
