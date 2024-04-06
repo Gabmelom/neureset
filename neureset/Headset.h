@@ -13,7 +13,7 @@ public:
 
     void applyTreatment(int site, int baseline);
     int readEEGBaseline(int site);
-    QVector<int> readBaseline();
+    QVector<float> readBaseline();
 
 public slots:
     void readBaselineSlot();

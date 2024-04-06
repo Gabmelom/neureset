@@ -3,6 +3,9 @@
 
 #include <QDateTime>
 #include <QTimer>
+#include <Headset.h>
+
+#include "QVector"
 
 class Device
 {
@@ -14,17 +17,21 @@ public:
     void startSession();
     void pauseSession();
     void stopSession();
-    void power(bool value);
+
+    bool applyTherapy();
+    void setPower(bool value);
 
 private:
     bool headsetConn;
     bool pcConn;
-    int battery;
+    int batteryLife;
+    bool powerState;
     QDateTime *currDate;
     QTimer *sessionTimer;
+    Headset *headset;
 
 public slots:
-    void readBaseline();
+    QVector<float> readBaseline();
 
 signals:
     int readEEG(int site);
