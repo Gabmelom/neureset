@@ -40,6 +40,8 @@ QVector<QVector<int>> Headset::getDomFreq(){
 //getting the dominant frequency is finding which one of these is dominant in the brain (corresponds to different states)
 QVector<int> Headset::readBaseAlpha(){
     QVector<int> out;
+    //since it sounds like the implementation is up to our interpretation, individual node values might not be necessary
+    //if it is, use the loop, need to add the amplitude after the values are generated (not sure what the expected values look like)
 //    for (int i = 0; i < numNodes; i++){
 //        out[i] = (rand() % 4) + 8;      //gives range 8-12
 //    }

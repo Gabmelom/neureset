@@ -31,6 +31,8 @@ private:
     QTimer *sessionTimer;
     Headset *headset;
 
+    float calcDomFreq(QVector<QVector<int>>);
+
 //public slots:
 //    QVector<int> readBaseline();
 
