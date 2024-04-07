@@ -4,10 +4,11 @@
 
 #include "QDebug"
 #include "QVector"
+#include "QThread"
 
 
 Device::Device(){
-    headset = new Headset();
+    headset = new Headset(7,this);
     //pcConn = new PC   //immplement after that  class has been maade
     sessionTimer = new QTimer();   //might move creation into start session. needs to be part of the class to be gotten from the UI
     currDate = new QDateTime();
@@ -34,7 +35,7 @@ void Device::startSession(){
     //stores all important info over the entire session
     SessionLog *sessLog = new SessionLog();
 
-    QVector<float> startBase = readBaseline();
+    QVector<int> startBase = readBaseline();
 
     //sessLog->addStartBaselines(startBase);
 
@@ -56,8 +57,16 @@ void Device::setPower(bool val){
     powerState = val;
 }
 
-QVector<float> Device::readBaseline(){
-    QVector<float> baseline = headset->readBaseline();
+QVector<int> Device::readBaseline(){
+    QVector<float>  avg;
+    avg.fill(0,21);
+//    QThread *thread = new QThread();
+
+//    QTimer *timer = new QTimer();
+
+    QVector<int> baseline = headset->readBase();
+
+
     //process numbers
     //maybe add them  to the log here, probably should be done in the maain process loop
     return baseline;

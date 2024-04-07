@@ -37,7 +37,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = neureset1.0.0
-DISTDIR = /home/student/share/neureset/build-neureset-Desktop-Debug/.tmp/neureset1.0.0
+DISTDIR = /home/student/neureset/build-neureset-Desktop-Debug/.tmp/neureset1.0.0
 LINK          = g++
 LFLAGS        = 
 LIBS          = $(SUBLIBS) /usr/lib/x86_64-linux-gnu/libQt5Widgets.so /usr/lib/x86_64-linux-gnu/libQt5Gui.so /usr/lib/x86_64-linux-gnu/libQt5Core.so -lGL -lpthread   
@@ -52,17 +52,21 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../neureset/Headset.cpp \
+SOURCES       = ../neureset/Device.cpp \
+		../neureset/Headset.cpp \
 		../neureset/SessionLog.cpp \
 		../neureset/main.cpp \
 		../neureset/mainwindow.cpp qrc_resources.cpp \
+		moc_Device.cpp \
 		moc_Headset.cpp \
 		moc_mainwindow.cpp
-OBJECTS       = Headset.o \
+OBJECTS       = Device.o \
+		Headset.o \
 		SessionLog.o \
 		main.o \
 		mainwindow.o \
 		qrc_resources.o \
+		moc_Device.o \
 		moc_Headset.o \
 		moc_mainwindow.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
@@ -122,6 +126,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
+		../neureset/.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
@@ -142,9 +147,11 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
-		../neureset/neureset.pro ../neureset/Headset.h \
+		../neureset/neureset.pro ../neureset/Device.h \
+		../neureset/Headset.h \
 		../neureset/SessionLog.h \
-		../neureset/mainwindow.h ../neureset/Headset.cpp \
+		../neureset/mainwindow.h ../neureset/Device.cpp \
+		../neureset/Headset.cpp \
 		../neureset/SessionLog.cpp \
 		../neureset/main.cpp \
 		../neureset/mainwindow.cpp
@@ -216,6 +223,7 @@ Makefile: ../neureset/neureset.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
@@ -296,6 +304,7 @@ Makefile: ../neureset/neureset.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf:
@@ -334,8 +343,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../neureset/resources.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../neureset/Headset.h ../neureset/SessionLog.h ../neureset/mainwindow.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../neureset/Headset.cpp ../neureset/SessionLog.cpp ../neureset/main.cpp ../neureset/mainwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../neureset/Device.h ../neureset/Headset.h ../neureset/SessionLog.h ../neureset/mainwindow.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../neureset/Device.cpp ../neureset/Headset.cpp ../neureset/SessionLog.cpp ../neureset/main.cpp ../neureset/mainwindow.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../neureset/mainwindow.ui $(DISTDIR)/
 
 
@@ -386,18 +395,24 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -std=gnu++11 -Wall -Wextra -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_Headset.cpp moc_mainwindow.cpp
+compiler_moc_header_make_all: moc_Device.cpp moc_Headset.cpp moc_mainwindow.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_Headset.cpp moc_mainwindow.cpp
+	-$(DEL_FILE) moc_Device.cpp moc_Headset.cpp moc_mainwindow.cpp
+moc_Device.cpp: ../neureset/Device.h \
+		../neureset/Headset.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/student/neureset/build-neureset-Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/student/neureset/neureset -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../neureset/Device.h -o moc_Device.cpp
+
 moc_Headset.cpp: ../neureset/Headset.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/student/share/neureset/build-neureset-Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/student/share/neureset/neureset -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../neureset/Headset.h -o moc_Headset.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/student/neureset/build-neureset-Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/student/neureset/neureset -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../neureset/Headset.h -o moc_Headset.cpp
 
 moc_mainwindow.cpp: ../neureset/mainwindow.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/student/share/neureset/build-neureset-Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/student/share/neureset/neureset -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../neureset/mainwindow.h -o moc_mainwindow.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/student/neureset/build-neureset-Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/student/neureset/neureset -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../neureset/mainwindow.h -o moc_mainwindow.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -420,6 +435,11 @@ compiler_clean: compiler_rcc_clean compiler_moc_predefs_clean compiler_moc_heade
 
 ####### Compile
 
+Device.o: ../neureset/Device.cpp ../neureset/Device.h \
+		../neureset/Headset.h \
+		../neureset/SessionLog.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Device.o ../neureset/Device.cpp
+
 Headset.o: ../neureset/Headset.cpp ../neureset/Headset.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Headset.o ../neureset/Headset.cpp
 
@@ -435,6 +455,9 @@ mainwindow.o: ../neureset/mainwindow.cpp ../neureset/mainwindow.h \
 
 qrc_resources.o: qrc_resources.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_resources.o qrc_resources.cpp
+
+moc_Device.o: moc_Device.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Device.o moc_Device.cpp
 
 moc_Headset.o: moc_Headset.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Headset.o moc_Headset.cpp

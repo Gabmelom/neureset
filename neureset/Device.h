@@ -7,8 +7,9 @@
 
 #include "QVector"
 
-class Device
+class Device : public QObject
 {
+    Q_OBJECT
 public:
     Device();
     ~Device();
@@ -17,7 +18,7 @@ public:
     void startSession();
     void pauseSession();
     void stopSession();
-
+    QVector<int> readBaseline();    //test version before thread stuff is implemented
     bool applyTherapy();
     void setPower(bool value);
 
@@ -30,8 +31,8 @@ private:
     QTimer *sessionTimer;
     Headset *headset;
 
-public slots:
-    QVector<float> readBaseline();
+//public slots:
+//    QVector<int> readBaseline();
 
 signals:
     int readEEG(int site);
