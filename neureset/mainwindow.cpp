@@ -30,7 +30,7 @@ void MainWindow::init()
     currentList = ui->HomeMenuList;
     currentList->setCurrentRow(0);
 
-    Device *device  = new Device();
+    Device *device  = new Device(this);
     device->startSession();
 }
 

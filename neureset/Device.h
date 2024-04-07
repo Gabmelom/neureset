@@ -4,6 +4,8 @@
 #include <QDateTime>
 #include <QTimer>
 #include <Headset.h>
+#include <mainwindow.h>
+#include "SessionLog.h"
 
 #include "QVector"
 
@@ -11,7 +13,7 @@ class Device : public QObject
 {
     Q_OBJECT
 public:
-    Device();
+    Device(MainWindow *window);
     ~Device();
 
     void replaceBattery();
@@ -30,6 +32,9 @@ private:
     QDateTime *currDate;
     QTimer *sessionTimer;
     Headset *headset;
+    MainWindow *window;
+    SessionLog *currSession;    //the current treatment session, stored in the object so it can be accessed outside the startSession function
+    QVector<SessionLog*> logs;
 
     float calcDomFreq(QVector<QVector<int>>);
 

@@ -25,7 +25,7 @@ QVector<int> Headset::readBase(){
 }
 
 QVector<QVector<int>> Headset::getDomFreq(){
-    //get vals for freq and amps
+    //get vals for freq and amps at a point in time (freqs change every 1 second)
     qDebug("geetting dominant freq");
     //change the function to get a different dominant freequency
     QVector<QVector<int>> out;

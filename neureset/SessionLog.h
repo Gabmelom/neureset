@@ -1,8 +1,9 @@
 #ifndef SESSIONLOG_H
 #define SESSIONLOG_H
 
-#include <vector>
+#include <QVector>
 #include <QDateTime>
+#include <QString>
 
 using namespace std;
 
@@ -15,11 +16,28 @@ public:
     void addStartBaselines(vector<int> baseline);
     void addEndBaselines(vector<int> baseline);
 
+    void setStartDomFreq(float);
+    void setEndDomFreq(float);
+    void setStartDateTime(QString);
+    void setEndDateTime(QString);
+    void setRound(int);
+    void pushTreatmentFreqs(QVector<QVector<int>>);
+    void pushOffset(float);
 private:
-    vector<int> startBaselines;
-    vector<int> endBaselines;
+    QVector<int> startBaselines;
+    QVector<int> endBaselines;
     QDateTime startDateTime;
     QDateTime endDateTime;
+
+
+    float startDomFreq;
+    QVector<QVector<QVector<int>>> treatmentFreqs;  //collection of frequencies throughout the treatments
+    QVector<float> offsetFreqs;
+    float endDomFreq;
+    QString startTime;  //using the QDateTime objeect's toString method
+    QString endTime;
+    int currentRound;
+
 };
 
 #endif // SESSIONLOG_H
