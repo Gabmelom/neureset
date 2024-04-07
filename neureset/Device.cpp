@@ -33,18 +33,19 @@ void Device::startSession(){
     //follows ssequeence ddiagram for the main use case
 
     //stores all important info over the entire session
-    SessionLog *sessLog = new SessionLog();
+    //SessionLog *sessLog = new SessionLog();
 
     float startBaseFreq = calcDomFreq(headset->getDomFreq());
     //ssession duratiion is expected to be constant, the only exception is if it is stopped completely
     //sessLog->addStartBaselines(startBaseFreq);    this might change accorrding to sessionLog format
     //the treatment bits, according to the recent test doc
     //should put this function in a thread for timing, pausing, and timer
+    qDebug() << "starting freq " << startBaseFreq;
     int r = 4;  //nummber of rounds of treatments
     int offset = 5;    //offset added top the dominant  frequency
     float domFreq;
     for (int i = 0;i < r; i++){
-        qDebug("round ",i);
+        qDebug() << "round " << i;
         domFreq = calcDomFreq(headset->getDomFreq());
         //over 1 second, apply the domFreq+offset every 1/16 seconds on each node
         headset->applyTreatment(domFreq+offset);
@@ -52,7 +53,7 @@ void Device::startSession(){
 
     }
     float endBaseFreq = calcDomFreq(headset->getDomFreq());
-    qDebug("treatment has been proformed. Start baseline: ",startBaseFreq," end baseline  ",endBaseFreq);
+    qDebug() << "treatment has been proformed. Start baseline: " << startBaseFreq <<" end baseline  " <<endBaseFreq;
 }
 
 void Device::pauseSession(){
@@ -99,6 +100,7 @@ float Device::calcDomFreq(QVector<QVector<int>> baseFreqs){
     //baseFreqs is a nested vector of freq,amp for the 4 wave  lengths being read
     //caalculates the dominent frequency from the output of headset->getDomFreq
     //equation from the test doc
+    qDebug("calcculating the dominant frequency");
     int top = (baseFreqs[0][0] * (baseFreqs[0][1] * baseFreqs[0][1]) + baseFreqs[1][0] * (baseFreqs[1][1] * baseFreqs[1][1]) + baseFreqs[2][0] * (baseFreqs[2][1] * baseFreqs[2][1]) + baseFreqs[3][0] * (baseFreqs[3][1] * baseFreqs[3][1]));
     int bot = baseFreqs[0][1] + baseFreqs[1][1] + baseFreqs[2][1]  + baseFreqs[3][1];
     return (top / bot);

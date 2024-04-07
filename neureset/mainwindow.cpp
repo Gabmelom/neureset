@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "Device.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -28,6 +29,9 @@ void MainWindow::init()
     ui->Screen->setCurrentIndex(currentScreen);
     currentList = ui->HomeMenuList;
     currentList->setCurrentRow(0);
+
+    Device *device  = new Device();
+    device->startSession();
 }
 
 void MainWindow::pageChanged(int index)

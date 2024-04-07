@@ -1,6 +1,7 @@
 #include "Headset.h"
 
 #include<cstdlib>
+#include <QDebug>
 using namespace std;
 
 Headset::Headset(int nodes, QObject *parent) : QObject(parent), numNodes(nodes){
@@ -8,7 +9,7 @@ Headset::Headset(int nodes, QObject *parent) : QObject(parent), numNodes(nodes){
 }
 
 void Headset::applyTreatment(int freq){
-    qDebug("applyinng treatment of ",freq," to ptient");
+    qDebug() << "applyinng treatment of " << freq <<" to ptient";
 //    for (int i = 0; i < numNodes; i++){
 //        qDebug("applyinng treatment of ",freq," to node ",i );
 //    }
@@ -25,13 +26,14 @@ QVector<int> Headset::readBase(){
 
 QVector<QVector<int>> Headset::getDomFreq(){
     //get vals for freq and amps
-
+    qDebug("geetting dominant freq");
     //change the function to get a different dominant freequency
     QVector<QVector<int>> out;
-    out[0] = readBaseAlpha();
-    out[1] = readBaseBeta();
-    out[2] = readBaseDelta();
-    out[3] = readBaseTheta();
+    out << readBaseAlpha() << readBaseBeta() << readBaseDelta() << readBaseTheta();
+//    out[0] = readBaseAlpha();
+//    out[1] = readBaseBeta();
+//    out[2] = readBaseDelta();
+//    out[3] = readBaseTheta();
 
     return out;
 }
@@ -45,8 +47,8 @@ QVector<int> Headset::readBaseAlpha(){
 //    for (int i = 0; i < numNodes; i++){
 //        out[i] = (rand() % 4) + 8;      //gives range 8-12
 //    }
-    out[0] = (rand() % 4) + 8;      //gives range 8-12
-    out[1] = 1;
+    out << (rand() % 4) + 8;      //gives range 8-12
+    out << 1;
 
 
     return out;
@@ -58,8 +60,8 @@ QVector<int> Headset::readBaseBeta(){
 //    for (int i = 0; i < numNodes; i++){
 //        out[i] = (rand() % 18) + 12;      //gives range 12-30
 //    }
-    out[0] = (rand() % 18) + 12;      //gives range 12-30
-    out[1] = 1;
+    out << (rand() % 18) + 12;      //gives range 12-30
+    out << 1;
 
 
     return out;
@@ -71,8 +73,8 @@ QVector<int> Headset::readBaseDelta(){
 //    for (int i = 0; i < numNodes; i++){
 //        out[i] = (rand() % 3) + 1;      //gives range 1-4
 //    }
-    out[0] = (rand() % 3) + 1;      //gives range 1-4
-    out[1] = 1;
+    out << (rand() % 3) + 1;      //gives range 1-4
+    out << 1;
     return out;
 }
 
@@ -82,8 +84,8 @@ QVector<int> Headset::readBaseTheta(){
 //    for (int i = 0; i < numNodes; i++){
 //        out[i] = (rand() % 4) + 4;      //gives range 4-8
 //    }
-    out[0] = (rand() % 4) + 4;      //gives range 4-8
-    out[1] = 1;
+    out << (rand() % 4) + 4;      //gives range 4-8
+    out << 1;
     return out;
 }
 
