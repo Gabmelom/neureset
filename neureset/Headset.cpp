@@ -2,17 +2,24 @@
 
 #include<cstdlib>
 #include <QDebug>
+#include <QTimer>
 using namespace std;
 
 Headset::Headset(int nodes, QObject *parent) : QObject(parent), numNodes(nodes){
     //numNodes  = nodes;
+    thread = new QThread;
+    this->moveToThread(thread);
+    thread->start();
+    qDebug()<<"thread sstarted";
 }
 
 void Headset::applyTreatment(int freq){
-    qDebug() << "applyinng treatment of " << freq <<" to ptient";
-//    for (int i = 0; i < numNodes; i++){
-//        qDebug("applyinng treatment of ",freq," to node ",i );
-//    }
+    //qDebug() << "applyinng treatment of " << freq <<" to ptient";
+    //thread->wait(750);
+    for (int i = 0; i < numNodes; i++){
+        qDebug()<<"applyinng treatment of "<<freq<<" to node "<<i;
+        thread->wait(150); //pretty  sure 1/16 = .075
+    }
 }
 
 //int Headset::readEEGBaseline(int site){
@@ -34,6 +41,7 @@ QVector<QVector<int>> Headset::getDomFreq(){
 //    out[1] = readBaseBeta();
 //    out[2] = readBaseDelta();
 //    out[3] = readBaseTheta();
+    thread->wait(1000);
 
     return out;
 }

@@ -1,4 +1,5 @@
 #include "SessionLog.h"
+#include <QDebug>
 
 SessionLog::SessionLog() {
 
@@ -16,6 +17,20 @@ void SessionLog::addStartBaselines(vector<int> baseline)
 
 void SessionLog::addEndBaselines(vector<int> baseline)
 {
+
+}
+
+void SessionLog::consoleOut(){
+    qInfo()<<"outputting log";
+    qInfo()<<"startDomFreq: "<<startDomFreq;
+    qInfo()<<"endDomFreq: "<<endDomFreq;
+    //qInfo()<<"treatments:";
+    //treatmentFreqs.toStdVector();
+    qInfo()<<"offset treatments:    "<<offsetFreqs;
+//    for (int i = 0; i < offsetFreqs.length(); i++){
+//        qInfo()<<"\r   "<<offsetFreqs[i];
+//    }
+    //qInfo()<<"";
 
 }
 

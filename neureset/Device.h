@@ -22,7 +22,12 @@ public:
     void stopSession();
     QVector<int> readBaseline();    //test version before thread stuff is implemented
     bool applyTherapy();
+
     void setPower(bool value);
+    bool getHeadsetConn();
+    int getBatteryLife();
+    QVector<SessionLog*> getLogs();
+    SessionLog* getCurrSession();
 
 private:
     bool headsetConn;

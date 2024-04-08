@@ -16,6 +16,8 @@ public:
     void addStartBaselines(vector<int> baseline);
     void addEndBaselines(vector<int> baseline);
 
+    void consoleOut();
+
     void setStartDomFreq(float);
     void setEndDomFreq(float);
     void setStartDateTime(QString);

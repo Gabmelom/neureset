@@ -46,13 +46,15 @@ void Device::startSession(){
     qDebug() << "starting freq " << startBaseFreq;
     int r = 4;  //nummber of rounds of treatments
     int offset = 5;    //offset added top the dominant frequency. does this change depending on the dominant frequency?
-    float domFreq;
+
+    float domFreq = calcDomFreq(headset->getDomFreq());
+    qDebug()<<"dom  freq ffor treatment:"<<domFreq;
     for (int i = 0;i < r; i++){
         qDebug() << "round " << i;
         currSession->setRound(1+i);
-        QVector<QVector<int>> freqs = headset->getDomFreq();;
-        domFreq = calcDomFreq(freqs);
-        currSession->pushTreatmentFreqs(freqs); //not sure if this one is necessary, but it is the freequency of each wave at the start of each treatment round
+        QVector<QVector<int>> freqs = headset->getDomFreq();
+        //domFreq = calcDomFreq(freqs); //This might or might not be recalculated
+        //currSession->pushTreatmentFreqs(freqs); //not sure if this one is necessary, but it is the freequency of each wave at the start of each treatment round
         //over 1 second, apply the domFreq+offset every 1/16 seconds on each node
         //toggle green light on
         headset->applyTreatment(domFreq+offset);
@@ -67,6 +69,8 @@ void Device::startSession(){
     qDebug() << "treatment has been proformed. Start baseline: " << startBaseFreq <<" end baseline  " <<endBaseFreq;
 
     currSession->setEndDateTime(currDate->toString());
+
+    currSession->consoleOut();
     logs.push_back(currSession);
 
 }
@@ -111,6 +115,20 @@ bool Device::applyTherapy(){
     return true;    //if the treatment round was successful, not sure if there are  fail cases yet (maybe prelimitory safeety checking)
 }
 
+bool Device::getHeadsetConn(){
+    return headsetConn;
+}
+int Device::getBatteryLife(){
+    return batteryLife;
+}
+
+QVector<SessionLog*> Device::getLogs(){
+    return logs;
+}
+SessionLog* Device::getCurrSession(){
+    return currSession;
+}
+
 float Device::calcDomFreq(QVector<QVector<int>> baseFreqs){
     //baseFreqs is a nested vector of freq,amp for the 4 wave  lengths being read
     //caalculates the dominent frequency from the output of headset->getDomFreq
@@ -123,9 +141,9 @@ float Device::calcDomFreq(QVector<QVector<int>> baseFreqs){
 
 
 int readEEG(int site){
-
+    return site;
 }
 
 int readBaselineSig(){
-
+    return 0;
 }

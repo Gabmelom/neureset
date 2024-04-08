@@ -32,6 +32,13 @@ void MainWindow::init()
 
     Device *device  = new Device(this);
     device->startSession();
+    device->startSession();
+    device->startSession();
+    QVector<SessionLog*> logs = device->getLogs();
+
+    for (int i = 0; i < logs.length(); i++){
+        logs[i]->consoleOut();
+    }
 }
 
 void MainWindow::pageChanged(int index)

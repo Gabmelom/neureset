@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QVector>
-
+#include <QThread>
 
 class Headset : public QObject
 {
@@ -17,6 +17,9 @@ public:
     QVector<int> readBase();
     void readBaselineSlot();
     QVector<QVector<int>> getDomFreq();
+
+
+
 //public slots:
 //    void readBaselineSlot();
 
@@ -26,6 +29,9 @@ private:
     QVector<int> readBaseBeta();
     QVector<int> readBaseDelta();
     QVector<int> readBaseTheta();
+
+    //headset will  manage the timings in combination with the window's state checking
+    QThread *thread;
 
 };
 #endif // HEADSET_H
