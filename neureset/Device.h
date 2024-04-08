@@ -3,28 +3,48 @@
 
 #include <QDateTime>
 #include <QTimer>
+#include <Headset.h>
+#include <mainwindow.h>
+#include "SessionLog.h"
 
-class Device
+#include "QVector"
+
+class Device : public QObject
 {
+    Q_OBJECT
 public:
-    Device();
+    Device(MainWindow *window);
     ~Device();
 
     void replaceBattery();
     void startSession();
     void pauseSession();
     void stopSession();
-    void power(bool value);
+    QVector<int> readBaseline();    //test version before thread stuff is implemented
+    bool applyTherapy();
+
+    void setPower(bool value);
+    bool getHeadsetConn();
+    int getBatteryLife();
+    QVector<SessionLog*> getLogs();
+    SessionLog* getCurrSession();
 
 private:
     bool headsetConn;
     bool pcConn;
-    int battery;
+    int batteryLife;
+    bool powerState;
     QDateTime *currDate;
     QTimer *sessionTimer;
+    Headset *headset;
+    MainWindow *window;
+    SessionLog *currSession;    //the current treatment session, stored in the object so it can be accessed outside the startSession function
+    QVector<SessionLog*> logs;
 
-public slots:
-    void readBaseline();
+    float calcDomFreq(QVector<QVector<int>>);
+
+//public slots:
+//    QVector<int> readBaseline();
 
 signals:
     int readEEG(int site);

@@ -3,20 +3,35 @@
 
 #include <QObject>
 #include <QVector>
-
+#include <QThread>
 
 class Headset : public QObject
 {
     Q_OBJECT
 public:
-    explicit Headset(QObject *parent = nullptr);
+    explicit Headset(int nodes, QObject *parent = nullptr);
 
-    void applyTreatment(int site, int baseline);
-    int readEEGBaseline(int site);
-    QVector<int> readBaseline();
-
-public slots:
+//    void applyTreatment(int site, int baseline);
+    void applyTreatment(int freq);
+//    int readEEGBaseline(int site);
+    QVector<int> readBase();
     void readBaselineSlot();
+    QVector<QVector<int>> getDomFreq();
+
+
+
+//public slots:
+//    void readBaselineSlot();
+
+private:
+    int numNodes;
+    QVector<int> readBaseAlpha();   //probablyy just the freq amp overall, not for each node
+    QVector<int> readBaseBeta();
+    QVector<int> readBaseDelta();
+    QVector<int> readBaseTheta();
+
+    //headset will  manage the timings in combination with the window's state checking
+    QThread *thread;
 
 };
 #endif // HEADSET_H

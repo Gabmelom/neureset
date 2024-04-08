@@ -213,7 +213,7 @@
       <rect>
        <x>490</x>
        <y>200</y>
-       <width>51</width>
+       <width>82</width>
        <height>151</height>
       </rect>
      </property>
@@ -303,7 +303,7 @@
       <string notr="true">border: solid 1px;</string>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="HomePage">
       <property name="styleSheet">
