@@ -30,7 +30,7 @@ void MainWindow::init()
     currentList = ui->HomeMenuList;
     currentList->setCurrentRow(0);
 
-    Device *device  = new Device(this);
+    Device *device = new Device(this, ui->sessionLogList);
     device->startSession();
     device->startSession();
     device->startSession();
@@ -59,6 +59,7 @@ void MainWindow::pageChanged(int index)
         case 2:
             currentList = ui->sessionLogList;
             currentList->setCurrentRow(0);
+            selectPressed();
             break;
         default:
             currentList = nullptr;
