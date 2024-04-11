@@ -18,6 +18,13 @@ public:
 
     void consoleOut();
 
+//    bool getOngoing();
+
+    int getCurrentRound();
+//    void setOngoing(bool);
+    float getstartBaseFreq();
+    float getEndBaseFreq();
+
     void setStartDomFreq(float);
     void setEndDomFreq(float);
     void setStartDateTime(QString);
@@ -26,6 +33,10 @@ public:
     void pushTreatmentFreqs(QVector<QVector<int>>);
     void pushOffset(float);
 private:
+
+/*    bool ongoing; */      //if the session is in progress, good to check the state of the device
+    //stores some info on the current session
+
     QVector<int> startBaselines;
     QVector<int> endBaselines;
     QDateTime startDateTime;

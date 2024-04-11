@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 #include "Device.h"
 
+#include <QDebug>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -32,6 +34,8 @@ void MainWindow::init()
 
     Device *device  = new Device(this);
     device->startSession();
+    device->startSession();
+    qDebug() << "   SESSION 3";
     device->startSession();
     device->startSession();
     QVector<SessionLog*> logs = device->getLogs();

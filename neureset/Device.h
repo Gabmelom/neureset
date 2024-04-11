@@ -34,6 +34,8 @@ private:
     bool pcConn;
     int batteryLife;
     bool powerState;
+    bool ongoingSession;
+
     QDateTime *currDate;
     QTimer *sessionTimer;
     Headset *headset;

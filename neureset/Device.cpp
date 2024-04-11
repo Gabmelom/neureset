@@ -14,6 +14,7 @@ Device::Device(MainWindow *window) : window(window){
     currDate = new QDateTime();
     batteryLife = 100; //stored as an int, should be a flloat once exact calculations are written
     powerState = 0;
+    ongoingSession = 0;
 
 }
 
@@ -34,22 +35,38 @@ void Device::startSession(){
 
     //stores all important info over the entire session
     //SessionLog *sessLog = new SessionLog();
-    currSession = new SessionLog();
-    currSession->setStartDateTime(currDate->toString());
-    float startBaseFreq = calcDomFreq(headset->getDomFreq());
+    if (!ongoingSession){
+        //if there was no previous session, create a new object and sttart the session
+        currSession = new SessionLog();
+        currSession->setStartDateTime(currDate->toString());
+        float startBaseFreq = calcDomFreq(headset->getDomFreq());
+        currSession->setStartDomFreq(startBaseFreq);
+        qDebug() << "starting freq " << startBaseFreq;
+        ongoingSession = 1;
+    }
 
-    currSession->setStartDomFreq(startBaseFreq);
+    if (batteryLife <= 20){
+        qDebug() <<"baattery low, replacing battery";
+        replaceBattery();
+    }
+
     //ssession duratiion is expected to be constant, the only exception is if it is stopped completely
     //sessLog->addStartBaselines(startBaseFreq);    this might change accorrding to sessionLog format
     //the treatment bits, according to the recent test doc
     //should put this function in a thread for timing, pausing, and timer
-    qDebug() << "starting freq " << startBaseFreq;
+
     int r = 4;  //nummber of rounds of treatments
     int offset = 5;    //offset added top the dominant frequency. does this change depending on the dominant frequency?
 
     float domFreq = calcDomFreq(headset->getDomFreq());
     qDebug()<<"dom  freq ffor treatment:"<<domFreq;
-    for (int i = 0;i < r; i++){
+    for (int i = currSession->getCurrentRound();i < r; i++){
+        if (batteryLife <= 20){
+            qInfo() <<"WARNING: battery low, pausing (not  really)";
+            replaceBattery();
+            //return;
+        }
+        qDebug() << "battery life "<<batteryLife;
         qDebug() << "round " << i;
         currSession->setRound(1+i);
         QVector<QVector<int>> freqs = headset->getDomFreq();
@@ -61,17 +78,21 @@ void Device::startSession(){
         //toggle green light off
         currSession->pushOffset(domFreq + offset);
         offset+=5;
+        batteryLife -= 9;
+        currSession->setRound(i);
         //update window: round i of r complete  (show as percent)
 
     }
     float endBaseFreq = calcDomFreq(headset->getDomFreq());
     currSession->setEndDomFreq(endBaseFreq);
-    qDebug() << "treatment has been proformed. Start baseline: " << startBaseFreq <<" end baseline  " <<endBaseFreq;
+    qDebug() << "treatment has been proformed. Start baseline: " << currSession->getstartBaseFreq() <<" end baseline  " <<currSession->getEndBaseFreq();
 
     currSession->setEndDateTime(currDate->toString());
 
     currSession->consoleOut();
     logs.push_back(currSession);
+
+    ongoingSession = 0;
 
 }
 
