@@ -36,7 +36,10 @@ void Device::startSession(){
     //SessionLog *sessLog = new SessionLog();
     currSession = new SessionLog();
     currSession->setStartDateTime(currDate->toString());
-    float startBaseFreq = calcDomFreq(headset->getDomFreq());
+    QVector<QVector<int>> startBaseline = headset->getDomFreq();
+    float startBaseFreq = calcDomFreq(startBaseline);
+
+    currSession->addStartBaselines(startBaseline);
 
     currSession->setStartDomFreq(startBaseFreq);
     //ssession duratiion is expected to be constant, the only exception is if it is stopped completely
@@ -48,25 +51,31 @@ void Device::startSession(){
     int offset = 5;    //offset added top the dominant frequency. does this change depending on the dominant frequency?
 
     float domFreq = calcDomFreq(headset->getDomFreq());
-    qDebug()<<"dom  freq ffor treatment:"<<domFreq;
+    qDebug()<<"dom freq for treatment:"<<domFreq;
     for (int i = 0;i < r; i++){
-        qDebug() << "round " << i;
-        currSession->setRound(1+i);
+        qDebug() << "round " << 1 + i;
+        currSession->setRound(1 + i);
         QVector<QVector<int>> freqs = headset->getDomFreq();
         //domFreq = calcDomFreq(freqs); //This might or might not be recalculated
         //currSession->pushTreatmentFreqs(freqs); //not sure if this one is necessary, but it is the freequency of each wave at the start of each treatment round
         //over 1 second, apply the domFreq+offset every 1/16 seconds on each node
         //toggle green light on
-        headset->applyTreatment(domFreq+offset);
+        headset->applyTreatment(domFreq + offset);
         //toggle green light off
         currSession->pushOffset(domFreq + offset);
         offset+=5;
         //update window: round i of r complete  (show as percent)
 
     }
-    float endBaseFreq = calcDomFreq(headset->getDomFreq());
+
+    QVector<QVector<int>> endBaseline = headset->getDomFreq();
+
+    float endBaseFreq = calcDomFreq(endBaseline);
+
+    currSession->addEndBaselines(endBaseline);
+
     currSession->setEndDomFreq(endBaseFreq);
-    qDebug() << "treatment has been proformed. Start baseline: " << startBaseFreq <<" end baseline  " <<endBaseFreq;
+    qDebug() << "treatment has been performed. Start baseline: " << startBaseFreq <<" end baseline  " << endBaseFreq;
 
     currSession->setEndDateTime(currDate->toString());
 
@@ -133,7 +142,7 @@ float Device::calcDomFreq(QVector<QVector<int>> baseFreqs){
     //baseFreqs is a nested vector of freq,amp for the 4 wave  lengths being read
     //caalculates the dominent frequency from the output of headset->getDomFreq
     //equation from the test doc
-    qDebug("calcculating the dominant frequency");
+    qDebug("calculating the dominant frequency");
     int top = (baseFreqs[0][0] * (baseFreqs[0][1] * baseFreqs[0][1]) + baseFreqs[1][0] * (baseFreqs[1][1] * baseFreqs[1][1]) + baseFreqs[2][0] * (baseFreqs[2][1] * baseFreqs[2][1]) + baseFreqs[3][0] * (baseFreqs[3][1] * baseFreqs[3][1]));
     int bot = baseFreqs[0][1] + baseFreqs[1][1] + baseFreqs[2][1]  + baseFreqs[3][1];
     return (top / bot);
