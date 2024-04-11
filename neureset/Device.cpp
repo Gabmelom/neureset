@@ -7,11 +7,11 @@
 #include "QThread"
 
 
-Device::Device(MainWindow *window) : window(window){
+Device::Device(MainWindow *window, QListWidget* list) : window(window), list(list){
     headset = new Headset(7,this);
     //pcConn = new PC   //immplement after that  class has been maade
     sessionTimer = new QTimer();   //might move creation into start session. needs to be part of the class to be gotten from the UI
-    currDate = new QDateTime();
+    currDate = new QDateTime(QDateTime::currentDateTime());
     batteryLife = 100; //stored as an int, should be a flloat once exact calculations are written
     powerState = 0;
 
@@ -29,6 +29,8 @@ void Device::replaceBattery(){
 }
 
 void Device::startSession(){
+    sessionNum++;
+
     qDebug("Session started");
     //follows ssequeence ddiagram for the main use case
 
@@ -82,6 +84,7 @@ void Device::startSession(){
     currSession->consoleOut();
     logs.push_back(currSession);
 
+    list->addItem(QString("Session %1       Date: %2").arg(sessionNum).arg(currDate->toString()));
 }
 
 void Device::pauseSession(){

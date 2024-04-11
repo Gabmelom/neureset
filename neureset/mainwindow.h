@@ -16,6 +16,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    Ui::MainWindow* getUi() { return ui; }
 private slots:
     void powerPressed();
     void homePressed();

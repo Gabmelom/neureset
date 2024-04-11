@@ -13,7 +13,7 @@ class Device : public QObject
 {
     Q_OBJECT
 public:
-    Device(MainWindow *window);
+    Device(MainWindow *window, QListWidget *list);
     ~Device();
 
     void replaceBattery();
@@ -32,6 +32,7 @@ public:
     void uploadSessionLog();
 
 private:
+    int sessionNum = 0;
     bool headsetConn;
     bool pcConn;
     int batteryLife;
@@ -40,6 +41,7 @@ private:
     QTimer *sessionTimer;
     Headset *headset;
     MainWindow *window;
+    QListWidget *list;
     SessionLog *currSession;    //the current treatment session, stored in the object so it can be accessed outside the startSession function
     QVector<SessionLog*> logs;
 
