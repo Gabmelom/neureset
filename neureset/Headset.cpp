@@ -17,7 +17,7 @@ void Headset::applyTreatment(int freq){
     //qDebug() << "applyinng treatment of " << freq <<" to ptient";
     //thread->wait(750);
     for (int i = 0; i < numNodes; i++){
-        qDebug()<<"applying treatment of "<<freq<<" to node "<<i;
+        qDebug()<<"applying treatment of "<<freq<<" to node "<< i + 1;
         thread->wait(150); //pretty  sure 1/16 = .075
     }
 }

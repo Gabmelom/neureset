@@ -13,11 +13,13 @@ SessionLog::~SessionLog()
 void SessionLog::addStartBaselines(QVector<QVector<int>> baseline)
 {
     startBaselines = baseline;
+    qInfo()<<"store start baseline";
 }
 
 void SessionLog::addEndBaselines(QVector<QVector<int>> baseline)
 {
     endBaselines = baseline;
+    qInfo()<<"store end baseline";
 }
 
 void SessionLog::consoleOut(){
