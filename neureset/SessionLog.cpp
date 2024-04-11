@@ -10,14 +10,14 @@ SessionLog::~SessionLog()
 
 }
 
-void SessionLog::addStartBaselines(vector<int> baseline)
+void SessionLog::addStartBaselines(QVector<QVector<int>> baseline)
 {
-
+    startBaselines = baseline;
 }
 
-void SessionLog::addEndBaselines(vector<int> baseline)
+void SessionLog::addEndBaselines(QVector<QVector<int>> baseline)
 {
-
+    endBaselines = baseline;
 }
 
 void SessionLog::consoleOut(){

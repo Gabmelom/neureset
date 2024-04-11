@@ -13,8 +13,8 @@ public:
     SessionLog();
     ~SessionLog();
 
-    void addStartBaselines(vector<int> baseline);
-    void addEndBaselines(vector<int> baseline);
+    void addStartBaselines(QVector<QVector<int>> baseline);
+    void addEndBaselines(QVector<QVector<int>> baseline);
 
     void consoleOut();
 
@@ -26,8 +26,8 @@ public:
     void pushTreatmentFreqs(QVector<QVector<int>>);
     void pushOffset(float);
 private:
-    QVector<int> startBaselines;
-    QVector<int> endBaselines;
+    QVector<QVector<int>> startBaselines;
+    QVector<QVector<int>> endBaselines;
     QDateTime startDateTime;
     QDateTime endDateTime;
 

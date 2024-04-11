@@ -29,6 +29,8 @@ public:
     QVector<SessionLog*> getLogs();
     SessionLog* getCurrSession();
 
+    void uploadSessionLog();
+
 private:
     bool headsetConn;
     bool pcConn;

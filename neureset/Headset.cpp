@@ -17,7 +17,7 @@ void Headset::applyTreatment(int freq){
     //qDebug() << "applyinng treatment of " << freq <<" to ptient";
     //thread->wait(750);
     for (int i = 0; i < numNodes; i++){
-        qDebug()<<"applyinng treatment of "<<freq<<" to node "<<i;
+        qDebug()<<"applying treatment of "<<freq<<" to node "<<i;
         thread->wait(150); //pretty  sure 1/16 = .075
     }
 }
@@ -33,7 +33,7 @@ QVector<int> Headset::readBase(){
 
 QVector<QVector<int>> Headset::getDomFreq(){
     //get vals for freq and amps at a point in time (freqs change every 1 second)
-    qDebug("geetting dominant freq");
+    qDebug("getting dominant freq");
     //change the function to get a different dominant freequency
     QVector<QVector<int>> out;
     out << readBaseAlpha() << readBaseBeta() << readBaseDelta() << readBaseTheta();
