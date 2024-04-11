@@ -13,15 +13,13 @@ public:
     SessionLog();
     ~SessionLog();
 
-    void addStartBaselines(vector<int> baseline);
-    void addEndBaselines(vector<int> baseline);
+    void addStartBaselines(QVector<QVector<int>> baseline);
+    void addEndBaselines(QVector<QVector<int>> baseline);
 
     void consoleOut();
 
-//    bool getOngoing();
 
     int getCurrentRound();
-//    void setOngoing(bool);
     float getstartBaseFreq();
     float getEndBaseFreq();
 
@@ -34,11 +32,9 @@ public:
     void pushOffset(float);
 private:
 
-/*    bool ongoing; */      //if the session is in progress, good to check the state of the device
-    //stores some info on the current session
+    QVector<QVector<int>> startBaselines;
+    QVector<QVector<int>> endBaselines;
 
-    QVector<int> startBaselines;
-    QVector<int> endBaselines;
     QDateTime startDateTime;
     QDateTime endDateTime;
 

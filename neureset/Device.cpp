@@ -7,11 +7,11 @@
 #include "QThread"
 
 
-Device::Device(MainWindow *window) : window(window){
+Device::Device(MainWindow *window, QListWidget* list) : window(window), list(list){
     headset = new Headset(7,this);
     //pcConn = new PC   //immplement after that  class has been maade
     sessionTimer = new QTimer();   //might move creation into start session. needs to be part of the class to be gotten from the UI
-    currDate = new QDateTime();
+    currDate = new QDateTime(QDateTime::currentDateTime());
     batteryLife = 100; //stored as an int, should be a flloat once exact calculations are written
     powerState = 0;
     ongoingSession = 0;
@@ -30,11 +30,14 @@ void Device::replaceBattery(){
 }
 
 void Device::startSession(){
+    sessionNum++;
+
     qDebug("Session started");
     //follows ssequeence ddiagram for the main use case
 
     //stores all important info over the entire session
     //SessionLog *sessLog = new SessionLog();
+
     if (!ongoingSession){
         //if there was no previous session, create a new object and sttart the session
         currSession = new SessionLog();
@@ -69,12 +72,13 @@ void Device::startSession(){
         qDebug() << "battery life "<<batteryLife;
         qDebug() << "round " << i;
         currSession->setRound(1+i);
+
         QVector<QVector<int>> freqs = headset->getDomFreq();
         //domFreq = calcDomFreq(freqs); //This might or might not be recalculated
         //currSession->pushTreatmentFreqs(freqs); //not sure if this one is necessary, but it is the freequency of each wave at the start of each treatment round
         //over 1 second, apply the domFreq+offset every 1/16 seconds on each node
         //toggle green light on
-        headset->applyTreatment(domFreq+offset);
+        headset->applyTreatment(domFreq + offset);
         //toggle green light off
         currSession->pushOffset(domFreq + offset);
         offset+=5;
@@ -83,16 +87,27 @@ void Device::startSession(){
         //update window: round i of r complete  (show as percent)
 
     }
-    float endBaseFreq = calcDomFreq(headset->getDomFreq());
+
+    QVector<QVector<int>> endBaseline = headset->getDomFreq();
+
+    float endBaseFreq = calcDomFreq(endBaseline);
+
+    currSession->addEndBaselines(endBaseline);
+
     currSession->setEndDomFreq(endBaseFreq);
+
     qDebug() << "treatment has been proformed. Start baseline: " << currSession->getstartBaseFreq() <<" end baseline  " <<currSession->getEndBaseFreq();
+
 
     currSession->setEndDateTime(currDate->toString());
 
     currSession->consoleOut();
     logs.push_back(currSession);
 
+
     ongoingSession = 0;
+
+    list->addItem(QString("Session %1       Date: %2").arg(sessionNum).arg(currDate->toString()));
 
 }
 
@@ -154,7 +169,7 @@ float Device::calcDomFreq(QVector<QVector<int>> baseFreqs){
     //baseFreqs is a nested vector of freq,amp for the 4 wave  lengths being read
     //caalculates the dominent frequency from the output of headset->getDomFreq
     //equation from the test doc
-    qDebug("calcculating the dominant frequency");
+    qDebug("calculating the dominant frequency");
     int top = (baseFreqs[0][0] * (baseFreqs[0][1] * baseFreqs[0][1]) + baseFreqs[1][0] * (baseFreqs[1][1] * baseFreqs[1][1]) + baseFreqs[2][0] * (baseFreqs[2][1] * baseFreqs[2][1]) + baseFreqs[3][0] * (baseFreqs[3][1] * baseFreqs[3][1]));
     int bot = baseFreqs[0][1] + baseFreqs[1][1] + baseFreqs[2][1]  + baseFreqs[3][1];
     return (top / bot);
