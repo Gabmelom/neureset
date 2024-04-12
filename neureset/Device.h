@@ -47,6 +47,7 @@ public:
     QDateTime* getDate();
     bool getHeadsetConn();
     int getBatteryLife();
+    bool getPowerState();
     QVector<SessionLog*> getLogs();
     SessionLog* getCurrSession();
 

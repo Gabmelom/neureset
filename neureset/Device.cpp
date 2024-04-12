@@ -233,7 +233,7 @@ void Device::turnOffRedlight(){
 }
 
 void Device::flashRedlight(){
-    if(!headsetConn){
+    if(!headsetConn && powerState){
         if(redlightOn){
             redlightOn = false;
             redlight->setStyleSheet("QLabel { background-color : white;}");
@@ -267,18 +267,17 @@ QVector<int> Device::readBaseline(){
 }
 
 void Device::togglePower(){
-    if(powerState) qInfo("Turn off device");
+    turnOffBluelight();
+    turnOffRedlight();
+    turnOffGreenlight();
+    powerState = !powerState;
+    if(!powerState) qInfo("Turn off device");
     else {
         qInfo("Turn on device");
-        sessionStage = NO_STAGE;
-        turnOffBluelight();
-        turnOffRedlight();
-        turnOffGreenlight();
+        sessionStage = NO_STAGE;    
         headsetConn = true;
         toggleHeadsetConn();
-    }
-
-    powerState = !powerState;
+    }    
 }
 
 void Device::toggleHeadsetConn(){
@@ -315,6 +314,10 @@ bool Device::applyTherapy(){
 
 QDateTime* Device::getDate(){
     return currDate;
+}
+
+bool Device::getPowerState(){
+    return powerState;
 }
 
 bool Device::isOngoing(){
