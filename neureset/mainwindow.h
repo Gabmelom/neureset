@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QListWidget>
+#include <Device.h>
+#include "Device.h"
 
 //#include "Device.h"
 #include <QDebug>
@@ -35,11 +37,18 @@ private slots:
     void updateDate();
     void changeDate();
     void changeTime();
+
+    void uploadSession();
+
+
 private:
     Ui::MainWindow *ui;
+    Device *device;
     void init();
     int currentScreen;
     QListWidget* currentList;
+
     Device *device;
+
 };
 #endif // MAINWINDOW_H

@@ -303,7 +303,11 @@
       <string notr="true">border: solid 1px;</string>
      </property>
      <property name="currentIndex">
+
       <number>3</number>
+
+      <number>1</number>
+
      </property>
      <widget class="QWidget" name="HomePage">
       <property name="styleSheet">
@@ -350,27 +354,29 @@
       <widget class="QProgressBar" name="sessionProgressBar">
        <property name="geometry">
         <rect>
-         <x>100</x>
-         <y>190</y>
-         <width>221</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="value">
-        <number>24</number>
-       </property>
-      </widget>
-      <widget class="QLabel" name="sessionTimer">
-       <property name="geometry">
-        <rect>
-         <x>130</x>
-         <y>120</y>
-         <width>141</width>
+         <x>20</x>
+         <y>160</y>
+         <width>361</width>
          <height>51</height>
         </rect>
        </property>
-       <property name="text">
-        <string>10 : 00</string>
+       <property name="styleSheet">
+        <string notr="true">font: 13pt &quot;DejaVu Sans&quot;;</string>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="textVisible">
+        <bool>true</bool>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="textDirection">
+        <enum>QProgressBar::BottomToTop</enum>
        </property>
       </widget>
      </widget>
@@ -384,8 +390,24 @@
          <x>10</x>
          <y>10</y>
          <width>381</width>
-         <height>341</height>
+         <height>311</height>
         </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="uploadSession">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>330</y>
+         <width>121</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: 1px solid black;</string>
+       </property>
+       <property name="text">
+        <string>Upload Session</string>
        </property>
       </widget>
      </widget>
@@ -480,7 +502,6 @@
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources>
   <include location="resources.qrc"/>

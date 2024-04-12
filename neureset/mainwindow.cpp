@@ -1,13 +1,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "Device.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
     init();
+
     connect(ui->power, SIGNAL(pressed()), this, SLOT(powerPressed()));
     connect(ui->home, SIGNAL(pressed()), this, SLOT(homePressed()));
     connect(ui->up, SIGNAL(pressed()), this, SLOT(upPressed()));
@@ -19,6 +20,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->dateEdit, SIGNAL(editingFinished()), this, SLOT(changeDate()));
     connect(ui->timeEdit,  SIGNAL(editingFinished()), this, SLOT(changeTime()));
+
+    connect(ui->uploadSession, SIGNAL(pressed()), this, SLOT(uploadSession()));
+
 }
 
 MainWindow::~MainWindow()
@@ -33,7 +37,8 @@ void MainWindow::init()
     currentList = ui->HomeMenuList;
     currentList->setCurrentRow(0);
 
-    device = new Device(this, ui->sessionLogList);
+
+    //device = new Device(this, ui->sessionLogList);
 //    device->startSession();
 //    device->startSession();
 //    device->startSession();
@@ -42,6 +47,9 @@ void MainWindow::init()
 //    for (int i = 0; i < logs.length(); i++){
 //        logs[i]->consoleOut();
 //    }
+
+    device = new Device(ui->sessionLogList, ui->sessionProgressBar);
+
 }
 
 void MainWindow::pageChanged(int index)
@@ -58,6 +66,10 @@ void MainWindow::pageChanged(int index)
         case 0:
             currentList = ui->HomeMenuList;
             currentList->setCurrentRow(0);
+            break;
+        case 1:
+            qInfo("Start Session");
+            device->startSession();
             break;
         case 2:
             currentList = ui->sessionLogList;
@@ -76,7 +88,7 @@ void MainWindow::pageChanged(int index)
 
 void MainWindow::powerPressed()
 {
-    qInfo("Power pressed");
+    device->togglePower();
 }
 
 void MainWindow::homePressed()
@@ -117,13 +129,21 @@ void MainWindow::selectPressed()
 
 void MainWindow::playPausePressed()
 {
-    qInfo("Play/Pause pressed");
+    if(device->getSessionStage() != -1){
+        if(device->isOngoing()){
+            device->pauseSession();
+        }
+        else{
+            device->resumeSession();
+        }
+    }
 }
 
 void MainWindow::stopPressed()
 {
-    qInfo("Stop pressed");
+    device->stopSession();
 }
+
 
 void MainWindow::changeDate(){
     qInfo("changing the date");
@@ -140,7 +160,14 @@ void MainWindow::changeTime(){
 }
 
 void MainWindow::updateDate(){
-    qInfo("update the date");
+    qInfo("update the date/time");
     ui->dateEdit->setDate(device->getDate()->date());
     ui->timeEdit->setTime(device->getDate()->time());
+
+void MainWindow::uploadSession()
+{
+    int selected = currentList->currentRow();
+    qInfo("Upload session %d", selected);
+    device->uploadSessionLog(selected);
+
 }
