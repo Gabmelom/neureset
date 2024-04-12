@@ -107,11 +107,13 @@ void MainWindow::selectPressed()
 
 void MainWindow::playPausePressed()
 {
-    if(device->isOngoing()){
-        device->pauseSession();
-    }
-    else{
-        device->resumeSession();
+    if(device->getSessionStage() != -1){
+        if(device->isOngoing()){
+            device->pauseSession();
+        }
+        else{
+            device->resumeSession();
+        }
     }
 }
 

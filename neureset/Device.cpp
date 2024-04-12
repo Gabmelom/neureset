@@ -24,7 +24,7 @@ Device::~Device(){
 }
 
 void Device::replaceBattery(){
-    qDebug("Changing the baattery");
+    qDebug("Changing the battery");
     batteryLife = 100;
 }
 
@@ -229,6 +229,10 @@ bool Device::applyTherapy(){
 
 bool Device::isOngoing(){
     return ongoing;
+}
+
+int Device::getSessionStage(){
+    return sessionStage;
 }
 
 bool Device::getHeadsetConn(){

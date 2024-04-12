@@ -35,6 +35,7 @@ public:
     void uploadSessionLog();
     void togglePower();
     bool isOngoing();
+    int getSessionStage();
 
 private:
     int sessionNum = -1;
