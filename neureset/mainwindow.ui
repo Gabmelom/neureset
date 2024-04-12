@@ -25,7 +25,7 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>591</width>
+      <width>581</width>
       <height>611</height>
      </rect>
     </property>
@@ -38,7 +38,7 @@
     <widget class="QPushButton" name="power">
      <property name="geometry">
       <rect>
-       <x>500</x>
+       <x>530</x>
        <y>10</y>
        <width>41</width>
        <height>41</height>
@@ -287,7 +287,7 @@
       </item>
      </layout>
     </widget>
-    <widget class="QStackedWidget" name="Screen">
+    <widget class="QStackedWidget" name="DeviceScreen">
      <property name="enabled">
       <bool>true</bool>
      </property>
@@ -303,7 +303,7 @@
       <string notr="true">border: solid 1px;</string>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="HomePage">
       <property name="styleSheet">
@@ -380,7 +380,7 @@
       <property name="styleSheet">
        <string notr="true">background-color:white;</string>
       </property>
-      <widget class="QListWidget" name="sessionLogList">
+      <widget class="QListWidget" name="deviceLogList">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -390,7 +390,7 @@
         </rect>
        </property>
       </widget>
-      <widget class="QPushButton" name="uploadSession">
+      <widget class="QPushButton" name="uploadLogsButton">
        <property name="geometry">
         <rect>
          <x>150</x>
@@ -403,7 +403,7 @@
         <string notr="true">border: 1px solid black;</string>
        </property>
        <property name="text">
-        <string>Upload Session</string>
+        <string>Upload logs</string>
        </property>
       </widget>
      </widget>
@@ -463,8 +463,8 @@
      </property>
      <property name="geometry">
       <rect>
-       <x>500</x>
-       <y>570</y>
+       <x>480</x>
+       <y>10</y>
        <width>41</width>
        <height>31</height>
       </rect>
@@ -485,6 +485,120 @@
        <height>30</height>
       </size>
      </property>
+    </widget>
+   </widget>
+   <widget class="QFrame" name="pcFrame">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>10</y>
+      <width>601</width>
+      <height>611</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QStackedWidget" name="stackedWidget">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>40</y>
+       <width>541</width>
+       <height>541</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border: solid 1px;</string>
+     </property>
+     <widget class="QWidget" name="sessionHistoryPage">
+      <widget class="QListWidget" name="pcLogList">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>40</y>
+         <width>521</width>
+         <height>491</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="historyLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>0</y>
+         <width>511</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Noto Sans Adlam</family>
+         <pointsize>20</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: none;</string>
+       </property>
+       <property name="text">
+        <string>Session history</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="detailViewPage">
+      <widget class="QTableWidget" name="tableWidget">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>40</y>
+         <width>521</width>
+         <height>491</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="detailedViewLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>0</y>
+         <width>221</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Noto Sans Adlam</family>
+         <pointsize>20</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: none;</string>
+       </property>
+       <property name="text">
+        <string>Detailed view:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="sessionNameLabel">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>0</y>
+         <width>301</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Session name here</string>
+       </property>
+      </widget>
+     </widget>
     </widget>
    </widget>
   </widget>

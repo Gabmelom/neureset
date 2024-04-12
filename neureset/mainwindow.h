@@ -28,14 +28,18 @@ private slots:
     void playPausePressed();
     void stopPressed();
     void pageChanged(int index);
-    void uploadSession();
+    void uploadLogs();
 
 private:
     Ui::MainWindow *ui;
     Device *device;
+    PC *pc;
     void init();
     int currentScreen;
     QListWidget* currentList;
+
+    void displayDeviceLogs();
+    void displayPCLogs();
 
 };
 #endif // MAINWINDOW_H
