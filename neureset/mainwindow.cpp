@@ -37,7 +37,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::init()
 {
-    currentScreen = 0;
+    currentScreen = 0;  //power off screen
     ui->Screen->setCurrentIndex(currentScreen);
     //currentList = ui->HomeMenuList;
     //currentList->setCurrentRow(4);
@@ -46,7 +46,12 @@ void MainWindow::init()
     device = new Device(ui->sessionLogList, ui->sessionProgressBar,
                         ui->redlight, ui->bluelight, ui->greenlight);
 
+    QTimer* timer = new QTimer(this);
+    connect(timer, &QTimer::timeout,this, &MainWindow::updateGui);
+    timer->start(1000);
 }
+
+
 
 void MainWindow::pageChanged(int index)
 {
@@ -193,7 +198,7 @@ void MainWindow::changeTime(){
 }
 
 void MainWindow::updateDate(){
-    qInfo("update the date/time");
+   // qInfo("update the date/time");
     ui->dateEdit->setDate(device->getDate()->date());
     ui->timeEdit->setTime(device->getDate()->time());
 }
@@ -216,4 +221,13 @@ void MainWindow::uploadSession()
     qInfo("Upload session %d", selected);
     device->uploadSessionLog(selected);
 
+}
+
+void MainWindow::updateGui(){
+    if  (not device->getPower()){
+        ui->Screen->setCurrentIndex(0);
+        pageChanged(0);
+    }
+    device->getDate()->setTime(device->getDate()->time().addSecs(1));
+    updateDate();
 }

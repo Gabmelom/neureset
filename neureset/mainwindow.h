@@ -41,6 +41,7 @@ private slots:
     void changeBattery();
     void toggleHeadset();
     void uploadSession();
+    void updateGui();
 
 
 private:
