@@ -8,7 +8,8 @@
 
 
 
-Device::Device(QListWidget* list, QProgressBar* progress) : list(list), progress(progress){
+Device::Device(QListWidget* list, QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g) :
+    list(list), progress(progress), redlight(r), bluelight(b), greenlight(g){
     headset = new Headset(7,this);
     pc = new PC();   //immplement after that  class has been maade
     currDate = new QDateTime(QDateTime::currentDateTime());
@@ -16,6 +17,7 @@ Device::Device(QListWidget* list, QProgressBar* progress) : list(list), progress
     powerState = 0;
 
     sessionStage = NO_STAGE;
+    turnOffBluelight();
 
     connect(&pauseTimer, &QTimer::timeout, this, &Device::pauseTimeout);
 }
@@ -55,6 +57,7 @@ void Device::startSession(){
     offset = 5;
     rounds = 0;
     sessionStage = START_SESSION;
+    turnOnBluelight();
     ongoing = true;
 
     qDebug("Session started");
@@ -179,6 +182,7 @@ void Device::readEndBaseline(){
 
         list->addItem(QString("Session %1       Date: %2").arg(sessionNum).arg(currDate->toString()));
         ongoing = false;
+        turnOffBluelight();
         progress->setValue(100);
     }
 
@@ -228,21 +232,27 @@ void Device::resumeSession(){
 void Device::pauseTimeout(){
     qInfo("Session Timeout after 15 seconds");
     // turn off lights
-    sessionStage = -1;
+    sessionStage = NO_STAGE;
     sessionNum--;
+    turnOffBluelight();
     togglePower();
 }
 
 void Device::stopSession(){
     qInfo("Session Stopped");
     sessionNum--;
-    sessionStage = -1;
+    sessionStage = NO_STAGE;
+    turnOffBluelight();
     ongoing = false;
 }
 
-//void Device::setPower(bool val){
-//    powerState = val;
-//}
+void Device::turnOffBluelight(){
+    bluelight->setStyleSheet("QLabel { background-color : white;}");
+}
+
+void Device::turnOnBluelight(){
+    bluelight->setStyleSheet("QLabel { background-color : blue;}");
+}
 
 QVector<int> Device::readBaseline(){
     //function for the complicated baseline, to be implemented if it seeems necessary (still looking through Q/A for details)
