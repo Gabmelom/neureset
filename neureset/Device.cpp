@@ -7,9 +7,9 @@
 #include "QThread"
 
 
-Device::Device(MainWindow *window, QListWidget* list) : window(window), list(list){
+Device::Device(QListWidget* list) : list(list){
     headset = new Headset(7,this);
-    //pcConn = new PC   //immplement after that  class has been maade
+    pc = new PC();   //immplement after that  class has been maade
     currDate = new QDateTime(QDateTime::currentDateTime());
     batteryLife = 100; //stored as an int, should be a flloat once exact calculations are written
     powerState = 0;
@@ -26,8 +26,6 @@ void Device::replaceBattery(){
 }
 
 void Device::startSession(){
-    sessionNum++;
-
     qDebug("Session started");
     //follows ssequeence ddiagram for the main use case
 
@@ -96,6 +94,8 @@ void Device::treatmentPart2()
 
 void Device::readEndBaseline()
 {
+    sessionNum++;
+
     QVector<QVector<int>> endBaseline = headset->getDomFreq();
 
     float endBaseFreq = calcDomFreq(endBaseline);
@@ -178,6 +178,11 @@ float Device::calcDomFreq(QVector<QVector<int>> baseFreqs){
     return (top / bot);
 }
 
+void Device::uploadSessionLog(int selected)
+{
+    SessionLog *log = logs[selected];
+    pc->uploadLog(log);
+}
 
 int readEEG(int site){
     return site;
