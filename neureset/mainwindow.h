@@ -48,7 +48,5 @@ private:
     int currentScreen;
     QListWidget* currentList;
 
-    Device *device;
-
 };
 #endif // MAINWINDOW_H

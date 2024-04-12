@@ -163,6 +163,7 @@ void MainWindow::updateDate(){
     qInfo("update the date/time");
     ui->dateEdit->setDate(device->getDate()->date());
     ui->timeEdit->setTime(device->getDate()->time());
+}
 
 void MainWindow::uploadSession()
 {

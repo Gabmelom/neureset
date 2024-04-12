@@ -199,9 +199,9 @@ void Device::stopSession(){
     ongoing = false;
 }
 
-void Device::setPower(bool val){
-    powerState = val;
-}
+//void Device::setPower(bool val){
+//    powerState = val;
+//}
 
 QVector<int> Device::readBaseline(){
     //function for the complicated baseline, to be implemented if it seeems necessary (still looking through Q/A for details)
