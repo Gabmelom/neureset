@@ -18,16 +18,24 @@ Headset::Headset(int nodes, QObject *parent) : QObject(parent), numNodes(nodes){
 }
 
 void Headset::applyTreatment(int freq){
-    treatmentFreq = freq;
     currentNodeIndex = 0;
 
-//    applyTreatmentToCurrNode();
+    if (currentNodeIndex >= numNodes)
+    {
+        return;
+    }
+
+    treatmentFreq = freq;
+
+//    qDebug()<<"applying treatment of "<<freq<<" to node "<< currentNodeIndex + 1;
+
+    applyTreatmentToCurrNode();
 
 //    QTimer::singleShot(0, this, &Headset::applyTreatmentToCurrNode);
 
 //    for (int i = 0; i < numNodes; i++){
-//        qDebug()<<"applying treatment of "<<freq<<" to node "<< i + 1;
-////        thread->wait(150); //pretty  sure 1/16 = .075
+
+//        thread->wait(150); //pretty  sure 1/16 = .075
 //    }
 }
 
@@ -37,7 +45,7 @@ void Headset::applyTreatmentToCurrNode(){
     }
     qDebug() << "Applying treatment of" << treatmentFreq << "to node" << currentNodeIndex + 1;
     currentNodeIndex++;
-//    QTimer::singleShot(150, this, &Headset::applyTreatmentToCurrNode);
+    QTimer::singleShot(150, this, &Headset::applyTreatmentToCurrNode);
 }
 
 //int Headset::readEEGBaseline(int site){

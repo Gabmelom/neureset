@@ -31,9 +31,9 @@ void MainWindow::init()
     currentList->setCurrentRow(0);
 
     Device *device = new Device(this, ui->sessionLogList);
-    device->startSession();
-    device->startSession();
-    device->startSession();
+    device->startSessionPart1();
+//    device->startSessionPart1();
+//    device->startSessionPart1();
     QVector<SessionLog*> logs = device->getLogs();
 
     for (int i = 0; i < logs.length(); i++){

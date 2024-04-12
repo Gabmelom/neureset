@@ -13,8 +13,6 @@ Device::Device(MainWindow *window, QListWidget* list) : window(window), list(lis
     currDate = new QDateTime(QDateTime::currentDateTime());
     batteryLife = 100; //stored as an int, should be a flloat once exact calculations are written
     powerState = 0;
-
-    connect(&sessionTimer, &QTimer::timeout, this, &Device::getStartFreq);
 }
 
 Device::~Device(){
@@ -43,7 +41,7 @@ void Device::startSessionPart1(){
 
 void Device::startSessionPart2(){
     QVector<QVector<int>> startBaseline = headset->getDomFreq();
-    float startBaseFreq = calcDomFreq(startBaseline);
+    startBaseFreq = calcDomFreq(startBaseline);
     currSession->addStartBaselines(startBaseline);
     currSession->setStartDomFreq(startBaseFreq);
     //ssession duratiion is expected to be constant, the only exception is if it is stopped completely
@@ -58,14 +56,21 @@ void Device::startSessionPart2(){
 }
 
 void Device::startSessionPart3(){
-    float domFreq = calcDomFreq(headset->getDomFreq());
+    domFreq = calcDomFreq(headset->getDomFreq());
     qDebug()<<"dom freq for treatment:"<<domFreq;
-}
-void Device::startSession(){
 
-    for (int i = 0;i < r; i++){
-        qDebug() << "round " << 1 + i;
-        currSession->setRound(1 + i);
+    QTimer::singleShot(1000, this, &Device::startSessionPart4);
+}
+
+void Device::startSessionPart4(){
+    if (rounds >= ROUNDS)
+    {
+        startSessionPart5();
+    }
+    else
+    {
+        qDebug() << "round " << 1 + rounds;
+        currSession->setRound(1 + rounds);
 
         QVector<QVector<int>> freqs = headset->getDomFreq();
         //domFreq = calcDomFreq(freqs); //This might or might not be recalculated
@@ -76,10 +81,15 @@ void Device::startSession(){
         //toggle green light off
         currSession->pushOffset(domFreq + offset);
         offset+=5;
+        rounds++;
         //update window: round i of r complete  (show as percent)
 
+        QTimer::singleShot(1000, this, &Device::startSessionPart4);
     }
+}
 
+void Device::startSessionPart5()
+{
     QVector<QVector<int>> endBaseline = headset->getDomFreq();
 
     float endBaseFreq = calcDomFreq(endBaseline);
@@ -87,6 +97,7 @@ void Device::startSession(){
     currSession->addEndBaselines(endBaseline);
 
     currSession->setEndDomFreq(endBaseFreq);
+
     qDebug() << "treatment has been performed. Start baseline: " << startBaseFreq <<" end baseline  " << endBaseFreq;
 
     currSession->setEndDateTime(currDate->toString());

@@ -9,7 +9,6 @@
 
 #include "QVector"
 
-#define OFFSET 5
 #define ROUNDS 4
 
 class Device : public QObject
@@ -33,6 +32,7 @@ public:
     SessionLog* getCurrSession();
 
     void uploadSessionLog();
+    void startSessionPart1();
 
 private:
     int sessionNum = 0;
@@ -49,7 +49,12 @@ private:
     QVector<SessionLog*> logs;
 
     float calcDomFreq(QVector<QVector<int>>);
-    void startSessionPart1();
+
+    int offset = 5;
+    int rounds = 0;
+
+    float domFreq;
+    float startBaseFreq;
 
 //public slots:
 //    QVector<int> readBaseline();
@@ -62,6 +67,8 @@ signals:
 private slots:
     void startSessionPart2();
     void startSessionPart3();
+    void startSessionPart4();
+    void startSessionPart5();
 };
 
 #endif // DEVICE_H
