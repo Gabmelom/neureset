@@ -17,7 +17,9 @@ Device::Device(QListWidget* list, QProgressBar* progress,QLabel *r, QLabel *b, Q
     powerState = 0;
     sessionStage = NO_STAGE;
     turnOffBluelight();
+    turnOffRedlight();
     headsetConn = false;
+    flashRedlight();
 
     connect(&pauseTimer, &QTimer::timeout, this, &Device::pauseTimeout);
 }
@@ -216,16 +218,26 @@ void Device::turnOnBluelight(){
     bluelight->setStyleSheet("QLabel { background-color : blue;}");
 }
 
+void Device::turnOffRedlight(){
+    redlightOn = false;
+    redlight->setStyleSheet("QLabel { background-color : white;}");
+}
+
 void Device::flashRedlight(){
-    if(redlightOn){
-        redlightOn = false;
-        redlight->setStyleSheet("QLabel { background-color : white;}");
-        if(!headsetConn) QTimer::singleShot(200, this, &Device::flashRedlight);
+    if(!headsetConn){
+        if(redlightOn){
+            redlightOn = false;
+            redlight->setStyleSheet("QLabel { background-color : white;}");
+            QTimer::singleShot(200, this, &Device::flashRedlight);
+        }
+        else{
+            redlightOn = true;
+            redlight->setStyleSheet("QLabel { background-color : red;}");
+            QTimer::singleShot(200, this, &Device::flashRedlight);
+        }
     }
     else{
-        redlightOn = true;
-        redlight->setStyleSheet("QLabel { background-color : red;}");
-        if(!headsetConn) QTimer::singleShot(200, this, &Device::flashRedlight);
+        redlight->setStyleSheet("QLabel { background-color : white;}");
     }
 }
 

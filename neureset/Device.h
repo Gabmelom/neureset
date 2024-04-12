@@ -95,6 +95,7 @@ private:
     float calcDomFreq(QVector<QVector<int>>);
     void turnOnBluelight();
     void turnOffBluelight();
+    void turnOffRedlight();
 
 
 
