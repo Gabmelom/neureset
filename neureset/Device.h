@@ -14,6 +14,17 @@
 
 #define ROUNDS 4
 
+enum SESSION_STAGE{
+    NO_STAGE,
+    START_SESSION,
+    READ_START_BASELINE,
+    TREATMENT,
+    READ_TREATMENT_BASELINE,
+    TREATMENT_PART_2,
+    READ_END_BASELINE
+};
+
+
 class Device : public QObject
 {
     Q_OBJECT
@@ -42,7 +53,7 @@ public:
 
 
 private:
-    int sessionNum = -1;
+    int sessionNum;
     int sessionStage;
     bool ongoing;
     bool headsetConn;

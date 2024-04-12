@@ -14,7 +14,7 @@ Device::Device(QListWidget* list, QProgressBar* progress) : list(list), progress
     currDate = new QDateTime(QDateTime::currentDateTime());
     batteryLife = 100; //stored as an int, should be a flloat once exact calculations are written
     powerState = 0;
-    sessionStage = -1;
+    sessionStage = NO_STAGE;
 
     connect(&pauseTimer, &QTimer::timeout, this, &Device::pauseTimeout);
 }
@@ -33,7 +33,7 @@ void Device::startSession(){
     sessionNum++;
     offset = 5;
     rounds = 0;
-    sessionStage = 0;
+    sessionStage = START_SESSION;
     ongoing = true;
 
     qDebug("Session started");
@@ -51,7 +51,7 @@ void Device::startSession(){
 
 void Device::readStartBaseline(){
     if(ongoing && powerState){
-        sessionStage = 1;
+        sessionStage = READ_START_BASELINE;
         QVector<QVector<int>> startBaseline = headset->getDomFreq();
         startBaseFreq = calcDomFreq(startBaseline);
         currSession->addStartBaselines(startBaseline);
@@ -64,15 +64,15 @@ void Device::readStartBaseline(){
         //nummber of rounds of treatments
         //offset added top the dominant frequency. does this change depending on the dominant frequency?
 
-    progress->setValue(28);
+        progress->setValue(28);
 
-    QTimer::singleShot(1000, this, &Device::readTreatmentBaseline);
+        QTimer::singleShot(1000, this, &Device::readTreatmentBaseline);
     }
 }
 
 void Device::readTreatmentBaseline(){
     if(ongoing && powerState){
-        sessionStage = 2;
+        sessionStage = READ_TREATMENT_BASELINE;
         domFreq = calcDomFreq(headset->getDomFreq());
         qDebug()<<"dom freq for treatment:"<<domFreq;
 
@@ -82,7 +82,7 @@ void Device::readTreatmentBaseline(){
 
 void Device::treatment(){
     if(ongoing && powerState){
-        sessionStage = 3;
+        sessionStage = TREATMENT;
         if (rounds >= ROUNDS)
         {
             readEndBaseline();
@@ -98,16 +98,16 @@ void Device::treatment(){
             //over 1 second, apply the domFreq+offset every 1/16 seconds on each node
             //toggle green light on
 
-        progress->setValue(40 + (rounds * 14));
+            progress->setValue(40 + (rounds * 14));
 
-        QTimer::singleShot(1000, this, &Device::treatmentPart2);
+            QTimer::singleShot(1000, this, &Device::treatmentPart2);
         }
     }
 }
 
 void Device::treatmentPart2(){
     if(ongoing && powerState){
-        sessionStage = 4;
+        sessionStage = TREATMENT_PART_2;
         headset->applyTreatment(domFreq + offset);
         //toggle green light off
         currSession->pushOffset(domFreq + offset);
@@ -121,7 +121,7 @@ void Device::treatmentPart2(){
 
 void Device::readEndBaseline(){
     if(ongoing && powerState){
-        sessionStage = 5;
+        sessionStage = READ_END_BASELINE;
         QVector<QVector<int>> endBaseline = headset->getDomFreq();
 
         float endBaseFreq = calcDomFreq(endBaseline);
@@ -157,28 +157,29 @@ void Device::resumeSession(){
     qInfo("Session Resumed");
     ongoing = true;
     pauseTimer.stop();
+
     switch(sessionStage)
     {
-        case 0:
+        case NO_STAGE:
+            break;
+        case START_SESSION:
             sessionNum--;
             startSession();
             break;
-        case 1:
+        case READ_START_BASELINE:
             readStartBaseline();
             break;
-        case 2:
+        case READ_TREATMENT_BASELINE:
             readTreatmentBaseline();
             break;
-        case 3:
+        case TREATMENT:
             treatment();
             break;
-        case 4:
+        case TREATMENT_PART_2:
             treatmentPart2();
             break;
-        case 5:
+        case READ_END_BASELINE:
             readEndBaseline();
-            break;
-        default:
             break;
     }
 }
