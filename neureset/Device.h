@@ -90,6 +90,8 @@ private:
     QTimer pauseTimer;
 
     float calcDomFreq(QVector<QVector<int>>);
+    void turnOnBluelight();
+    void turnOffBluelight();
 
 
 

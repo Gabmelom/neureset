@@ -16,6 +16,7 @@ Device::Device(QListWidget* list, QProgressBar* progress,QLabel *r, QLabel *b, Q
     batteryLife = 100; //stored as an int, should be a flloat once exact calculations are written
     powerState = 0;
     sessionStage = NO_STAGE;
+    turnOffBluelight();
 
     connect(&pauseTimer, &QTimer::timeout, this, &Device::pauseTimeout);
 }
@@ -35,6 +36,7 @@ void Device::startSession(){
     offset = 5;
     rounds = 0;
     sessionStage = START_SESSION;
+    turnOnBluelight();
     ongoing = true;
 
     qDebug("Session started");
@@ -140,6 +142,7 @@ void Device::readEndBaseline(){
 
         list->addItem(QString("Session %1       Date: %2").arg(sessionNum).arg(currDate->toString()));
         ongoing = false;
+        turnOffBluelight();
         progress->setValue(100);
     }
 }
@@ -188,20 +191,26 @@ void Device::resumeSession(){
 void Device::pauseTimeout(){
     qInfo("Session Timeout after 15 seconds");
     // turn off lights
-    sessionStage = -1;
+    sessionStage = NO_STAGE;
     sessionNum--;
+    turnOffBluelight();
     togglePower();
 }
 
 void Device::stopSession(){
     qInfo("Session Stopped");
     sessionNum--;
-    sessionStage = -1;
+    sessionStage = NO_STAGE;
+    turnOffBluelight();
     ongoing = false;
 }
 
-void Device::setPower(bool val){
-    powerState = val;
+void Device::turnOffBluelight(){
+    bluelight->setStyleSheet("QLabel { background-color : white;}");
+}
+
+void Device::turnOnBluelight(){
+    bluelight->setStyleSheet("QLabel { background-color : blue;}");
 }
 
 QVector<int> Device::readBaseline(){
