@@ -279,7 +279,7 @@ void Device::turnOffRedlight(){
 }
 
 void Device::flashRedlight(){
-    if(!headsetConn){
+    if(!headsetConn && powerState){
         if(redlightOn){
             redlightOn = false;
             redlight->setStyleSheet("QLabel { background-color : white;}");
@@ -313,25 +313,18 @@ QVector<int> Device::readBaseline(){
 }
 
 void Device::togglePower(){
-    if(powerState){
-        turnOffBluelight();
-        turnOffRedlight();
-        turnOffGreenlight();
-        qInfo("Turn off device");
-    }else {
+    turnOffBluelight();
+    turnOffRedlight();
+    turnOffGreenlight();
+    powerState = !powerState;
+    if(!powerState) qInfo("Turn off device");
+    else {
         qInfo("Turn on device");
-        //sessionStage = NO_STAGE;
-//        turnOffBluelight();
-//        turnOffRedlight();
-//        turnOnGreenlight();
-        //headsetConn = true;
+        sessionStage = NO_STAGE;    
         if (headsetConn){
             turnOnBluelight();
         }
-        //toggleHeadsetConn();  //this would be a different action, headset can be connected even if power off
-    }
-
-    powerState = !powerState;
+    }    
 }
 
 void Device::toggleHeadsetConn(){
@@ -379,6 +372,10 @@ bool Device::applyTherapy(){
 
 QDateTime* Device::getDate(){
     return currDate;
+}
+
+bool Device::getPowerState(){
+    return powerState;
 }
 
 bool Device::isOngoing(){

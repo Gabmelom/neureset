@@ -49,6 +49,7 @@ public:
     bool getPower();
     bool getHeadsetConn();
     int getBatteryLife();
+    bool getPowerState();
     QVector<SessionLog*> getLogs();
     SessionLog* getCurrSession();
 

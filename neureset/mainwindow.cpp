@@ -72,7 +72,6 @@ void MainWindow::pageChanged(int index)
             currentList = ui->HomeMenuList;
             currentList->setCurrentRow(0);
             break;
-
         case 2:
             qInfo("Start Session");
             device->startSession();
@@ -138,7 +137,18 @@ void MainWindow::selectPressed()
         //  1 - Session log page
         //  2 - Time & date page
         int optionSelected = currentList->currentRow();
-        ui->Screen->setCurrentIndex(optionSelected+2);
+        switch(optionSelected){
+            case 0:
+                if(device->getPowerState() && device->getHeadsetConn()){
+                    ui->Screen->setCurrentIndex(optionSelected+2);
+                }
+                break;
+            default:
+                if(device->getPowerState()){
+                    ui->Screen->setCurrentIndex(optionSelected+2);
+                }
+                break;
+        }
     }
     else if(currentScreen == 2){ // Session log page
         // TODO
@@ -147,7 +157,7 @@ void MainWindow::selectPressed()
 
 void MainWindow::playPausePressed()
 {
-    if(device->getSessionStage() != -1){
+    if(device->getSessionStage() != NO_STAGE && device->getPowerState()){
         if(device->isOngoing()){
             device->pauseSession();
         }
@@ -159,7 +169,7 @@ void MainWindow::playPausePressed()
 
 void MainWindow::stopPressed()
 {
-    device->stopSession();
+    if(device->getPowerState()) device->stopSession();
 }
 
 
