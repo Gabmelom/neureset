@@ -36,6 +36,24 @@ void SessionLog::consoleOut(){
 
 }
 
+//bool SessionLog::getOngoing(){
+//    return ongoing;
+//}
+
+//void SessionLog::setOngoing(bool state){
+//    ongoing = state;
+//}
+
+int SessionLog::getCurrentRound(){
+    return currentRound;
+}
+float SessionLog::getstartBaseFreq(){
+    return startDomFreq;
+}
+float SessionLog::getEndBaseFreq(){
+    return endDomFreq;
+}
+
 void SessionLog::setStartDomFreq(float freq){
     startDomFreq = freq;
 }

@@ -36,6 +36,7 @@ public:
     ~Device();
 
     void replaceBattery();
+    void toggleHeadsetConn();
     void startSession();
     void pauseSession();
     void resumeSession();
@@ -45,6 +46,7 @@ public:
 
 
     QDateTime* getDate();
+    bool getPower();
     bool getHeadsetConn();
     int getBatteryLife();
     bool getPowerState();
@@ -72,10 +74,12 @@ private:
     bool greenlightOn;
     int batteryLife;
     bool powerState;
+
     int offset;
     int rounds;
     float domFreq;
     float startBaseFreq;
+
     QDateTime *currDate;
     QTimer sessionTimer;
     Headset *headset;
@@ -116,7 +120,7 @@ private slots:
     void readEndBaseline();
     void pauseTimeout();
     void flashRedlight();
-    void toggleHeadsetConn();
+    //void toggleHeadsetConn();
 };
 
 #endif // DEVICE_H
