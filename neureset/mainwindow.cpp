@@ -32,8 +32,8 @@ void MainWindow::init()
 
     Device *device = new Device(this, ui->sessionLogList);
     device->startSession();
-//    device->startSessionPart1();
-//    device->startSessionPart1();
+    device->startSession();
+    device->startSession();
     QVector<SessionLog*> logs = device->getLogs();
 
     for (int i = 0; i < logs.length(); i++){
