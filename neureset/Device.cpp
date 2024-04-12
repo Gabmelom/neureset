@@ -40,24 +40,6 @@ void Device::replaceBattery(){
     }
 
 }
-//void Device::toggleHeadsetConn(){ written by spencer
-//    qDebug()<<"ongoing"<<ongoing;
-//    if (headsetConn){
-//        if (ongoing){
-//            pauseSession();
-//        }
-//        headsetConn = false;
-//        qDebug("ADMIN: disconnected headset");
-//    } else {
-//        if (sessionStage != NO_STAGE){
-//            resumeSession();
-//        }
-//        headsetConn = true;
-//        qDebug("ADMIN: reconnected headset");
-//    }
-//}
-
-
 
 void Device::startSession(){
     if(headsetConn){
@@ -353,10 +335,10 @@ void Device::togglePower(){
 }
 
 void Device::toggleHeadsetConn(){
-    qDebug() << headsetConn;
+    //qDebug() << headsetConn;
     headsetConn = !headsetConn;
     // if it is now connected, device stops beeping, turn red light off and resume session if it was paused
-    qDebug() << sessionStage;
+    //qDebug() << sessionStage;
     if(headsetConn){
         qInfo("Headset connected");
 

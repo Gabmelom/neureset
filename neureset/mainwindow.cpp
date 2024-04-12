@@ -62,7 +62,7 @@ void MainWindow::pageChanged(int index)
     //  3- Session log page
     //  4- Time & date page
     currentScreen = index;
-    qDebug()<<index;
+    //qDebug()<<index;
     switch(currentScreen)
     {
         case 0:
@@ -98,7 +98,7 @@ void MainWindow::pageChanged(int index)
 void MainWindow::powerPressed()
 {
     device->togglePower();
-    qDebug () <<device->getPower();
+    //qDebug () <<device->getPower();
     if (device->getPower()){    //power  on
         ui->Screen->setCurrentIndex(1);
         pageChanged(1);
