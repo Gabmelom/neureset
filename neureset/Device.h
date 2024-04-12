@@ -32,7 +32,6 @@ public:
     SessionLog* getCurrSession();
 
     void uploadSessionLog();
-    void startSessionPart1();
 
 private:
     int sessionNum = 0;
@@ -65,10 +64,11 @@ signals:
     int readBaselineSig();
 
 private slots:
-    void startSessionPart2();
-    void startSessionPart3();
-    void startSessionPart4();
-    void startSessionPart5();
+    void readStartBaseline();
+    void readTreatmentBaseline();
+    void treatment();
+    void treatmentPart2();
+    void readEndBaseline();
 };
 
 #endif // DEVICE_H

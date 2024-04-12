@@ -25,7 +25,7 @@ void Device::replaceBattery(){
     batteryLife = 100;
 }
 
-void Device::startSessionPart1(){
+void Device::startSession(){
     sessionNum++;
 
     qDebug("Session started");
@@ -36,10 +36,10 @@ void Device::startSessionPart1(){
     currSession = new SessionLog();
     currSession->setStartDateTime(currDate->toString());
 
-    QTimer::singleShot(1000, this, &Device::startSessionPart2);
+    QTimer::singleShot(1000, this, &Device::readStartBaseline);
 }
 
-void Device::startSessionPart2(){
+void Device::readStartBaseline(){
     QVector<QVector<int>> startBaseline = headset->getDomFreq();
     startBaseFreq = calcDomFreq(startBaseline);
     currSession->addStartBaselines(startBaseline);
@@ -52,20 +52,20 @@ void Device::startSessionPart2(){
     //nummber of rounds of treatments
     //offset added top the dominant frequency. does this change depending on the dominant frequency?
 
-    QTimer::singleShot(1000, this, &Device::startSessionPart3);
+    QTimer::singleShot(1000, this, &Device::readTreatmentBaseline);
 }
 
-void Device::startSessionPart3(){
+void Device::readTreatmentBaseline(){
     domFreq = calcDomFreq(headset->getDomFreq());
     qDebug()<<"dom freq for treatment:"<<domFreq;
 
-    QTimer::singleShot(1000, this, &Device::startSessionPart4);
+    QTimer::singleShot(1000, this, &Device::treatment);
 }
 
-void Device::startSessionPart4(){
+void Device::treatment(){
     if (rounds >= ROUNDS)
     {
-        startSessionPart5();
+        readEndBaseline();
     }
     else
     {
@@ -77,18 +77,24 @@ void Device::startSessionPart4(){
         //currSession->pushTreatmentFreqs(freqs); //not sure if this one is necessary, but it is the freequency of each wave at the start of each treatment round
         //over 1 second, apply the domFreq+offset every 1/16 seconds on each node
         //toggle green light on
-        headset->applyTreatment(domFreq + offset);
-        //toggle green light off
-        currSession->pushOffset(domFreq + offset);
-        offset+=5;
-        rounds++;
-        //update window: round i of r complete  (show as percent)
 
-        QTimer::singleShot(1000, this, &Device::startSessionPart4);
+        QTimer::singleShot(1000, this, &Device::treatmentPart2);
     }
 }
 
-void Device::startSessionPart5()
+void Device::treatmentPart2()
+{
+    headset->applyTreatment(domFreq + offset);
+    //toggle green light off
+    currSession->pushOffset(domFreq + offset);
+    offset+=5;
+    rounds++;
+    //update window: round i of r complete  (show as percent)
+
+    QTimer::singleShot((7 *150), this, &Device::treatment);
+}
+
+void Device::readEndBaseline()
 {
     QVector<QVector<int>> endBaseline = headset->getDomFreq();
 

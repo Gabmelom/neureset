@@ -7,10 +7,6 @@ using namespace std;
 
 Headset::Headset(int nodes, QObject *parent) : QObject(parent), numNodes(nodes){
     //numNodes  = nodes;
-//    thread = new QThread;
-//    this->moveToThread(thread);
-//    thread->start();
-//    qDebug()<<"thread sstarted";
 
     connect(&timer, &QTimer::timeout, this, &Headset::applyTreatmentToCurrNode);
 
@@ -27,16 +23,7 @@ void Headset::applyTreatment(int freq){
 
     treatmentFreq = freq;
 
-//    qDebug()<<"applying treatment of "<<freq<<" to node "<< currentNodeIndex + 1;
-
     applyTreatmentToCurrNode();
-
-//    QTimer::singleShot(0, this, &Headset::applyTreatmentToCurrNode);
-
-//    for (int i = 0; i < numNodes; i++){
-
-//        thread->wait(150); //pretty  sure 1/16 = .075
-//    }
 }
 
 void Headset::applyTreatmentToCurrNode(){
