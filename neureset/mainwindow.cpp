@@ -39,8 +39,8 @@ void MainWindow::init()
 {
     currentScreen = 0;
     ui->Screen->setCurrentIndex(currentScreen);
-    currentList = ui->HomeMenuList;
-    currentList->setCurrentRow(0);
+    //currentList = ui->HomeMenuList;
+    //currentList->setCurrentRow(4);
 
 
     device = new Device(ui->sessionLogList, ui->sessionProgressBar,
@@ -51,30 +51,58 @@ void MainWindow::init()
 void MainWindow::pageChanged(int index)
 {
     // Page indexes:
-    //  0 - Menu page
-    //  1 - New session page
-    //  2 - Session log page
-    //  3 - Time & date page
+    //  0 - off
+    //  1 - Menu page
+    //  2 - New session page
+    //  3- Session log page
+    //  4- Time & date page
     currentScreen = index;
-
+    qDebug()<<index;
     switch(currentScreen)
     {
+//        case 0:
+//            currentList = ui->HomeMenuList;
+//            currentList->setCurrentRow(0);
+//            break;
+//        case 1:
+//            qInfo("Start Session");
+//            device->startSession();
+//            break;
+//        case 2:
+//            currentList = ui->sessionLogList;
+//            currentList->setCurrentRow(0);
+//            selectPressed();
+//            break;
+//        case 3:
+//            updateDate();
+//            break;
+//        case 4:
+//            //ui->screen->powerOffPage;
+//        default:
+//            currentList = nullptr;
         case 0:
+                qDebug("off");
+            break;
+        case 1:
             currentList = ui->HomeMenuList;
             currentList->setCurrentRow(0);
             break;
-        case 1:
+
+        case 2:
             qInfo("Start Session");
             device->startSession();
             break;
-        case 2:
+
+        case 3:
             currentList = ui->sessionLogList;
             currentList->setCurrentRow(0);
             selectPressed();
             break;
-        case 3:
+
+        case 4:
             updateDate();
             break;
+            //ui->screen->powerOffPage;
         default:
             currentList = nullptr;
     }
@@ -85,12 +113,21 @@ void MainWindow::pageChanged(int index)
 void MainWindow::powerPressed()
 {
     device->togglePower();
+    qDebug () <<device->getPower();
+    if (device->getPower()){    //power  on
+        ui->Screen->setCurrentIndex(1);
+        pageChanged(1);
+    } else {
+        ui->Screen->setCurrentIndex(0);
+        pageChanged(0);
+    }
+
 }
 
 void MainWindow::homePressed()
 {
     // TODO: Stop any ongoing session
-    ui->Screen->setCurrentIndex(0);
+    ui->Screen->setCurrentIndex(1);
 }
 
 void MainWindow::upPressed()
@@ -109,14 +146,14 @@ void MainWindow::downPressed()
 
 void MainWindow::selectPressed()
 {
-    if(currentScreen == 0){ // Home page
+    if(currentScreen == 1){ // Home page
 
         // Menu list options:
         //  0 - New session page
         //  1 - Session log page
         //  2 - Time & date page
         int optionSelected = currentList->currentRow();
-        ui->Screen->setCurrentIndex(optionSelected+1);
+        ui->Screen->setCurrentIndex(optionSelected+2);
     }
     else if(currentScreen == 2){ // Session log page
         // TODO

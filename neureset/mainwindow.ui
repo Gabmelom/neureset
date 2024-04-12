@@ -303,8 +303,22 @@
       <string notr="true">border: solid 1px;</string>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
+     <widget class="QWidget" name="powerOffPage">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="baseSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:rgb(0, 0, 0);</string>
+      </property>
+     </widget>
      <widget class="QWidget" name="HomePage">
       <property name="styleSheet">
        <string notr="true">background-color:white;</string>

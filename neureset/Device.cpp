@@ -306,7 +306,9 @@ bool Device::getHeadsetConn(){
 int Device::getBatteryLife(){
     return batteryLife;
 }
-
+bool Device::getPower(){
+    return powerState;
+}
 QVector<SessionLog*> Device::getLogs(){
     return logs;
 }
