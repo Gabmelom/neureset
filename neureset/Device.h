@@ -67,6 +67,9 @@ private:
     bool ongoing;
     bool headsetConn;
     bool pcConn;
+    bool bluelightOn;
+    bool redlightOn;
+    bool greenlightOn;
     int batteryLife;
     bool powerState;
     int offset;
@@ -92,6 +95,7 @@ private:
     float calcDomFreq(QVector<QVector<int>>);
     void turnOnBluelight();
     void turnOffBluelight();
+    void turnOffRedlight();
 
 
 
@@ -110,6 +114,7 @@ private slots:
     void treatmentPart2();
     void readEndBaseline();
     void pauseTimeout();
+    void flashRedlight();
 };
 
 #endif // DEVICE_H
