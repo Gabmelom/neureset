@@ -18,7 +18,7 @@ Device::Device(QListWidget* list, QProgressBar* progress,QLabel *r, QLabel *b, Q
 
     sessionStage = NO_STAGE;
     turnOffBluelight();
-
+      
     connect(&pauseTimer, &QTimer::timeout, this, &Device::pauseTimeout);
 }
 
@@ -192,7 +192,6 @@ void Device::pauseSession(){
     //pause the timer
     //pause any calls to the headset
     qInfo("Session Paused");
-    qInfo("Device start beeping");
     // flash red light
     ongoing = false;
     pauseTimer.start(15000);
@@ -247,11 +246,36 @@ void Device::stopSession(){
 }
 
 void Device::turnOffBluelight(){
+    bluelightOn = false;
     bluelight->setStyleSheet("QLabel { background-color : white;}");
 }
 
 void Device::turnOnBluelight(){
+    bluelightOn = true;
     bluelight->setStyleSheet("QLabel { background-color : blue;}");
+}
+
+void Device::turnOffRedlight(){
+    redlightOn = false;
+    redlight->setStyleSheet("QLabel { background-color : white;}");
+}
+
+void Device::flashRedlight(){
+    if(!headsetConn){
+        if(redlightOn){
+            redlightOn = false;
+            redlight->setStyleSheet("QLabel { background-color : white;}");
+            QTimer::singleShot(200, this, &Device::flashRedlight);
+        }
+        else{
+            redlightOn = true;
+            redlight->setStyleSheet("QLabel { background-color : red;}");
+            QTimer::singleShot(200, this, &Device::flashRedlight);
+        }
+    }
+    else{
+        redlight->setStyleSheet("QLabel { background-color : white;}");
+    }
 }
 
 QVector<int> Device::readBaseline(){
@@ -272,9 +296,38 @@ QVector<int> Device::readBaseline(){
 
 void Device::togglePower(){
     if(powerState) qInfo("Turn off device");
-    else qInfo("Turn on device");
+    else {
+        qInfo("Turn on device");
+        sessionStage = NO_STAGE;
+        turnOffBluelight();
+        turnOffRedlight();
+        headsetConn = true;
+        toggleHeadsetConn();
+    }
 
     powerState = !powerState;
+}
+
+void Device::toggleHeadsetConn(){
+    headsetConn = !headsetConn;
+    // if it is now connected, device stops beeping, turn red light off and resume session if it was paused
+    if(headsetConn){
+        qInfo("Headset connected");
+        qInfo("Device stops beeping");
+        turnOffRedlight();
+        if(bluelightOn){
+            resumeSession();
+        }
+    }
+    // if it is now unconnected, device beeps, red light flashes, current session is paused
+    else{
+        qInfo("Headset NOT connected");
+        qInfo("Device start beeping");
+        flashRedlight();
+        if(bluelightOn){
+            pauseSession();
+        }
+    }
 }
 
 bool Device::applyTherapy(){

@@ -62,13 +62,15 @@ public:
     void uploadSessionLog(int selected);
 
 
-
 private:
     int sessionNum;
     int sessionStage;
     bool ongoing;
     bool headsetConn;
     bool pcConn;
+    bool bluelightOn;
+    bool redlightOn;
+    bool greenlightOn;
     int batteryLife;
     bool powerState;
 
@@ -96,6 +98,7 @@ private:
     float calcDomFreq(QVector<QVector<int>>);
     void turnOnBluelight();
     void turnOffBluelight();
+    void turnOffRedlight();
 
 
 
@@ -114,6 +117,8 @@ private slots:
     void treatmentPart2();
     void readEndBaseline();
     void pauseTimeout();
+    void flashRedlight();
+    void toggleHeadsetConn();
 };
 
 #endif // DEVICE_H
