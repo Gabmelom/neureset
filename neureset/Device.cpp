@@ -7,9 +7,10 @@
 #include "QThread"
 
 
-Device::Device(QListWidget* list) : list(list){
+
+Device::Device(QListWidget* list, QProgressBar* progress) : list(list), progress(progress){
     headset = new Headset(7,this);
-    //pcConn = new PC   //immplement after that  class has been maade
+    pc = new PC();   //immplement after that  class has been maade
     currDate = new QDateTime(QDateTime::currentDateTime());
     batteryLife = 100; //stored as an int, should be a flloat once exact calculations are written
     powerState = 0;
@@ -43,6 +44,8 @@ void Device::startSession(){
     currSession = new SessionLog();
     currSession->setStartDateTime(currDate->toString());
 
+    progress->setValue(15);
+
     QTimer::singleShot(1000, this, &Device::readStartBaseline);
 }
 
@@ -61,8 +64,9 @@ void Device::readStartBaseline(){
         //nummber of rounds of treatments
         //offset added top the dominant frequency. does this change depending on the dominant frequency?
 
-        QTimer::singleShot(1000, this, &Device::readTreatmentBaseline);
-    }
+    progress->setValue(28);
+
+    QTimer::singleShot(1000, this, &Device::readTreatmentBaseline);
 }
 
 void Device::readTreatmentBaseline(){
@@ -93,8 +97,9 @@ void Device::treatment(){
             //over 1 second, apply the domFreq+offset every 1/16 seconds on each node
             //toggle green light on
 
-            QTimer::singleShot(1000, this, &Device::treatmentPart2);
-        }
+        progress->setValue(40 + (rounds * 14));
+
+        QTimer::singleShot(1000, this, &Device::treatmentPart2);
     }
 }
 
@@ -132,6 +137,7 @@ void Device::readEndBaseline(){
 
         list->addItem(QString("Session %1       Date: %2").arg(sessionNum).arg(currDate->toString()));
         ongoing = false;
+        progress->setValue(100);
     }
 }
 
@@ -259,6 +265,11 @@ float Device::calcDomFreq(QVector<QVector<int>> baseFreqs){
     return (top / bot);
 }
 
+void Device::uploadSessionLog(int selected)
+{
+    SessionLog *log = logs[selected];
+    pc->uploadLog(log);
+}
 
 int readEEG(int site){
     return site;

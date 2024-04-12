@@ -5,6 +5,8 @@
 #include <QListWidget>
 #include <Device.h>
 
+#include "Device.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -27,9 +29,11 @@ private slots:
     void playPausePressed();
     void stopPressed();
     void pageChanged(int index);
+    void uploadSession();
 
 private:
     Ui::MainWindow *ui;
+    Device *device;
     void init();
     int currentScreen;
     QListWidget* currentList;
