@@ -12,6 +12,8 @@
 
 #include "QVector"
 
+class Headset;
+
 #define ROUNDS 4
 
 enum E_SESSION_STAGE{
@@ -23,7 +25,6 @@ enum E_SESSION_STAGE{
     TREATMENT_PART_2,
     READ_END_BASELINE
 };
-
 
 class Device : public QObject
 {
@@ -40,16 +41,22 @@ public:
     QVector<int> readBaseline();    //test version before thread stuff is implemented
     bool applyTherapy();
 
-    void setPower(bool value);
+
+    QDateTime* getDate();
     bool getHeadsetConn();
     int getBatteryLife();
     QVector<SessionLog*> getLogs();
     SessionLog* getCurrSession();
 
+    //void setPower(bool value);
+
+    void uploadSessionLog();
+
     void togglePower();
     bool isOngoing();
     int getSessionStage();
     void uploadSessionLog(int selected);
+
 
 
 private:

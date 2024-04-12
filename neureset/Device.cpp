@@ -199,9 +199,9 @@ void Device::stopSession(){
     ongoing = false;
 }
 
-void Device::setPower(bool val){
-    powerState = val;
-}
+//void Device::setPower(bool val){
+//    powerState = val;
+//}
 
 QVector<int> Device::readBaseline(){
     //function for the complicated baseline, to be implemented if it seeems necessary (still looking through Q/A for details)
@@ -236,12 +236,17 @@ bool Device::applyTherapy(){
     return true;    //if the treatment round was successful, not sure if there are  fail cases yet (maybe prelimitory safeety checking)
 }
 
+QDateTime* Device::getDate(){
+    return currDate;
+}
+
 bool Device::isOngoing(){
     return ongoing;
 }
 
 int Device::getSessionStage(){
     return sessionStage;
+
 }
 
 bool Device::getHeadsetConn(){

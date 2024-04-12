@@ -6,6 +6,8 @@
 #include <QThread>
 #include <QTimer>
 
+
+
 class Headset : public QObject
 {
     Q_OBJECT

@@ -17,7 +17,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->play_pause, SIGNAL(pressed()), this, SLOT(playPausePressed()));
     connect(ui->stop, SIGNAL(pressed()), this, SLOT(stopPressed()));
     connect(ui->Screen, SIGNAL(currentChanged(int)), this, SLOT(pageChanged(int)));
+
+    connect(ui->dateEdit, SIGNAL(editingFinished()), this, SLOT(changeDate()));
+    connect(ui->timeEdit,  SIGNAL(editingFinished()), this, SLOT(changeTime()));
+
     connect(ui->uploadSession, SIGNAL(pressed()), this, SLOT(uploadSession()));
+
 }
 
 MainWindow::~MainWindow()
@@ -32,7 +37,19 @@ void MainWindow::init()
     currentList = ui->HomeMenuList;
     currentList->setCurrentRow(0);
 
+
+    //device = new Device(this, ui->sessionLogList);
+//    device->startSession();
+//    device->startSession();
+//    device->startSession();
+    //QVector<SessionLog*> logs = device->getLogs();
+
+//    for (int i = 0; i < logs.length(); i++){
+//        logs[i]->consoleOut();
+//    }
+
     device = new Device(ui->sessionLogList, ui->sessionProgressBar);
+
 }
 
 void MainWindow::pageChanged(int index)
@@ -58,6 +75,9 @@ void MainWindow::pageChanged(int index)
             currentList = ui->sessionLogList;
             currentList->setCurrentRow(0);
             selectPressed();
+            break;
+        case 3:
+            updateDate();
             break;
         default:
             currentList = nullptr;
@@ -124,9 +144,31 @@ void MainWindow::stopPressed()
     device->stopSession();
 }
 
+
+void MainWindow::changeDate(){
+    qInfo("changing the date");
+    //ui->dateEdit->setDate(device->getDate()->date());
+    device->getDate()->setDate(ui->dateEdit->date());
+    qDebug() << device->getDate()->date();
+}
+
+void MainWindow::changeTime(){
+    qInfo("changing the time");
+    //ui->dateEdit->dateTimeChanged()
+    device->getDate()->setTime(ui->timeEdit->time());
+    qDebug() << device->getDate()->time();
+}
+
+void MainWindow::updateDate(){
+    qInfo("update the date/time");
+    ui->dateEdit->setDate(device->getDate()->date());
+    ui->timeEdit->setTime(device->getDate()->time());
+}
+
 void MainWindow::uploadSession()
 {
     int selected = currentList->currentRow();
     qInfo("Upload session %d", selected);
     device->uploadSessionLog(selected);
+
 }
