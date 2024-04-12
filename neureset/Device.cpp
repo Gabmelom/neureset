@@ -30,24 +30,27 @@ void Device::replaceBattery(){
 }
 
 void Device::startSession(){
-    sessionNum++;
-    offset = 5;
-    rounds = 0;
-    sessionStage = START_SESSION;
-    turnOnBluelight();
-    ongoing = true;
+    if(headsetConn){
+        sessionNum++;
+        offset = 5;
+        rounds = 0;
+        sessionStage = START_SESSION;
+        turnOnBluelight();
+        ongoing = true;
 
-    qDebug("Session started");
-    //follows ssequeence ddiagram for the main use case
+        qDebug("Session started");
+        //follows ssequeence ddiagram for the main use case
 
-    //stores all important info over the entire session
-    //SessionLog *sessLog = new SessionLog();
-    currSession = new SessionLog();
-    currSession->setStartDateTime(currDate->toString());
+        //stores all important info over the entire session
+        //SessionLog *sessLog = new SessionLog();
+        currSession = new SessionLog();
+        currSession->setStartDateTime(currDate->toString());
 
-    progress->setValue(15);
+        progress->setValue(15);
 
-    QTimer::singleShot(1000, this, &Device::readStartBaseline);
+        QTimer::singleShot(1000, this, &Device::readStartBaseline);
+    }
+    else qInfo("Cannot start session without headset connection");
 }
 
 void Device::readStartBaseline(){
