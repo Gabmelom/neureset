@@ -31,11 +31,6 @@ private:
     QVector<int> readBaseDelta();
     QVector<int> readBaseTheta();
 
-
-    //headset will  manage the timings in combination with the window's state checking
-//    QThread *thread;
-    QTimer timer;
-
     int currentNodeIndex;
     int treatmentFreq;
 

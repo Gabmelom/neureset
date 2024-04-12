@@ -7,10 +7,6 @@ using namespace std;
 
 Headset::Headset(int nodes, QObject *parent) : QObject(parent), numNodes(nodes){
     //numNodes  = nodes;
-
-    connect(&timer, &QTimer::timeout, this, &Headset::applyTreatmentToCurrNode);
-
-
 }
 
 void Headset::applyTreatment(int freq){
