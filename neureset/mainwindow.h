@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QListWidget>
-
+#include <Device.h>
 #include "Device.h"
 
 QT_BEGIN_NAMESPACE
@@ -36,5 +36,6 @@ private:
     void init();
     int currentScreen;
     QListWidget* currentList;
+
 };
 #endif // MAINWINDOW_H

@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "Device.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -34,14 +33,6 @@ void MainWindow::init()
     currentList->setCurrentRow(0);
 
     device = new Device(ui->sessionLogList, ui->sessionProgressBar);
-    device->startSession();
-//    device->startSession();
-//    device->startSession();
-    QVector<SessionLog*> logs = device->getLogs();
-
-    for (int i = 0; i < logs.length(); i++){
-        logs[i]->consoleOut();
-    }
 }
 
 void MainWindow::pageChanged(int index)
@@ -59,6 +50,10 @@ void MainWindow::pageChanged(int index)
             currentList = ui->HomeMenuList;
             currentList->setCurrentRow(0);
             break;
+        case 1:
+            qInfo("Start Session");
+            device->startSession();
+            break;
         case 2:
             currentList = ui->sessionLogList;
             currentList->setCurrentRow(0);
@@ -73,7 +68,7 @@ void MainWindow::pageChanged(int index)
 
 void MainWindow::powerPressed()
 {
-    qInfo("Power pressed");
+    device->togglePower();
 }
 
 void MainWindow::homePressed()
@@ -114,12 +109,19 @@ void MainWindow::selectPressed()
 
 void MainWindow::playPausePressed()
 {
-    qInfo("Play/Pause pressed");
+    if(device->getSessionStage() != -1){
+        if(device->isOngoing()){
+            device->pauseSession();
+        }
+        else{
+            device->resumeSession();
+        }
+    }
 }
 
 void MainWindow::stopPressed()
 {
-    qInfo("Stop pressed");
+    device->stopSession();
 }
 
 void MainWindow::uploadSession()

@@ -3,6 +3,7 @@
 
 #include <QDateTime>
 #include <QTimer>
+#include <QListWidget>
 #include <Headset.h>
 #include <QListWidget>
 #include <QProgressBar>
@@ -12,6 +13,17 @@
 #include "QVector"
 
 #define ROUNDS 4
+
+enum SESSION_STAGE{
+    NO_STAGE,
+    START_SESSION,
+    READ_START_BASELINE,
+    TREATMENT,
+    READ_TREATMENT_BASELINE,
+    TREATMENT_PART_2,
+    READ_END_BASELINE
+};
+
 
 class Device : public QObject
 {
@@ -23,6 +35,7 @@ public:
     void replaceBattery();
     void startSession();
     void pauseSession();
+    void resumeSession();
     void stopSession();
     QVector<int> readBaseline();    //test version before thread stuff is implemented
     bool applyTherapy();
@@ -33,30 +46,39 @@ public:
     QVector<SessionLog*> getLogs();
     SessionLog* getCurrSession();
 
+    void togglePower();
+    bool isOngoing();
+    int getSessionStage();
     void uploadSessionLog(int selected);
 
+
 private:
-    int sessionNum = 0;
+    int sessionNum;
+    int sessionStage;
+    bool ongoing;
     bool headsetConn;
     bool pcConn;
     int batteryLife;
     bool powerState;
+    int offset;
+    int rounds;
+    float domFreq;
+    float startBaseFreq;
     QDateTime *currDate;
     QTimer sessionTimer;
     Headset *headset;
     PC *pc;
+
     QListWidget *list;
     QProgressBar *progress;
     SessionLog *currSession;    //the current treatment session, stored in the object so it can be accessed outside the startSession function
     QVector<SessionLog*> logs;
 
+    QTimer pauseTimer;
+
     float calcDomFreq(QVector<QVector<int>>);
 
-    int offset = 5;
-    int rounds = 0;
 
-    float domFreq;
-    float startBaseFreq;
 
 //public slots:
 //    QVector<int> readBaseline();
@@ -72,6 +94,7 @@ private slots:
     void treatment();
     void treatmentPart2();
     void readEndBaseline();
+    void pauseTimeout();
 };
 
 #endif // DEVICE_H
