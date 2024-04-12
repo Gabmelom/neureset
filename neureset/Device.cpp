@@ -7,7 +7,7 @@
 #include "QThread"
 
 
-Device::Device(QListWidget* list) : list(list){
+Device::Device(QListWidget* list, QProgressBar* progress) : list(list), progress(progress){
     headset = new Headset(7,this);
     pc = new PC();   //immplement after that  class has been maade
     currDate = new QDateTime(QDateTime::currentDateTime());
@@ -34,6 +34,8 @@ void Device::startSession(){
     currSession = new SessionLog();
     currSession->setStartDateTime(currDate->toString());
 
+    progress->setValue(15);
+
     QTimer::singleShot(1000, this, &Device::readStartBaseline);
 }
 
@@ -50,12 +52,16 @@ void Device::readStartBaseline(){
     //nummber of rounds of treatments
     //offset added top the dominant frequency. does this change depending on the dominant frequency?
 
+    progress->setValue(28);
+
     QTimer::singleShot(1000, this, &Device::readTreatmentBaseline);
 }
 
 void Device::readTreatmentBaseline(){
     domFreq = calcDomFreq(headset->getDomFreq());
     qDebug()<<"dom freq for treatment:"<<domFreq;
+
+    progress->setValue(36);
 
     QTimer::singleShot(1000, this, &Device::treatment);
 }
@@ -75,6 +81,8 @@ void Device::treatment(){
         //currSession->pushTreatmentFreqs(freqs); //not sure if this one is necessary, but it is the freequency of each wave at the start of each treatment round
         //over 1 second, apply the domFreq+offset every 1/16 seconds on each node
         //toggle green light on
+
+        progress->setValue(40 + (rounds * 14));
 
         QTimer::singleShot(1000, this, &Device::treatmentPart2);
     }
@@ -112,6 +120,8 @@ void Device::readEndBaseline()
     logs.push_back(currSession);
 
     list->addItem(QString("Session %1       Date: %2").arg(sessionNum).arg(currDate->toString()));
+
+    progress->setValue(100);
 }
 
 void Device::pauseSession(){

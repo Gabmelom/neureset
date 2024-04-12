@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <Headset.h>
 #include <QListWidget>
+#include <QProgressBar>
 #include "SessionLog.h"
 #include "PC.h"
 
@@ -16,7 +17,7 @@ class Device : public QObject
 {
     Q_OBJECT
 public:
-    Device(QListWidget *list);
+    Device(QListWidget *list, QProgressBar *progress);
     ~Device();
 
     void replaceBattery();
@@ -45,6 +46,7 @@ private:
     Headset *headset;
     PC *pc;
     QListWidget *list;
+    QProgressBar *progress;
     SessionLog *currSession;    //the current treatment session, stored in the object so it can be accessed outside the startSession function
     QVector<SessionLog*> logs;
 

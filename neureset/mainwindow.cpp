@@ -7,7 +7,9 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
     init();
+
     connect(ui->power, SIGNAL(pressed()), this, SLOT(powerPressed()));
     connect(ui->home, SIGNAL(pressed()), this, SLOT(homePressed()));
     connect(ui->up, SIGNAL(pressed()), this, SLOT(upPressed()));
@@ -31,10 +33,10 @@ void MainWindow::init()
     currentList = ui->HomeMenuList;
     currentList->setCurrentRow(0);
 
-    device = new Device(ui->sessionLogList);
+    device = new Device(ui->sessionLogList, ui->sessionProgressBar);
     device->startSession();
-    device->startSession();
-    device->startSession();
+//    device->startSession();
+//    device->startSession();
     QVector<SessionLog*> logs = device->getLogs();
 
     for (int i = 0; i < logs.length(); i++){
