@@ -7,19 +7,28 @@ using namespace std;
 
 Headset::Headset(int nodes, QObject *parent) : QObject(parent), numNodes(nodes){
     //numNodes  = nodes;
-    thread = new QThread;
-    this->moveToThread(thread);
-    thread->start();
-    qDebug()<<"thread sstarted";
 }
 
 void Headset::applyTreatment(int freq){
-    //qDebug() << "applyinng treatment of " << freq <<" to ptient";
-    //thread->wait(750);
-    for (int i = 0; i < numNodes; i++){
-        qDebug()<<"applying treatment of "<<freq<<" to node "<< i + 1;
-        thread->wait(150); //pretty  sure 1/16 = .075
+    currentNodeIndex = 0;
+
+    if (currentNodeIndex >= numNodes)
+    {
+        return;
     }
+
+    treatmentFreq = freq;
+
+    applyTreatmentToCurrNode();
+}
+
+void Headset::applyTreatmentToCurrNode(){
+    if (currentNodeIndex >= numNodes) {
+        return;
+    }
+    qDebug() << "Applying treatment of" << treatmentFreq << "to node" << currentNodeIndex + 1;
+    currentNodeIndex++;
+    QTimer::singleShot(150, this, &Headset::applyTreatmentToCurrNode);
 }
 
 //int Headset::readEEGBaseline(int site){
@@ -41,7 +50,7 @@ QVector<QVector<int>> Headset::getDomFreq(){
 //    out[1] = readBaseBeta();
 //    out[2] = readBaseDelta();
 //    out[3] = readBaseTheta();
-    thread->wait(1000);
+//    thread->wait(1000);
 
     return out;
 }

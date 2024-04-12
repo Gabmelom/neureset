@@ -30,6 +30,10 @@ public:
     void setRound(int);
     void pushTreatmentFreqs(QVector<QVector<int>>);
     void pushOffset(float);
+
+    QVector<QVector<int>> getStartBaseline() const { return startBaselines; }
+    QVector<QVector<int>> getEndBaseline() const { return endBaselines; }
+
 private:
 
     QVector<QVector<int>> startBaselines;
