@@ -1,12 +1,15 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "Device.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
     init();
+
     connect(ui->power, SIGNAL(pressed()), this, SLOT(powerPressed()));
     connect(ui->home, SIGNAL(pressed()), this, SLOT(homePressed()));
     connect(ui->up, SIGNAL(pressed()), this, SLOT(upPressed()));
@@ -15,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->play_pause, SIGNAL(pressed()), this, SLOT(playPausePressed()));
     connect(ui->stop, SIGNAL(pressed()), this, SLOT(stopPressed()));
     connect(ui->Screen, SIGNAL(currentChanged(int)), this, SLOT(pageChanged(int)));
+    connect(ui->uploadSession, SIGNAL(pressed()), this, SLOT(uploadSession()));
 }
 
 MainWindow::~MainWindow()
@@ -28,6 +32,16 @@ void MainWindow::init()
     ui->Screen->setCurrentIndex(currentScreen);
     currentList = ui->HomeMenuList;
     currentList->setCurrentRow(0);
+
+    device = new Device(ui->sessionLogList, ui->sessionProgressBar);
+    device->startSession();
+//    device->startSession();
+//    device->startSession();
+    QVector<SessionLog*> logs = device->getLogs();
+
+    for (int i = 0; i < logs.length(); i++){
+        logs[i]->consoleOut();
+    }
 }
 
 void MainWindow::pageChanged(int index)
@@ -48,6 +62,7 @@ void MainWindow::pageChanged(int index)
         case 2:
             currentList = ui->sessionLogList;
             currentList->setCurrentRow(0);
+            selectPressed();
             break;
         default:
             currentList = nullptr;
@@ -107,3 +122,9 @@ void MainWindow::stopPressed()
     qInfo("Stop pressed");
 }
 
+void MainWindow::uploadSession()
+{
+    int selected = currentList->currentRow();
+    qInfo("Upload session %d", selected);
+    device->uploadSessionLog(selected);
+}

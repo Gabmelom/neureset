@@ -11,6 +11,7 @@ CONFIG += c++11
 SOURCES += \
     Device.cpp \
     Headset.cpp \
+    PC.cpp \
     SessionLog.cpp \
     main.cpp \
     mainwindow.cpp
@@ -18,6 +19,7 @@ SOURCES += \
 HEADERS += \
     Device.h \
     Headset.h \
+    PC.h \
     SessionLog.h \
     mainwindow.h
 

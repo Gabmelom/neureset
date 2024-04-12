@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QListWidget>
 
+#include "Device.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -16,6 +18,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    Ui::MainWindow* getUi() { return ui; }
 private slots:
     void powerPressed();
     void homePressed();
@@ -25,9 +28,11 @@ private slots:
     void playPausePressed();
     void stopPressed();
     void pageChanged(int index);
+    void uploadSession();
 
 private:
     Ui::MainWindow *ui;
+    Device *device;
     void init();
     int currentScreen;
     QListWidget* currentList;
