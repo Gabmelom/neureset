@@ -96,7 +96,8 @@ private:
     void turnOnBluelight();
     void turnOffBluelight();
     void turnOffRedlight();
-
+    void turnOffGreenlight();
+    void turnOnGreenlight();
 
 
 //public slots:

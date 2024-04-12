@@ -88,6 +88,7 @@ void Device::readTreatmentBaseline(){
 
 void Device::treatment(){
     if(ongoing && powerState){
+        turnOffGreenlight();
         sessionStage = TREATMENT;
         if (rounds >= ROUNDS)
         {
@@ -102,7 +103,6 @@ void Device::treatment(){
             //domFreq = calcDomFreq(freqs); //This might or might not be recalculated
             //currSession->pushTreatmentFreqs(freqs); //not sure if this one is necessary, but it is the freequency of each wave at the start of each treatment round
             //over 1 second, apply the domFreq+offset every 1/16 seconds on each node
-            //toggle green light on
 
             progress->setValue(40 + (rounds * 14));
 
@@ -114,8 +114,8 @@ void Device::treatment(){
 void Device::treatmentPart2(){
     if(ongoing && powerState){
         sessionStage = TREATMENT_PART_2;
+        turnOnGreenlight();
         headset->applyTreatment(domFreq + offset);
-        //toggle green light off
         currSession->pushOffset(domFreq + offset);
         offset+=5;
         rounds++;
@@ -154,6 +154,7 @@ void Device::pauseSession(){
     //pause the timer
     //pause any calls to the headset
     qInfo("Session Paused");
+    turnOffGreenlight();
     qInfo("Device start beeping");
     // flash red light
     ongoing = false;
@@ -195,6 +196,7 @@ void Device::pauseTimeout(){
     qInfo("Session Timeout after 15 seconds");
     // turn off lights
     sessionStage = NO_STAGE;
+    turnOffGreenlight();
     sessionNum--;
     turnOffBluelight();
     togglePower();
@@ -204,6 +206,7 @@ void Device::stopSession(){
     qInfo("Session Stopped");
     sessionNum--;
     sessionStage = NO_STAGE;
+    turnOffGreenlight();
     turnOffBluelight();
     ongoing = false;
 }
@@ -216,6 +219,16 @@ void Device::turnOffBluelight(){
 void Device::turnOnBluelight(){
     bluelightOn = true;
     bluelight->setStyleSheet("QLabel { background-color : blue;}");
+}
+
+void Device::turnOffGreenlight(){
+    greenlightOn = false;
+    greenlight->setStyleSheet("QLabel { background-color : white;}");
+}
+
+void Device::turnOnGreenlight(){
+    greenlightOn = true;
+    greenlight->setStyleSheet("QLabel { background-color : green;}");
 }
 
 void Device::turnOffRedlight(){
@@ -259,7 +272,10 @@ QVector<int> Device::readBaseline(){
 
 void Device::togglePower(){
     if(powerState) qInfo("Turn off device");
-    else qInfo("Turn on device");
+    else {
+        qInfo("Turn on device");
+        turnOffGreenlight();
+    }
 
     powerState = !powerState;
 }
