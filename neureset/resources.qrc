@@ -13,5 +13,6 @@
         <file>icons/battery-half.svg</file>
         <file>icons/battery-low.svg</file>
         <file>icons/battery-three-quarters.svg</file>
+        <file>icons/left-from-bracket.svg</file>
     </qresource>
 </RCC>

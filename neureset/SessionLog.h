@@ -30,6 +30,8 @@ public:
     QDateTime getStartDateTime() const { return startDateTime; }
     QDateTime getEndDateTime() const { return endDateTime; }
     int getSessionNumber() const { return sessionNumber; }
+    float getStartDomFreq() { return startDomFreq; }
+    float getEndDomFreq() { return endDomFreq; }
 
     // Setters
     void setStartDomFreq(float f) { startDomFreq = f; }
@@ -43,12 +45,12 @@ private:
     QDateTime startDateTime;
     QDateTime endDateTime;
 
+    int currentRound;
     int sessionNumber;
     float startDomFreq;
+    float endDomFreq;
     QVector<QVector<QVector<int>>> treatmentFreqs;  //collection of frequencies throughout the treatments
     QVector<float> offsetFreqs;
-    float endDomFreq;
-    int currentRound;
 
 };
 

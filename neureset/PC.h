@@ -1,7 +1,7 @@
 #ifndef PC_H
 #define PC_H
 
-#include <vector>
+#include <QVector>
 #include <QListWidget>
 
 #include "SessionLog.h"
@@ -16,12 +16,12 @@ public:
     void uploadLog(SessionLog *log);
 
     // Getters
-    vector<SessionLog*> getLogs() const { return logs; }
+    QVector<SessionLog*> getLogs() const { return logs; }
 
     // Setters
 
 private:
-    vector<SessionLog*> logs;
+    QVector<SessionLog*> logs;
     SessionLog* selectedLog;
 };
 
