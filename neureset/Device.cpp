@@ -33,22 +33,22 @@ void Device::replaceBattery(){
     qDebug() << "Changing the battery, was at " << batteryLife;
     batteryLife = 100;
 }
-void Device::toggleHeadsetConn(){
-    qDebug()<<"ongoing"<<ongoing;
-    if (headsetConn){
-        if (ongoing){
-            pauseSession();
-        }
-        headsetConn = false;
-        qDebug("ADMIN: disconnected headset");
-    } else {
-        if (sessionStage != NO_STAGE){
-            resumeSession();
-        }
-        headsetConn = true;
-        qDebug("ADMIN: reconnected headset");
-    }
-}
+//void Device::toggleHeadsetConn(){ written by spencer
+//    qDebug()<<"ongoing"<<ongoing;
+//    if (headsetConn){
+//        if (ongoing){
+//            pauseSession();
+//        }
+//        headsetConn = false;
+//        qDebug("ADMIN: disconnected headset");
+//    } else {
+//        if (sessionStage != NO_STAGE){
+//            resumeSession();
+//        }
+//        headsetConn = true;
+//        qDebug("ADMIN: reconnected headset");
+//    }
+//}
 
 
 
@@ -302,7 +302,7 @@ void Device::togglePower(){
         turnOffBluelight();
         turnOffRedlight();
         headsetConn = true;
-        toggleHeadsetConn();
+        //toggleHeadsetConn();  //this would be a different action, headset can be connected even if power off
     }
 
     powerState = !powerState;

@@ -118,7 +118,7 @@ private slots:
     void readEndBaseline();
     void pauseTimeout();
     void flashRedlight();
-    void toggleHeadsetConn();
+    //void toggleHeadsetConn();
 };
 
 #endif // DEVICE_H
