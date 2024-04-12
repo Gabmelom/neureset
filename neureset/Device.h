@@ -7,6 +7,7 @@
 #include <Headset.h>
 #include <QListWidget>
 #include <QProgressBar>
+#include <QLabel>
 #include "SessionLog.h"
 #include "PC.h"
 
@@ -30,7 +31,8 @@ class Device : public QObject
 {
     Q_OBJECT
 public:
-    Device(QListWidget *list, QProgressBar *progress);
+    Device(QListWidget *list, QProgressBar *progress,
+           QLabel *redlight, QLabel *bluelight, QLabel *greenlight);
     ~Device();
 
     void replaceBattery();
@@ -80,10 +82,16 @@ private:
     QProgressBar *progress;
     SessionLog *currSession;    //the current treatment session, stored in the object so it can be accessed outside the startSession function
     QVector<SessionLog*> logs;
+    QLabel* redlight;
+    QLabel* bluelight;
+    QLabel* greenlight;
+
 
     QTimer pauseTimer;
 
     float calcDomFreq(QVector<QVector<int>>);
+    void turnOnBluelight();
+    void turnOffBluelight();
 
 
 

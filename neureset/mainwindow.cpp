@@ -37,19 +37,8 @@ void MainWindow::init()
     currentList = ui->HomeMenuList;
     currentList->setCurrentRow(0);
 
-
-    //device = new Device(this, ui->sessionLogList);
-//    device->startSession();
-//    device->startSession();
-//    device->startSession();
-    //QVector<SessionLog*> logs = device->getLogs();
-
-//    for (int i = 0; i < logs.length(); i++){
-//        logs[i]->consoleOut();
-//    }
-
-    device = new Device(ui->sessionLogList, ui->sessionProgressBar);
-
+    device = new Device(ui->sessionLogList, ui->sessionProgressBar,
+                        ui->redlight, ui->bluelight, ui->greenlight);
 }
 
 void MainWindow::pageChanged(int index)
