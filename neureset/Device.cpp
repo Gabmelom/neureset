@@ -25,10 +25,30 @@ Device::~Device(){
     delete currDate;
 }
 
+//admin functions that simmulate  hardware managament
+
 void Device::replaceBattery(){
-    qDebug("Changing the battery");
+    qDebug() << "Changing the battery, was at " << batteryLife;
     batteryLife = 100;
 }
+void Device::toggleHeadsetConn(){
+    qDebug()<<"ongoing"<<ongoing;
+    if (headsetConn){
+        if (ongoing){
+            pauseSession();
+        }
+        headsetConn = false;
+        qDebug("ADMIN: disconnected headset");
+    } else {
+        if (sessionStage != NO_STAGE){
+            resumeSession();
+        }
+        headsetConn = true;
+        qDebug("ADMIN: reconnected headset");
+    }
+}
+
+
 
 void Device::startSession(){
     sessionNum++;
@@ -92,6 +112,16 @@ void Device::treatment(){
         else
         {
             qDebug() << "round " << 1 + rounds;
+            qDebug() << "batttery life: " << batteryLife;
+            if (batteryLife <= 20) {
+                qInfo()<<"battery low: "<<batteryLife<<", please pause and replace";
+                //trigger light or different image on UI
+            }
+//            else if (batteryLife < 10){
+//                qInfo()<<"battery is too low to continue: "<<batteryLife<<", stopping current sesssion";
+//                stopSession();
+//                return;
+//            }
             currSession->setRound(1 + rounds);
 
             QVector<QVector<int>> freqs = headset->getDomFreq();
@@ -111,8 +141,13 @@ void Device::treatmentPart2(){
     if(ongoing && powerState){
         sessionStage = TREATMENT_PART_2;
 
+
         offset+=5;
-        batteryLife -= 9;
+        if (batteryLife < 19){
+            qDebug()<<"Not enough power to continue";
+            return;
+        }
+        batteryLife -= 19;
 
         rounds++;
 

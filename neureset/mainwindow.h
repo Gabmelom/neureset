@@ -38,6 +38,8 @@ private slots:
     void changeDate();
     void changeTime();
 
+    void changeBattery();
+    void toggleHeadset();
     void uploadSession();
 
 

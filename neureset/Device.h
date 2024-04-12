@@ -34,6 +34,7 @@ public:
     ~Device();
 
     void replaceBattery();
+    void toggleHeadsetConn();
     void startSession();
     void pauseSession();
     void resumeSession();

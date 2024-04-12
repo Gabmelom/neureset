@@ -23,6 +23,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->dateEdit, SIGNAL(editingFinished()), this, SLOT(changeDate()));
     connect(ui->timeEdit,  SIGNAL(editingFinished()), this, SLOT(changeTime()));
 
+    connect(ui->tglHeadsetBtn, SIGNAL(pressed()), this, SLOT(toggleHeadset()));
+    connect(ui->batteryBtn, SIGNAL(pressed()), this, SLOT(changeBattery()));
+
     connect(ui->uploadSession, SIGNAL(pressed()), this, SLOT(uploadSession()));
 
 }
@@ -154,6 +157,18 @@ void MainWindow::updateDate(){
     qInfo("update the date/time");
     ui->dateEdit->setDate(device->getDate()->date());
     ui->timeEdit->setTime(device->getDate()->time());
+}
+
+void MainWindow::changeBattery()
+{
+    qDebug() << "ADMIN: replacing battery";
+    device->replaceBattery();
+}
+
+void MainWindow::toggleHeadset()
+{
+    qDebug() << "ADMIN: toggle heeadset";
+    device->toggleHeadsetConn();
 }
 
 void MainWindow::uploadSession()
