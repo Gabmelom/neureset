@@ -4,9 +4,15 @@
 #include <QMainWindow>
 #include <QListWidget>
 
+//#include "Device.h"
+#include <QDebug>
+
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
+
+class Device;
 
 class MainWindow : public QMainWindow
 {
@@ -26,11 +32,14 @@ private slots:
     void playPausePressed();
     void stopPressed();
     void pageChanged(int index);
-
+    void updateDate();
+    void changeDate();
+    void changeTime();
 private:
     Ui::MainWindow *ui;
     void init();
     int currentScreen;
     QListWidget* currentList;
+    Device *device;
 };
 #endif // MAINWINDOW_H

@@ -9,6 +9,8 @@
 
 #include "QVector"
 
+class Headset;
+
 class Device : public QObject
 {
     Q_OBJECT
@@ -23,11 +25,15 @@ public:
     QVector<int> readBaseline();    //test version before thread stuff is implemented
     bool applyTherapy();
 
-    void setPower(bool value);
+
+    QDateTime* getDate();
     bool getHeadsetConn();
     int getBatteryLife();
     QVector<SessionLog*> getLogs();
     SessionLog* getCurrSession();
+
+
+    void setPower(bool value);
 
     void uploadSessionLog();
 

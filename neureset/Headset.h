@@ -5,6 +5,8 @@
 #include <QVector>
 #include <QThread>
 
+
+
 class Headset : public QObject
 {
     Q_OBJECT

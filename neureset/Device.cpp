@@ -127,6 +127,10 @@ bool Device::applyTherapy(){
     return true;    //if the treatment round was successful, not sure if there are  fail cases yet (maybe prelimitory safeety checking)
 }
 
+QDateTime* Device::getDate(){
+    return currDate;
+}
+
 bool Device::getHeadsetConn(){
     return headsetConn;
 }
