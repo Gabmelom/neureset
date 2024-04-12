@@ -34,7 +34,7 @@ private:
 
     //headset will  manage the timings in combination with the window's state checking
 //    QThread *thread;
-    QTimer *timer;
+    QTimer timer;
 
     int currentNodeIndex;
     int treatmentFreq;

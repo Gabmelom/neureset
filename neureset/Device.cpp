@@ -10,16 +10,15 @@
 Device::Device(MainWindow *window, QListWidget* list) : window(window), list(list){
     headset = new Headset(7,this);
     //pcConn = new PC   //immplement after that  class has been maade
-    sessionTimer = new QTimer();   //might move creation into start session. needs to be part of the class to be gotten from the UI
     currDate = new QDateTime(QDateTime::currentDateTime());
     batteryLife = 100; //stored as an int, should be a flloat once exact calculations are written
     powerState = 0;
 
+    connect(&sessionTimer, &QTimer::timeout, this, &Device::getStartFreq);
 }
 
 Device::~Device(){
     delete headset;
-    delete sessionTimer;
     delete currDate;
 }
 
@@ -28,7 +27,7 @@ void Device::replaceBattery(){
     batteryLife = 100;
 }
 
-void Device::startSession(){
+void Device::startSessionPart1(){
     sessionNum++;
 
     qDebug("Session started");
@@ -38,25 +37,36 @@ void Device::startSession(){
     //SessionLog *sessLog = new SessionLog();
     currSession = new SessionLog();
     currSession->setStartDateTime(currDate->toString());
+
+    QTimer::singleShot(1000, this, &Device::startSessionPart2);
+}
+
+void Device::startSessionPart2(){
     QVector<QVector<int>> startBaseline = headset->getDomFreq();
     float startBaseFreq = calcDomFreq(startBaseline);
-
     currSession->addStartBaselines(startBaseline);
-
     currSession->setStartDomFreq(startBaseFreq);
     //ssession duratiion is expected to be constant, the only exception is if it is stopped completely
     //sessLog->addStartBaselines(startBaseFreq);    this might change accorrding to sessionLog format
     //the treatment bits, according to the recent test doc
     //should put this function in a thread for timing, pausing, and timer
     qDebug() << "starting freq " << startBaseFreq;
-    int r = 4;  //nummber of rounds of treatments
-    int offset = 5;    //offset added top the dominant frequency. does this change depending on the dominant frequency?
+    //nummber of rounds of treatments
+    //offset added top the dominant frequency. does this change depending on the dominant frequency?
 
+    QTimer::singleShot(1000, this, &Device::startSessionPart3);
+}
+
+void Device::startSessionPart3(){
     float domFreq = calcDomFreq(headset->getDomFreq());
     qDebug()<<"dom freq for treatment:"<<domFreq;
+}
+void Device::startSession(){
+
     for (int i = 0;i < r; i++){
         qDebug() << "round " << 1 + i;
         currSession->setRound(1 + i);
+
         QVector<QVector<int>> freqs = headset->getDomFreq();
         //domFreq = calcDomFreq(freqs); //This might or might not be recalculated
         //currSession->pushTreatmentFreqs(freqs); //not sure if this one is necessary, but it is the freequency of each wave at the start of each treatment round

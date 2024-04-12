@@ -12,7 +12,8 @@ Headset::Headset(int nodes, QObject *parent) : QObject(parent), numNodes(nodes){
 //    thread->start();
 //    qDebug()<<"thread sstarted";
 
-    connect(timer, &QTimer::timeout, this, &Headset::applyTreatmentToCurrNode);
+    connect(&timer, &QTimer::timeout, this, &Headset::applyTreatmentToCurrNode);
+
 
 }
 
@@ -20,7 +21,7 @@ void Headset::applyTreatment(int freq){
     treatmentFreq = freq;
     currentNodeIndex = 0;
 
-    applyTreatmentToCurrNode();
+//    applyTreatmentToCurrNode();
 
 //    QTimer::singleShot(0, this, &Headset::applyTreatmentToCurrNode);
 
@@ -36,7 +37,7 @@ void Headset::applyTreatmentToCurrNode(){
     }
     qDebug() << "Applying treatment of" << treatmentFreq << "to node" << currentNodeIndex + 1;
     currentNodeIndex++;
-    QTimer::singleShot(150, this, &Headset::applyTreatmentToCurrNode);
+//    QTimer::singleShot(150, this, &Headset::applyTreatmentToCurrNode);
 }
 
 //int Headset::readEEGBaseline(int site){
