@@ -9,6 +9,8 @@
 
 #include "QVector"
 
+#define ROUNDS 4
+
 class Device : public QObject
 {
     Q_OBJECT
@@ -38,7 +40,7 @@ private:
     int batteryLife;
     bool powerState;
     QDateTime *currDate;
-    QTimer *sessionTimer;
+    QTimer sessionTimer;
     Headset *headset;
     MainWindow *window;
     QListWidget *list;
@@ -47,6 +49,12 @@ private:
 
     float calcDomFreq(QVector<QVector<int>>);
 
+    int offset = 5;
+    int rounds = 0;
+
+    float domFreq;
+    float startBaseFreq;
+
 //public slots:
 //    QVector<int> readBaseline();
 
@@ -54,6 +62,13 @@ signals:
     int readEEG(int site);
     void updateProgressBar(int percentage);
     int readBaselineSig();
+
+private slots:
+    void readStartBaseline();
+    void readTreatmentBaseline();
+    void treatment();
+    void treatmentPart2();
+    void readEndBaseline();
 };
 
 #endif // DEVICE_H
