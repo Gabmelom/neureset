@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QVector>
 #include <QThread>
+#include <QTimer>
 
 class Headset : public QObject
 {
@@ -30,8 +31,16 @@ private:
     QVector<int> readBaseDelta();
     QVector<int> readBaseTheta();
 
+
     //headset will  manage the timings in combination with the window's state checking
-    QThread *thread;
+//    QThread *thread;
+    QTimer *timer;
+
+    int currentNodeIndex;
+    int treatmentFreq;
+
+private slots:
+    void applyTreatmentToCurrNode();
 
 };
 #endif // HEADSET_H
