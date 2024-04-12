@@ -18,6 +18,11 @@ public:
 
     void consoleOut();
 
+
+    int getCurrentRound();
+    float getstartBaseFreq();
+    float getEndBaseFreq();
+
     void setStartDomFreq(float);
     void setEndDomFreq(float);
     void setStartDateTime(QString);
@@ -30,8 +35,10 @@ public:
     QVector<QVector<int>> getEndBaseline() const { return endBaselines; }
 
 private:
+
     QVector<QVector<int>> startBaselines;
     QVector<QVector<int>> endBaselines;
+
     QDateTime startDateTime;
     QDateTime endDateTime;
 
