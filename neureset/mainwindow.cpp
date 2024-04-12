@@ -30,15 +30,7 @@ void MainWindow::init()
     currentList = ui->HomeMenuList;
     currentList->setCurrentRow(0);
 
-    Device *device = new Device(this, ui->sessionLogList);
-    device->startSession();
-    device->startSession();
-    device->startSession();
-    QVector<SessionLog*> logs = device->getLogs();
-
-    for (int i = 0; i < logs.length(); i++){
-        logs[i]->consoleOut();
-    }
+    device = new Device(ui->sessionLogList);
 }
 
 void MainWindow::pageChanged(int index)
@@ -56,6 +48,10 @@ void MainWindow::pageChanged(int index)
             currentList = ui->HomeMenuList;
             currentList->setCurrentRow(0);
             break;
+        case 1:
+            qInfo("Start Session");
+            device->startSession();
+            break;
         case 2:
             currentList = ui->sessionLogList;
             currentList->setCurrentRow(0);
@@ -70,7 +66,7 @@ void MainWindow::pageChanged(int index)
 
 void MainWindow::powerPressed()
 {
-    qInfo("Power pressed");
+    device->togglePower();
 }
 
 void MainWindow::homePressed()
@@ -111,11 +107,16 @@ void MainWindow::selectPressed()
 
 void MainWindow::playPausePressed()
 {
-    qInfo("Play/Pause pressed");
+    if(device->isOngoing()){
+        device->pauseSession();
+    }
+    else{
+        device->resumeSession();
+    }
 }
 
 void MainWindow::stopPressed()
 {
-    qInfo("Stop pressed");
+    device->stopSession();
 }
 

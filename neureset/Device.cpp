@@ -7,12 +7,15 @@
 #include "QThread"
 
 
-Device::Device(MainWindow *window, QListWidget* list) : window(window), list(list){
+Device::Device(QListWidget* list) : list(list){
     headset = new Headset(7,this);
     //pcConn = new PC   //immplement after that  class has been maade
     currDate = new QDateTime(QDateTime::currentDateTime());
     batteryLife = 100; //stored as an int, should be a flloat once exact calculations are written
     powerState = 0;
+    sessionStage = -1;
+
+    connect(&pauseTimer, &QTimer::timeout, this, &Device::pauseTimeout);
 }
 
 Device::~Device(){
@@ -27,6 +30,10 @@ void Device::replaceBattery(){
 
 void Device::startSession(){
     sessionNum++;
+    offset = 5;
+    rounds = 0;
+    sessionStage = 0;
+    ongoing = true;
 
     qDebug("Session started");
     //follows ssequeence ddiagram for the main use case
@@ -40,88 +47,147 @@ void Device::startSession(){
 }
 
 void Device::readStartBaseline(){
-    QVector<QVector<int>> startBaseline = headset->getDomFreq();
-    startBaseFreq = calcDomFreq(startBaseline);
-    currSession->addStartBaselines(startBaseline);
-    currSession->setStartDomFreq(startBaseFreq);
-    //ssession duratiion is expected to be constant, the only exception is if it is stopped completely
-    //sessLog->addStartBaselines(startBaseFreq);    this might change accorrding to sessionLog format
-    //the treatment bits, according to the recent test doc
-    //should put this function in a thread for timing, pausing, and timer
-    qDebug() << "starting freq " << startBaseFreq;
-    //nummber of rounds of treatments
-    //offset added top the dominant frequency. does this change depending on the dominant frequency?
+    if(ongoing && powerState){
+        sessionStage = 1;
+        QVector<QVector<int>> startBaseline = headset->getDomFreq();
+        startBaseFreq = calcDomFreq(startBaseline);
+        currSession->addStartBaselines(startBaseline);
+        currSession->setStartDomFreq(startBaseFreq);
+        //ssession duratiion is expected to be constant, the only exception is if it is stopped completely
+        //sessLog->addStartBaselines(startBaseFreq);    this might change accorrding to sessionLog format
+        //the treatment bits, according to the recent test doc
+        //should put this function in a thread for timing, pausing, and timer
+        qDebug() << "starting freq " << startBaseFreq;
+        //nummber of rounds of treatments
+        //offset added top the dominant frequency. does this change depending on the dominant frequency?
 
-    QTimer::singleShot(1000, this, &Device::readTreatmentBaseline);
+        QTimer::singleShot(1000, this, &Device::readTreatmentBaseline);
+    }
 }
 
 void Device::readTreatmentBaseline(){
-    domFreq = calcDomFreq(headset->getDomFreq());
-    qDebug()<<"dom freq for treatment:"<<domFreq;
+    if(ongoing && powerState){
+        sessionStage = 2;
+        domFreq = calcDomFreq(headset->getDomFreq());
+        qDebug()<<"dom freq for treatment:"<<domFreq;
 
-    QTimer::singleShot(1000, this, &Device::treatment);
+        QTimer::singleShot(1000, this, &Device::treatment);
+    }
 }
 
 void Device::treatment(){
-    if (rounds >= ROUNDS)
-    {
-        readEndBaseline();
-    }
-    else
-    {
-        qDebug() << "round " << 1 + rounds;
-        currSession->setRound(1 + rounds);
+    if(ongoing && powerState){
+        sessionStage = 3;
+        if (rounds >= ROUNDS)
+        {
+            readEndBaseline();
+        }
+        else
+        {
+            qDebug() << "round " << 1 + rounds;
+            currSession->setRound(1 + rounds);
 
-        QVector<QVector<int>> freqs = headset->getDomFreq();
-        //domFreq = calcDomFreq(freqs); //This might or might not be recalculated
-        //currSession->pushTreatmentFreqs(freqs); //not sure if this one is necessary, but it is the freequency of each wave at the start of each treatment round
-        //over 1 second, apply the domFreq+offset every 1/16 seconds on each node
-        //toggle green light on
+            QVector<QVector<int>> freqs = headset->getDomFreq();
+            //domFreq = calcDomFreq(freqs); //This might or might not be recalculated
+            //currSession->pushTreatmentFreqs(freqs); //not sure if this one is necessary, but it is the freequency of each wave at the start of each treatment round
+            //over 1 second, apply the domFreq+offset every 1/16 seconds on each node
+            //toggle green light on
 
-        QTimer::singleShot(1000, this, &Device::treatmentPart2);
+            QTimer::singleShot(1000, this, &Device::treatmentPart2);
+        }
     }
 }
 
-void Device::treatmentPart2()
-{
-    headset->applyTreatment(domFreq + offset);
-    //toggle green light off
-    currSession->pushOffset(domFreq + offset);
-    offset+=5;
-    rounds++;
-    //update window: round i of r complete  (show as percent)
+void Device::treatmentPart2(){
+    if(ongoing && powerState){
+        sessionStage = 4;
+        headset->applyTreatment(domFreq + offset);
+        //toggle green light off
+        currSession->pushOffset(domFreq + offset);
+        offset+=5;
+        rounds++;
+        //update window: round i of r complete  (show as percent)
 
-    QTimer::singleShot((7 *150), this, &Device::treatment);
+        QTimer::singleShot((7 *150), this, &Device::treatment);
+    }
 }
 
-void Device::readEndBaseline()
-{
-    QVector<QVector<int>> endBaseline = headset->getDomFreq();
+void Device::readEndBaseline(){
+    if(ongoing && powerState){
+        sessionStage = 5;
+        QVector<QVector<int>> endBaseline = headset->getDomFreq();
 
-    float endBaseFreq = calcDomFreq(endBaseline);
+        float endBaseFreq = calcDomFreq(endBaseline);
 
-    currSession->addEndBaselines(endBaseline);
+        currSession->addEndBaselines(endBaseline);
 
-    currSession->setEndDomFreq(endBaseFreq);
+        currSession->setEndDomFreq(endBaseFreq);
 
-    qDebug() << "treatment has been performed. Start baseline: " << startBaseFreq <<" end baseline  " << endBaseFreq;
+        qDebug() << "treatment has been performed. Start baseline: " << startBaseFreq <<" end baseline  " << endBaseFreq;
 
-    currSession->setEndDateTime(currDate->toString());
+        currSession->setEndDateTime(currDate->toString());
 
-    currSession->consoleOut();
-    logs.push_back(currSession);
+        currSession->consoleOut();
+        logs.push_back(currSession);
 
-    list->addItem(QString("Session %1       Date: %2").arg(sessionNum).arg(currDate->toString()));
+        list->addItem(QString("Session %1       Date: %2").arg(sessionNum).arg(currDate->toString()));
+        ongoing = false;
+    }
 }
 
 void Device::pauseSession(){
     //pause the timer
     //pause any calls to the headset
+    qInfo("Session Paused");
+    qInfo("Device start beeping");
+    // flash red light
+    ongoing = false;
+    pauseTimer.start(15000);
+}
+
+void Device::resumeSession(){
+    qInfo("Session Resumed");
+    ongoing = true;
+    pauseTimer.stop();
+    switch(sessionStage)
+    {
+        case 0:
+            sessionNum--;
+            startSession();
+            break;
+        case 1:
+            readStartBaseline();
+            break;
+        case 2:
+            readTreatmentBaseline();
+            break;
+        case 3:
+            treatment();
+            break;
+        case 4:
+            treatmentPart2();
+            break;
+        case 5:
+            readEndBaseline();
+            break;
+        default:
+            break;
+    }
+}
+
+void Device::pauseTimeout(){
+    qInfo("Session Timeout after 15 seconds");
+    // turn off lights
+    sessionStage = -1;
+    sessionNum--;
+    togglePower();
 }
 
 void Device::stopSession(){
-    //reset state
-    //saves the current session log?
+    qInfo("Session Stopped");
+    sessionNum--;
+    sessionStage = -1;
+    ongoing = false;
 }
 
 void Device::setPower(bool val){
@@ -144,6 +210,13 @@ QVector<int> Device::readBaseline(){
     return baseline;
 }
 
+void Device::togglePower(){
+    if(powerState) qInfo("Turn off device");
+    else qInfo("Turn on device");
+
+    powerState = !powerState;
+}
+
 bool Device::applyTherapy(){
     //might not be necessary since the device can call the headset functionn, this should be used if extra steps are necessary
     //over all sites
@@ -152,6 +225,10 @@ bool Device::applyTherapy(){
     //repeat over x intervals
     //end of roound stuff (if it exists)
     return true;    //if the treatment round was successful, not sure if there are  fail cases yet (maybe prelimitory safeety checking)
+}
+
+bool Device::isOngoing(){
+    return ongoing;
 }
 
 bool Device::getHeadsetConn(){
