@@ -67,6 +67,9 @@ private:
     bool ongoing;
     bool headsetConn;
     bool pcConn;
+    bool bluelightOn;
+    bool redlightOn;
+    bool greenlightOn;
     int batteryLife;
     bool powerState;
     int offset;
@@ -110,6 +113,7 @@ private slots:
     void treatmentPart2();
     void readEndBaseline();
     void pauseTimeout();
+    void flashRedlight();
 };
 
 #endif // DEVICE_H
