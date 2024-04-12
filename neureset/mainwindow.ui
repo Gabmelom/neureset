@@ -384,8 +384,24 @@
          <x>10</x>
          <y>10</y>
          <width>381</width>
-         <height>341</height>
+         <height>311</height>
         </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="uploadSession">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>330</y>
+         <width>121</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: 1px solid black;</string>
+       </property>
+       <property name="text">
+        <string>Upload Session</string>
        </property>
       </widget>
      </widget>
@@ -480,7 +496,6 @@
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources>
   <include location="resources.qrc"/>

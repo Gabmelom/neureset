@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->play_pause, SIGNAL(pressed()), this, SLOT(playPausePressed()));
     connect(ui->stop, SIGNAL(pressed()), this, SLOT(stopPressed()));
     connect(ui->Screen, SIGNAL(currentChanged(int)), this, SLOT(pageChanged(int)));
+    connect(ui->uploadSession, SIGNAL(pressed()), this, SLOT(uploadSession()));
 }
 
 MainWindow::~MainWindow()
@@ -30,7 +31,7 @@ void MainWindow::init()
     currentList = ui->HomeMenuList;
     currentList->setCurrentRow(0);
 
-    Device *device = new Device(this, ui->sessionLogList);
+    device = new Device(ui->sessionLogList);
     device->startSession();
     device->startSession();
     device->startSession();
@@ -119,3 +120,9 @@ void MainWindow::stopPressed()
     qInfo("Stop pressed");
 }
 
+void MainWindow::uploadSession()
+{
+    int selected = currentList->currentRow();
+    qInfo("Upload session %d", selected);
+    device->uploadSessionLog(selected);
+}

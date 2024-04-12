@@ -12,14 +12,14 @@ public:
 
     ~PC();
 
-    void uploadLogs(vector<SessionLog> logs);
+    void uploadLog(SessionLog *log);
     void selectLog();
     void viewLog();
 
 
 private:
-    vector<SessionLog> logs;
-    SessionLog selecftedLog;
+    vector<SessionLog*> logs;
+    SessionLog* selectedLog;
 };
 
 #endif // PC_H
