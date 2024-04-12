@@ -67,6 +67,7 @@ void Device::readStartBaseline(){
     progress->setValue(28);
 
     QTimer::singleShot(1000, this, &Device::readTreatmentBaseline);
+    }
 }
 
 void Device::readTreatmentBaseline(){
@@ -100,6 +101,7 @@ void Device::treatment(){
         progress->setValue(40 + (rounds * 14));
 
         QTimer::singleShot(1000, this, &Device::treatmentPart2);
+        }
     }
 }
 
