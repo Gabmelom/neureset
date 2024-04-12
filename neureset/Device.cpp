@@ -15,11 +15,6 @@ Device::Device(QListWidget* list, QProgressBar* progress,QLabel *r, QLabel *b, Q
     currDate = new QDateTime(QDateTime::currentDateTime());
     batteryLife = 100; //stored as an int, should be a flloat once exact calculations are written
     powerState = 0;
-    sessionStage = NO_STAGE;
-    turnOffBluelight();
-    turnOffRedlight();
-    headsetConn = false;
-    flashRedlight();
 
     connect(&pauseTimer, &QTimer::timeout, this, &Device::pauseTimeout);
 }
@@ -154,7 +149,6 @@ void Device::pauseSession(){
     //pause the timer
     //pause any calls to the headset
     qInfo("Session Paused");
-    qInfo("Device start beeping");
     // flash red light
     ongoing = false;
     pauseTimer.start(15000);
@@ -259,9 +253,38 @@ QVector<int> Device::readBaseline(){
 
 void Device::togglePower(){
     if(powerState) qInfo("Turn off device");
-    else qInfo("Turn on device");
+    else {
+        qInfo("Turn on device");
+        sessionStage = NO_STAGE;
+        turnOffBluelight();
+        turnOffRedlight();
+        headsetConn = true;
+        toggleHeadsetConn();
+    }
 
     powerState = !powerState;
+}
+
+void Device::toggleHeadsetConn(){
+    headsetConn = !headsetConn;
+    // if it is now connected, device stops beeping, turn red light off and resume session if it was paused
+    if(headsetConn){
+        qInfo("Headset connected");
+        qInfo("Device stops beeping");
+        turnOffRedlight();
+        if(bluelightOn){
+            resumeSession();
+        }
+    }
+    // if it is now unconnected, device beeps, red light flashes, current session is paused
+    else{
+        qInfo("Headset NOT connected");
+        qInfo("Device start beeping");
+        flashRedlight();
+        if(bluelightOn){
+            pauseSession();
+        }
+    }
 }
 
 bool Device::applyTherapy(){
