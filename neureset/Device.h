@@ -60,7 +60,6 @@ public:
     void uploadSessionLog(int selected);
 
 
-
 private:
     int sessionNum;
     int sessionStage;
@@ -116,6 +115,7 @@ private slots:
     void readEndBaseline();
     void pauseTimeout();
     void flashRedlight();
+    void toggleHeadsetConn();
 };
 
 #endif // DEVICE_H
