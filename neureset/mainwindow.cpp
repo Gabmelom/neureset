@@ -65,28 +65,8 @@ void MainWindow::pageChanged(int index)
     qDebug()<<index;
     switch(currentScreen)
     {
-//        case 0:
-//            currentList = ui->HomeMenuList;
-//            currentList->setCurrentRow(0);
-//            break;
-//        case 1:
-//            qInfo("Start Session");
-//            device->startSession();
-//            break;
-//        case 2:
-//            currentList = ui->sessionLogList;
-//            currentList->setCurrentRow(0);
-//            selectPressed();
-//            break;
-//        case 3:
-//            updateDate();
-//            break;
-//        case 4:
-//            //ui->screen->powerOffPage;
-//        default:
-//            currentList = nullptr;
         case 0:
-                qDebug("off");
+                //qDebug("off");
             break;
         case 1:
             currentList = ui->HomeMenuList;
@@ -187,14 +167,14 @@ void MainWindow::changeDate(){
     qInfo("changing the date");
     //ui->dateEdit->setDate(device->getDate()->date());
     device->getDate()->setDate(ui->dateEdit->date());
-    qDebug() << device->getDate()->date();
+    //qDebug() << device->getDate()->date();
 }
 
 void MainWindow::changeTime(){
     qInfo("changing the time");
     //ui->dateEdit->dateTimeChanged()
     device->getDate()->setTime(ui->timeEdit->time());
-    qDebug() << device->getDate()->time();
+    //qDebug() << device->getDate()->time();
 }
 
 void MainWindow::updateDate(){
@@ -230,4 +210,5 @@ void MainWindow::updateGui(){
     }
     device->getDate()->setTime(device->getDate()->time().addSecs(1));
     updateDate();
+    ui->currBattery->setText(QString::number(device->getBatteryLife()));
 }

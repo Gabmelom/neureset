@@ -15,9 +15,11 @@ Device::Device(QListWidget* list, QProgressBar* progress,QLabel *r, QLabel *b, Q
     currDate = new QDateTime(QDateTime::currentDateTime());
     batteryLife = 100; //stored as an int, should be a flloat once exact calculations are written
     powerState = 0;
-
+    headsetConn = 0;
     sessionStage = NO_STAGE;
     turnOffBluelight();
+    turnOffRedlight();
+    turnOffGreenlight();
       
     connect(&pauseTimer, &QTimer::timeout, this, &Device::pauseTimeout);
 }
@@ -31,7 +33,12 @@ Device::~Device(){
 
 void Device::replaceBattery(){
     qDebug() << "Changing the battery, was at " << batteryLife;
-    batteryLife = 100;
+    if (powerState){
+        qInfo("turrn off the device  before changing the battery");
+    } else {
+        batteryLife = 100;
+    }
+
 }
 //void Device::toggleHeadsetConn(){ written by spencer
 //    qDebug()<<"ongoing"<<ongoing;
@@ -54,6 +61,10 @@ void Device::replaceBattery(){
 
 void Device::startSession(){
     if(headsetConn){
+        if (sessionStage != 0){
+            resumeSession();
+            return;
+        }
         sessionNum++;
         offset = 5;
         rounds = 0;
@@ -120,7 +131,11 @@ void Device::treatment(){
         {
             qDebug() << "round " << 1 + rounds;
             qDebug() << "batttery life: " << batteryLife;
-            if (batteryLife <= 20) {
+            if (batteryLife < 9) {     //19 is for quick testing, something liike 9 gives realistic test results for middle of sessionn. 10 could be used ofr start
+                qDebug()<<"Not enough power to continue";
+                pauseSession();
+                return;
+            } else if (batteryLife <= 20) {
                 qInfo()<<"battery low: "<<batteryLife<<", please pause and replace";
                 //trigger light or different image on UI
             }
@@ -152,11 +167,12 @@ void Device::treatmentPart2(){
         currSession->pushOffset(domFreq + offset);
 
         offset+=5;
-        if (batteryLife < 19){
+        if (batteryLife < 9){
             qDebug()<<"Not enough power to continue";
+            stopSession();
             return;
         }
-        batteryLife -= 19;
+        batteryLife -= 9;
 
         rounds++;
 
@@ -188,8 +204,9 @@ void Device::readEndBaseline(){
 
         list->addItem(QString("Session %1       Date: %2").arg(sessionNum).arg(currDate->toString()));
         ongoing = false;
-        turnOffBluelight();
+        //turnOffBluelight();
         progress->setValue(100);
+        sessionStage = NO_STAGE;
     }
 
 }
@@ -251,6 +268,7 @@ void Device::stopSession(){
     turnOffGreenlight();
     turnOffBluelight();
     ongoing = false;
+    pauseTimer.stop();
 }
 
 void Device::turnOffBluelight(){
@@ -313,14 +331,21 @@ QVector<int> Device::readBaseline(){
 }
 
 void Device::togglePower(){
-    if(powerState) qInfo("Turn off device");
-    else {
-        qInfo("Turn on device");
-        sessionStage = NO_STAGE;
+    if(powerState){
         turnOffBluelight();
         turnOffRedlight();
         turnOffGreenlight();
-        headsetConn = true;
+        qInfo("Turn off device");
+    }else {
+        qInfo("Turn on device");
+        //sessionStage = NO_STAGE;
+//        turnOffBluelight();
+//        turnOffRedlight();
+//        turnOnGreenlight();
+        //headsetConn = true;
+        if (headsetConn){
+            turnOnBluelight();
+        }
         //toggleHeadsetConn();  //this would be a different action, headset can be connected even if power off
     }
 
@@ -328,24 +353,35 @@ void Device::togglePower(){
 }
 
 void Device::toggleHeadsetConn(){
+    qDebug() << headsetConn;
     headsetConn = !headsetConn;
     // if it is now connected, device stops beeping, turn red light off and resume session if it was paused
+    qDebug() << sessionStage;
     if(headsetConn){
         qInfo("Headset connected");
-        qInfo("Device stops beeping");
-        turnOffRedlight();
-        if(bluelightOn){
+
+//        if(bluelightOn){
+        if (sessionStage != 0){
+            qInfo("Device stops beeping");
+            turnOffRedlight();
             resumeSession();
-        }
+        } /*else {
+            turnOnBluelight();
+        }*/
+        turnOnBluelight();
     }
     // if it is now unconnected, device beeps, red light flashes, current session is paused
     else{
         qInfo("Headset NOT connected");
-        qInfo("Device start beeping");
-        flashRedlight();
-        if(bluelightOn){
+        if (sessionStage != 0){
+//        if(bluelightOn){
+            qInfo("Device start beeping");
+            flashRedlight();
             pauseSession();
-        }
+        } /*else {
+            turnOffBluelight();
+        }*/
+        turnOffBluelight();
     }
 }
 
