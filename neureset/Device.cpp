@@ -8,7 +8,8 @@
 
 
 
-Device::Device(QListWidget* list, QProgressBar* progress) : list(list), progress(progress){
+Device::Device(QListWidget* list, QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g) :
+    list(list), progress(progress), redlight(r), bluelight(b), greenlight(g){
     headset = new Headset(7,this);
     pc = new PC();   //immplement after that  class has been maade
     currDate = new QDateTime(QDateTime::currentDateTime());

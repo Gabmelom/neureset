@@ -32,7 +32,8 @@ void MainWindow::init()
     currentList = ui->HomeMenuList;
     currentList->setCurrentRow(0);
 
-    device = new Device(ui->sessionLogList, ui->sessionProgressBar);
+    device = new Device(ui->sessionLogList, ui->sessionProgressBar,
+                        ui->redlight, ui->bluelight, ui->greenlight);
 }
 
 void MainWindow::pageChanged(int index)

@@ -7,10 +7,13 @@
 #include <Headset.h>
 #include <QListWidget>
 #include <QProgressBar>
+#include <QLabel>
 #include "SessionLog.h"
 #include "PC.h"
 
 #include "QVector"
+
+class Headset;
 
 #define ROUNDS 4
 
@@ -24,12 +27,12 @@ enum E_SESSION_STAGE{
     READ_END_BASELINE
 };
 
-
 class Device : public QObject
 {
     Q_OBJECT
 public:
-    Device(QListWidget *list, QProgressBar *progress);
+    Device(QListWidget *list, QProgressBar *progress,
+           QLabel *redlight, QLabel *bluelight, QLabel *greenlight);
     ~Device();
 
     void replaceBattery();
@@ -40,16 +43,22 @@ public:
     QVector<int> readBaseline();    //test version before thread stuff is implemented
     bool applyTherapy();
 
-    void setPower(bool value);
+
+    QDateTime* getDate();
     bool getHeadsetConn();
     int getBatteryLife();
     QVector<SessionLog*> getLogs();
     SessionLog* getCurrSession();
 
+    //void setPower(bool value);
+
+    void uploadSessionLog();
+
     void togglePower();
     bool isOngoing();
     int getSessionStage();
     void uploadSessionLog(int selected);
+
 
 
 private:
@@ -73,6 +82,10 @@ private:
     QProgressBar *progress;
     SessionLog *currSession;    //the current treatment session, stored in the object so it can be accessed outside the startSession function
     QVector<SessionLog*> logs;
+    QLabel* redlight;
+    QLabel* bluelight;
+    QLabel* greenlight;
+
 
     QTimer pauseTimer;
 
