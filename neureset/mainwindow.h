@@ -38,7 +38,6 @@ private slots:
     void changeTime();
     void changeBattery();
     void toggleHeadset();
-    void uploadSession();
     void updateGui();
     void devicePageChanged(int index);
     void pcPageChanged(int index);

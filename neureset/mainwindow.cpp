@@ -44,9 +44,10 @@ void MainWindow::init()
 
     device = new Device(ui->sessionProgressBar, ui->redlight, ui->bluelight, ui->greenlight);
     pc = new PC();
-    QTimer* timer = new QTimer(this);
-    connect(timer, &QTimer::timeout,this, &MainWindow::updateGui);
-    timer->start(1000);
+    // CRASHES AFTER MERGE CONFLICT
+    // QTimer* timer = new QTimer(this);
+    // connect(timer, &QTimer::timeout,this, &MainWindow::updateGui);
+    // timer->start(1000);
 }
 
 void MainWindow::devicePageChanged(int index)
@@ -286,7 +287,7 @@ void MainWindow::pcBackButtonPressed()
 
 
 void MainWindow::updateGui(){
-    if  (not device->getPower()){
+    if  (!device->getPower()){
         ui->DeviceScreen->setCurrentIndex(0);
         devicePageChanged(0);
     }
