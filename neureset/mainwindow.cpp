@@ -125,8 +125,8 @@ void MainWindow::powerPressed()
 
 void MainWindow::homePressed()
 {
-    // TODO: Stop any ongoing session
-    ui->DeviceScreen->setCurrentIndex(0);
+    // TODO: Stop any ongoing session?
+    ui->DeviceScreen->setCurrentIndex(1);
 }
 
 void MainWindow::upPressed()
