@@ -18,6 +18,7 @@ Device::Device(QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g) : progres
     turnOffBluelight();
     turnOffRedlight();
     turnOffGreenlight();
+    rounds = 0;
       
     connect(&pauseTimer, &QTimer::timeout, this, &Device::pauseTimeout);
 }
@@ -186,6 +187,8 @@ void Device::readEndBaseline(){
         //turnOffBluelight();
         progress->setValue(100);
         sessionStage = NO_STAGE;
+
+        rounds = 0;
     }
 
 }
