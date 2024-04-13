@@ -76,6 +76,7 @@ void MainWindow::devicePageChanged(int index)
             currentDeviceList = ui->deviceLogList;
             currentDeviceList->setCurrentRow(0);
             selectPressed();
+            displayDeviceLogs();
             break;
 
         case 4:
