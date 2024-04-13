@@ -6,9 +6,15 @@
 #include <Device.h>
 #include "Device.h"
 
+//#include "Device.h"
+#include <QDebug>
+
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
+
+class Device;
 
 class MainWindow : public QMainWindow
 {
@@ -27,11 +33,19 @@ private slots:
     void selectPressed();
     void playPausePressed();
     void stopPressed();
+    void updateDate();
+    void changeDate();
+    void changeTime();
+    void changeBattery();
+    void toggleHeadset();
+    void uploadSession();
+    void updateGui();
     void devicePageChanged(int index);
     void pcPageChanged(int index);
     void displayLogDetails(QListWidgetItem*);
     void uploadLogs();
     void pcBackButtonPressed();
+
 
 private:
     Ui::MainWindow *ui;

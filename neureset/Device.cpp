@@ -8,12 +8,16 @@
 
 
 
-Device::Device(QProgressBar* progress) : progress(progress){
+Device::Device(QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g) : progress(progress), redlight(r), bluelight(b), greenlight(g){
     headset = new Headset(7,this);
     batteryLife = 100; //stored as an int, should be a flloat once exact calculations are written
     powerState = 0;
+    headsetConn = 0;
     sessionStage = NO_STAGE;
-
+    turnOffBluelight();
+    turnOffRedlight();
+    turnOffGreenlight();
+      
     connect(&pauseTimer, &QTimer::timeout, this, &Device::pauseTimeout);
 }
 
@@ -21,9 +25,16 @@ Device::~Device(){
     delete headset;
 }
 
+//admin functions that simmulate  hardware managament
+
 void Device::replaceBattery(){
-    qDebug("Changing the battery");
-    batteryLife = 100;
+    qDebug() << "Changing the battery, was at " << batteryLife;
+    if (powerState){
+        qInfo("turrn off the device  before changing the battery");
+    } else {
+        batteryLife = 100;
+    }
+
 }
 
 // Follows sequence ddiagram for the main use case
@@ -32,20 +43,25 @@ void Device::startSession(){
         qInfo("Device is off");
         return;
     }
+    if(headsetConn){
+        if (sessionStage != 0){
+            resumeSession();
+            return;
+        }
+        turnOnBluelight();
+        ongoing = true;
 
-    offset = 5;
-    rounds = 0;
-    sessionStage = START_SESSION;
-    ongoing = true;
+        qDebug("Session started");
+        //follows ssequeence ddiagram for the main use case
 
-    qDebug("Session started");
+        currSession = new SessionLog(logs.length() + 1);
+        currSession->startSession();
 
-    // Stores all important info over the entire session
-    currSession = new SessionLog(logs.length() + 1);
-    currSession->startSession();
-    progress->setValue(15);
+        progress->setValue(15);
 
-    QTimer::singleShot(1000, this, &Device::readStartBaseline);
+        QTimer::singleShot(1000, this, &Device::readStartBaseline);
+    }
+    else qInfo("Cannot start session without headset connection");
 }
 
 void Device::readStartBaseline(){
@@ -57,7 +73,7 @@ void Device::readStartBaseline(){
         currSession->setStartDomFreq(startBaseFreq);
         //ssession duratiion is expected to be constant, the only exception is if it is stopped completely
         //sessLog->addStartBaselines(startBaseFreq);    this might change accorrding to sessionLog format
-        //the treatment bits, according to the recent test doc
+        //the treatment  bits, according to the recent test doc
         //should put this function in a thread for timing, pausing, and timer
         qDebug() << "starting freq " << startBaseFreq;
         //nummber of rounds of treatments
@@ -81,6 +97,7 @@ void Device::readTreatmentBaseline(){
 
 void Device::treatment(){
     if(ongoing && powerState){
+        turnOffGreenlight();
         sessionStage = TREATMENT;
         if (rounds >= ROUNDS)
         {
@@ -89,13 +106,26 @@ void Device::treatment(){
         else
         {
             qDebug() << "round " << 1 + rounds;
+            qDebug() << "batttery life: " << batteryLife;
+            if (batteryLife < 9) {     //19 is for quick testing, something liike 9 gives realistic test results for middle of sessionn. 10 could be used ofr start
+                qDebug()<<"Not enough power to continue";
+                pauseSession();
+                return;
+            } else if (batteryLife <= 20) {
+                qInfo()<<"battery low: "<<batteryLife<<", please pause and replace";
+                //trigger light or different image on UI
+            }
+//            else if (batteryLife < 10){
+//                qInfo()<<"battery is too low to continue: "<<batteryLife<<", stopping current sesssion";
+//                stopSession();
+//                return;
+//            }
             currSession->setRound(1 + rounds);
 
             QVector<QVector<int>> freqs = headset->getDomFreq();
             //domFreq = calcDomFreq(freqs); //This might or might not be recalculated
             //currSession->pushTreatmentFreqs(freqs); //not sure if this one is necessary, but it is the freequency of each wave at the start of each treatment round
             //over 1 second, apply the domFreq+offset every 1/16 seconds on each node
-            //toggle green light on
 
             progress->setValue(40 + (rounds * 14));
 
@@ -107,11 +137,21 @@ void Device::treatment(){
 void Device::treatmentPart2(){
     if(ongoing && powerState){
         sessionStage = TREATMENT_PART_2;
+
+        turnOnGreenlight();
         headset->applyTreatment(domFreq + offset);
-        //toggle green light off
         currSession->pushOffset(domFreq + offset);
+
         offset+=5;
+        if (batteryLife < 9){
+            qDebug()<<"Not enough power to continue";
+            stopSession();
+            return;
+        }
+        batteryLife -= 9;
+
         rounds++;
+
         //update window: round i of r complete  (show as percent)
 
         QTimer::singleShot((7 *150), this, &Device::treatment);
@@ -127,6 +167,7 @@ void Device::readEndBaseline(){
 
         currSession->addEndBaselines(endBaseline);
 
+
         currSession->setEndDomFreq(endBaseFreq);
 
         qDebug() << "treatment has been performed. Start baseline: " << startBaseFreq <<" end baseline  " << endBaseFreq;
@@ -136,16 +177,18 @@ void Device::readEndBaseline(){
         logs.push_back(currSession);
 
         ongoing = false;
+        //turnOffBluelight();
         progress->setValue(100);
+        sessionStage = NO_STAGE;
     }
+
 }
 
 void Device::pauseSession(){
     //pause the timer
     //pause any calls to the headset
     qInfo("Session Paused");
-    qInfo("Device start beeping");
-    // flash red light
+    turnOffGreenlight();
     ongoing = false;
     pauseTimer.start(15000);
 }
@@ -183,18 +226,64 @@ void Device::resumeSession(){
 void Device::pauseTimeout(){
     qInfo("Session Timeout after 15 seconds");
     // turn off lights
-    sessionStage = -1;
+    sessionStage = NO_STAGE;
+    turnOffGreenlight();
+    sessionNum--;
+    turnOffBluelight();
     togglePower();
 }
 
 void Device::stopSession(){
     qInfo("Session Stopped");
-    sessionStage = -1;
+    sessionNum--;
+    sessionStage = NO_STAGE;
+    turnOffGreenlight();
+    turnOffBluelight();
     ongoing = false;
+    pauseTimer.stop();
 }
 
-void Device::setPower(bool val){
-    powerState = val;
+void Device::turnOffBluelight(){
+    bluelightOn = false;
+    bluelight->setStyleSheet("QLabel { background-color : white;}");
+}
+
+void Device::turnOnBluelight(){
+    bluelightOn = true;
+    bluelight->setStyleSheet("QLabel { background-color : blue;}");
+}
+
+void Device::turnOffGreenlight(){
+    greenlightOn = false;
+    greenlight->setStyleSheet("QLabel { background-color : white;}");
+}
+
+void Device::turnOnGreenlight(){
+    greenlightOn = true;
+    greenlight->setStyleSheet("QLabel { background-color : green;}");
+}
+
+void Device::turnOffRedlight(){
+    redlightOn = false;
+    redlight->setStyleSheet("QLabel { background-color : white;}");
+}
+
+void Device::flashRedlight(){
+    if(!headsetConn && powerState){
+        if(redlightOn){
+            redlightOn = false;
+            redlight->setStyleSheet("QLabel { background-color : white;}");
+            QTimer::singleShot(200, this, &Device::flashRedlight);
+        }
+        else{
+            redlightOn = true;
+            redlight->setStyleSheet("QLabel { background-color : red;}");
+            QTimer::singleShot(200, this, &Device::flashRedlight);
+        }
+    }
+    else{
+        redlight->setStyleSheet("QLabel { background-color : white;}");
+    }
 }
 
 QVector<int> Device::readBaseline(){
@@ -215,10 +304,51 @@ QVector<int> Device::readBaseline(){
 
 
 void Device::togglePower(){
-    if(powerState) qInfo("Turn off device");
-    else qInfo("Turn on device");
-
+    turnOffBluelight();
+    turnOffRedlight();
+    turnOffGreenlight();
     powerState = !powerState;
+    if(!powerState) qInfo("Turn off device");
+    else {
+        qInfo("Turn on device");
+        sessionStage = NO_STAGE;    
+        if (headsetConn){
+            turnOnBluelight();
+        }
+    }    
+}
+
+void Device::toggleHeadsetConn(){
+    //qDebug() << headsetConn;
+    headsetConn = !headsetConn;
+    // if it is now connected, device stops beeping, turn red light off and resume session if it was paused
+    //qDebug() << sessionStage;
+    if(headsetConn){
+        qInfo("Headset connected");
+
+//        if(bluelightOn){
+        if (sessionStage != 0){
+            qInfo("Device stops beeping");
+            turnOffRedlight();
+            resumeSession();
+        } /*else {
+            turnOnBluelight();
+        }*/
+        turnOnBluelight();
+    }
+    // if it is now unconnected, device beeps, red light flashes, current session is paused
+    else{
+        qInfo("Headset NOT connected");
+        if (sessionStage != 0){
+//        if(bluelightOn){
+            qInfo("Device start beeping");
+            flashRedlight();
+            pauseSession();
+        } /*else {
+            turnOffBluelight();
+        }*/
+        turnOffBluelight();
+    }
 }
 
 bool Device::applyTherapy(){
@@ -231,12 +361,21 @@ bool Device::applyTherapy(){
     return true;    //if the treatment round was successful, not sure if there are  fail cases yet (maybe prelimitory safeety checking)
 }
 
+QDateTime* Device::getDate(){
+    return currDate;
+}
+
+bool Device::getPowerState(){
+    return powerState;
+}
+
 bool Device::isOngoing(){
     return ongoing;
 }
 
 int Device::getSessionStage(){
     return sessionStage;
+
 }
 
 bool Device::getHeadsetConn(){
@@ -245,7 +384,9 @@ bool Device::getHeadsetConn(){
 int Device::getBatteryLife(){
     return batteryLife;
 }
-
+bool Device::getPower(){
+    return powerState;
+}
 QVector<SessionLog*> Device::getLogs(){
     return logs;
 }

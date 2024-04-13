@@ -40,8 +40,10 @@ public:
     void setSessionNumber(int n) { sessionNumber = n; }
 
 private:
+
     QVector<QVector<int>> startBaselines;
     QVector<QVector<int>> endBaselines;
+
     QDateTime startDateTime;
     QDateTime endDateTime;
 

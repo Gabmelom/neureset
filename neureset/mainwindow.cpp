@@ -1,5 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "ui_mainwindow.h"
+
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -21,6 +24,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->uploadLogsButton, SIGNAL(pressed()), this, SLOT(uploadLogs()));
     connect(ui->pcLogList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(displayLogDetails(QListWidgetItem*)));
     connect(ui->pcBackButton, SIGNAL(pressed()), this, SLOT(pcBackButtonPressed()));
+    connect(ui->dateEdit, SIGNAL(editingFinished()), this, SLOT(changeDate()));
+    connect(ui->timeEdit,  SIGNAL(editingFinished()), this, SLOT(changeTime()));
+    connect(ui->tglHeadsetBtn, SIGNAL(pressed()), this, SLOT(toggleHeadset()));
+    connect(ui->batteryBtn, SIGNAL(pressed()), this, SLOT(changeBattery()));
+    connect(ui->uploadSession, SIGNAL(pressed()), this, SLOT(uploadSession()));
 }
 
 MainWindow::~MainWindow()
@@ -37,33 +45,44 @@ void MainWindow::init()
 
     device = new Device(ui->sessionProgressBar);
     pc = new PC();
+    //QTimer* timer = new QTimer(this);
+    //connect(timer, &QTimer::timeout,this, &MainWindow::updateGui);
+    //timer->start(1000);
 }
 
-void MainWindow::devicePageChanged(int index)
+void MainWindow::pageChanged(int index)
 {
     // Page indexes:
-    //  0 - Menu page
-    //  1 - New session page
-    //  2 - Session log page
-    //  3 - Time & date page
+    //  0 - off
+    //  1 - Menu page
+    //  2 - New session page
+    //  3- Session log page
+    //  4- Time & date page
     currentDeviceScreen = index;
-
     switch(currentDeviceScreen)
     {
         case 0:
-            currentDeviceList = ui->HomeMenuList;
-            currentDeviceList->setCurrentRow(0);
+                //qDebug("off");
             break;
         case 1:
+            currentList = ui->HomeMenuList;
+            currentList->setCurrentRow(0);
+            break;
+        case 2:
             qInfo("Start Session");
             device->startSession();
             break;
-        case 2:
-            currentDeviceList = ui->deviceLogList;
-            displayDeviceLogs();
-            currentDeviceList->setCurrentRow(0);
+
+        case 3:
+            currentList = ui->sessionLogList;
+            currentList->setCurrentRow(0);
             selectPressed();
             break;
+
+        case 4:
+            updateDate();
+            break;
+            //ui->screen->powerOffPage;
         default:
             currentDeviceList = nullptr;
     }
@@ -93,6 +112,15 @@ void MainWindow::pcPageChanged(int index)
 void MainWindow::powerPressed()
 {
     device->togglePower();
+    //qDebug () <<device->getPower();
+    if (device->getPower()){    //power  on
+        ui->Screen->setCurrentIndex(1);
+        pageChanged(1);
+    } else {
+        ui->Screen->setCurrentIndex(0);
+        pageChanged(0);
+    }
+
 }
 
 void MainWindow::homePressed()
@@ -117,14 +145,16 @@ void MainWindow::downPressed()
 
 void MainWindow::selectPressed()
 {
-    if(currentDeviceScreen == 0){ // Home page
+    if(!device->getPowerState()) return;
+    if(currentDeviceScreen == 1){ // Home page
 
         // Menu list options:
         //  0 - New session page
         //  1 - Session log page
         //  2 - Time & date page
-        int optionSelected = currentDeviceList->currentRow();
-        ui->DeviceScreen->setCurrentIndex(optionSelected+1);
+        int optionSelected = currentList->currentRow();
+        if(optionSelected == 0 && !device->getHeadsetConn()) return; // Device needs a headset connection to start a new session
+        ui->Screen->setCurrentIndex(optionSelected+2);
     }
     else if(currentDeviceScreen == 2){ // Session log page
         // TODO: upload session log?
@@ -133,7 +163,7 @@ void MainWindow::selectPressed()
 
 void MainWindow::playPausePressed()
 {
-    if(device->getSessionStage() != -1){
+    if(device->getSessionStage() != NO_STAGE && device->getPowerState()){
         if(device->isOngoing()){
             device->pauseSession();
         }
@@ -145,8 +175,42 @@ void MainWindow::playPausePressed()
 
 void MainWindow::stopPressed()
 {
-    device->stopSession();
+    if(device->getPowerState()) device->stopSession();
 }
+
+
+void MainWindow::changeDate(){
+    qInfo("changing the date");
+    //ui->dateEdit->setDate(device->getDate()->date());
+    device->getDate()->setDate(ui->dateEdit->date());
+    //qDebug() << device->getDate()->date();
+}
+
+void MainWindow::changeTime(){
+    qInfo("changing the time");
+    //ui->dateEdit->dateTimeChanged()
+    device->getDate()->setTime(ui->timeEdit->time());
+    //qDebug() << device->getDate()->time();
+}
+
+void MainWindow::updateDate(){
+   // qInfo("update the date/time");
+    ui->dateEdit->setDate(device->getDate()->date());
+    ui->timeEdit->setTime(device->getDate()->time());
+}
+
+void MainWindow::changeBattery()
+{
+    qDebug() << "ADMIN: replacing battery";
+    device->replaceBattery();
+}
+
+void MainWindow::toggleHeadset()
+{
+    qDebug() << "ADMIN: toggle heeadset";
+    device->toggleHeadsetConn();
+}
+
 
 void MainWindow::uploadLogs()
 {
@@ -219,4 +283,15 @@ void MainWindow::displayLogDetails(QListWidgetItem *item)
 void MainWindow::pcBackButtonPressed()
 {
     ui->pcScreen->setCurrentIndex(0); // Switch to log list page
+}
+
+
+void MainWindow::updateGui(){
+    if  (not device->getPower()){
+        ui->Screen->setCurrentIndex(0);
+        pageChanged(0);
+    }
+    device->getDate()->setTime(device->getDate()->time().addSecs(1));
+    updateDate();
+    ui->currBattery->setText(QString::number(device->getBatteryLife()));
 }
