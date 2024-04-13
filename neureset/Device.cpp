@@ -228,14 +228,12 @@ void Device::pauseTimeout(){
     // turn off lights
     sessionStage = NO_STAGE;
     turnOffGreenlight();
-    sessionNum--;
     turnOffBluelight();
     togglePower();
 }
 
 void Device::stopSession(){
     qInfo("Session Stopped");
-    sessionNum--;
     sessionStage = NO_STAGE;
     turnOffGreenlight();
     turnOffBluelight();

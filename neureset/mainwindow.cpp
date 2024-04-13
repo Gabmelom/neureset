@@ -26,9 +26,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pcBackButton, SIGNAL(pressed()), this, SLOT(pcBackButtonPressed()));
     connect(ui->dateEdit, SIGNAL(editingFinished()), this, SLOT(changeDate()));
     connect(ui->timeEdit,  SIGNAL(editingFinished()), this, SLOT(changeTime()));
-    connect(ui->tglHeadsetBtn, SIGNAL(pressed()), this, SLOT(toggleHeadset()));
-    connect(ui->batteryBtn, SIGNAL(pressed()), this, SLOT(changeBattery()));
-    connect(ui->uploadSession, SIGNAL(pressed()), this, SLOT(uploadSession()));
+    connect(ui->toggleHeadsetBtn, SIGNAL(pressed()), this, SLOT(toggleHeadset()));
+    connect(ui->replaceBatteryBtn, SIGNAL(pressed()), this, SLOT(changeBattery()));
 }
 
 MainWindow::~MainWindow()
@@ -43,14 +42,14 @@ void MainWindow::init()
     currentDeviceList = ui->HomeMenuList;
     currentDeviceList->setCurrentRow(0);
 
-    device = new Device(ui->sessionProgressBar);
+    device = new Device(ui->sessionProgressBar, ui->redlight, ui->bluelight, ui->greenlight);
     pc = new PC();
-    //QTimer* timer = new QTimer(this);
-    //connect(timer, &QTimer::timeout,this, &MainWindow::updateGui);
-    //timer->start(1000);
+    QTimer* timer = new QTimer(this);
+    connect(timer, &QTimer::timeout,this, &MainWindow::updateGui);
+    timer->start(1000);
 }
 
-void MainWindow::pageChanged(int index)
+void MainWindow::devicePageChanged(int index)
 {
     // Page indexes:
     //  0 - off
@@ -65,8 +64,8 @@ void MainWindow::pageChanged(int index)
                 //qDebug("off");
             break;
         case 1:
-            currentList = ui->HomeMenuList;
-            currentList->setCurrentRow(0);
+            currentDeviceList = ui->HomeMenuList;
+            currentDeviceList->setCurrentRow(0);
             break;
         case 2:
             qInfo("Start Session");
@@ -74,8 +73,8 @@ void MainWindow::pageChanged(int index)
             break;
 
         case 3:
-            currentList = ui->sessionLogList;
-            currentList->setCurrentRow(0);
+            currentDeviceList = ui->deviceLogList;
+            currentDeviceList->setCurrentRow(0);
             selectPressed();
             break;
 
@@ -114,11 +113,11 @@ void MainWindow::powerPressed()
     device->togglePower();
     //qDebug () <<device->getPower();
     if (device->getPower()){    //power  on
-        ui->Screen->setCurrentIndex(1);
-        pageChanged(1);
+        ui->DeviceScreen->setCurrentIndex(1);
+        devicePageChanged(1);
     } else {
-        ui->Screen->setCurrentIndex(0);
-        pageChanged(0);
+        ui->DeviceScreen->setCurrentIndex(0);
+        devicePageChanged(0);
     }
 
 }
@@ -152,9 +151,9 @@ void MainWindow::selectPressed()
         //  0 - New session page
         //  1 - Session log page
         //  2 - Time & date page
-        int optionSelected = currentList->currentRow();
+        int optionSelected = currentDeviceList->currentRow();
         if(optionSelected == 0 && !device->getHeadsetConn()) return; // Device needs a headset connection to start a new session
-        ui->Screen->setCurrentIndex(optionSelected+2);
+        ui->DeviceScreen->setCurrentIndex(optionSelected+2);
     }
     else if(currentDeviceScreen == 2){ // Session log page
         // TODO: upload session log?
@@ -288,8 +287,8 @@ void MainWindow::pcBackButtonPressed()
 
 void MainWindow::updateGui(){
     if  (not device->getPower()){
-        ui->Screen->setCurrentIndex(0);
-        pageChanged(0);
+        ui->DeviceScreen->setCurrentIndex(0);
+        devicePageChanged(0);
     }
     device->getDate()->setTime(device->getDate()->time().addSecs(1));
     updateDate();
