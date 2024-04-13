@@ -8,10 +8,8 @@
 
 
 
-Device::Device(QListWidget* list, QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g) :
-    list(list), progress(progress), redlight(r), bluelight(b), greenlight(g){
+Device::Device(QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g) : progress(progress), redlight(r), bluelight(b), greenlight(g){
     headset = new Headset(7,this);
-    pc = new PC();   //immplement after that  class has been maade
     currDate = new QDateTime(QDateTime::currentDateTime());
     batteryLife = 100; //stored as an int, should be a flloat once exact calculations are written
     powerState = 0;
@@ -27,6 +25,10 @@ Device::Device(QListWidget* list, QProgressBar* progress,QLabel *r, QLabel *b, Q
 Device::~Device(){
     delete headset;
     delete currDate;
+    // Clear logs
+    for (int i = 0; i < logs.length(); i++){
+        delete logs[i];
+    }
 }
 
 //admin functions that simmulate  hardware managament
@@ -41,27 +43,25 @@ void Device::replaceBattery(){
 
 }
 
+// Follows sequence diagram for the main use case
 void Device::startSession(){
+    if(!powerState){
+        qInfo("Device is off");
+        return;
+    }
     if(headsetConn){
         if (sessionStage != 0){
             resumeSession();
             return;
         }
-        sessionNum++;
-        offset = 5;
-        rounds = 0;
-        sessionStage = START_SESSION;
         turnOnBluelight();
         ongoing = true;
 
         qDebug("Session started");
         //follows ssequeence ddiagram for the main use case
 
-        //stores all important info over the entire session
-        //SessionLog *sessLog = new SessionLog();
-        currSession = new SessionLog();
-        currSession->setStartDateTime(currDate->toString());
-
+        currSession = new SessionLog(logs.length() + 1);
+        currSession->startSession();
 
         progress->setValue(15);
 
@@ -178,13 +178,10 @@ void Device::readEndBaseline(){
 
         qDebug() << "treatment has been performed. Start baseline: " << startBaseFreq <<" end baseline  " << endBaseFreq;
 
-        currSession->setEndDateTime(currDate->toString());
-
-
+        currSession->endSession();
         currSession->consoleOut();
         logs.push_back(currSession);
 
-        list->addItem(QString("Session %1       Date: %2").arg(sessionNum).arg(currDate->toString()));
         ongoing = false;
         //turnOffBluelight();
         progress->setValue(100);
@@ -212,7 +209,6 @@ void Device::resumeSession(){
         case NO_STAGE:
             break;
         case START_SESSION:
-            sessionNum--;
             startSession();
             break;
         case READ_START_BASELINE:
@@ -238,14 +234,12 @@ void Device::pauseTimeout(){
     // turn off lights
     sessionStage = NO_STAGE;
     turnOffGreenlight();
-    sessionNum--;
     turnOffBluelight();
     togglePower();
 }
 
 void Device::stopSession(){
     qInfo("Session Stopped");
-    sessionNum--;
     sessionStage = NO_STAGE;
     turnOffGreenlight();
     turnOffBluelight();
@@ -311,6 +305,7 @@ QVector<int> Device::readBaseline(){
     //maybe add them  to the log here, probably should be done in the maain process loop
     return baseline;
 }
+
 
 void Device::togglePower(){
     turnOffBluelight();
@@ -413,14 +408,10 @@ float Device::calcDomFreq(QVector<QVector<int>> baseFreqs){
     return (top / bot);
 }
 
-void Device::uploadSessionLog(int selected)
-{
-    SessionLog *log = logs[selected];
-    pc->uploadLog(log);
-}
-
-int readEEG(int site){
-    return site;
+void Device::uploadLogs(PC *pc){
+    for (int i = 0; i < logs.length(); i++){
+        pc->uploadLog(logs[i]);
+    }
 }
 
 int readBaselineSig(){

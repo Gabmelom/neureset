@@ -33,23 +33,33 @@ private slots:
     void selectPressed();
     void playPausePressed();
     void stopPressed();
-    void pageChanged(int index);
     void updateDate();
     void changeDate();
     void changeTime();
-
     void changeBattery();
     void toggleHeadset();
-    void uploadSession();
     void updateGui();
+    void devicePageChanged(int index);
+    void pcPageChanged(int index);
+    void displayLogDetails(QListWidgetItem*);
+    void uploadLogs();
+    void pcBackButtonPressed();
 
 
 private:
     Ui::MainWindow *ui;
     Device *device;
+    PC *pc;
     void init();
-    int currentScreen;
-    QListWidget* currentList;
+
+    int currentDeviceScreen;
+    QListWidget* currentDeviceList;
+
+    int currentPCScreen;
+    QListWidget* currentPCList;
+
+    void displayDeviceLogs();
+    void displayPCLogs();
 
 };
 #endif // MAINWINDOW_H

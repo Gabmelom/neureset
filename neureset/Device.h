@@ -31,8 +31,7 @@ class Device : public QObject
 {
     Q_OBJECT
 public:
-    Device(QListWidget *list, QProgressBar *progress,
-           QLabel *redlight, QLabel *bluelight, QLabel *greenlight);
+    Device(QProgressBar *progress, QLabel *redlight, QLabel *bluelight, QLabel *greenlight);
     ~Device();
 
     void replaceBattery();
@@ -60,11 +59,10 @@ public:
     void togglePower();
     bool isOngoing();
     int getSessionStage();
-    void uploadSessionLog(int selected);
+    void uploadLogs(PC *pc);
 
 
 private:
-    int sessionNum;
     int sessionStage;
     bool ongoing;
     bool headsetConn;
@@ -83,10 +81,8 @@ private:
     QDateTime *currDate;
     QTimer sessionTimer;
     Headset *headset;
-    PC *pc;
 
-    QListWidget *list;
-    QProgressBar *progress;
+    QProgressBar *progress; // TODO: Decouple ui from class
     SessionLog *currSession;    //the current treatment session, stored in the object so it can be accessed outside the startSession function
     QVector<SessionLog*> logs;
     QLabel* redlight;
@@ -103,12 +99,7 @@ private:
     void turnOffGreenlight();
     void turnOnGreenlight();
 
-
-//public slots:
-//    QVector<int> readBaseline();
-
 signals:
-    int readEEG(int site);
     void updateProgressBar(int percentage);
     int readBaselineSig();
 
