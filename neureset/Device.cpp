@@ -24,6 +24,7 @@ Device::Device(QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g) : progres
 
 Device::~Device(){
     delete headset;
+    delete currDate;
 }
 
 //admin functions that simmulate  hardware managament
