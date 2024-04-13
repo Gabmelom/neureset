@@ -59,7 +59,6 @@ public:
     void togglePower();
     bool isOngoing();
     int getSessionStage();
-    void uploadSessionLog(PC *pc, int selected);
     void uploadLogs(PC *pc);
 
 

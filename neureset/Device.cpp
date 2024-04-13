@@ -25,6 +25,10 @@ Device::Device(QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g) : progres
 Device::~Device(){
     delete headset;
     delete currDate;
+    // Clear logs
+    for (int i = 0; i < logs.length(); i++){
+        delete logs[i];
+    }
 }
 
 //admin functions that simmulate  hardware managament
@@ -39,7 +43,7 @@ void Device::replaceBattery(){
 
 }
 
-// Follows sequence ddiagram for the main use case
+// Follows sequence diagram for the main use case
 void Device::startSession(){
     if(!powerState){
         qInfo("Device is off");
@@ -403,13 +407,6 @@ float Device::calcDomFreq(QVector<QVector<int>> baseFreqs){
     int bot = baseFreqs[0][1] + baseFreqs[1][1] + baseFreqs[2][1]  + baseFreqs[3][1];
     return (top / bot);
 }
-
-void Device::uploadSessionLog(PC *pc, int selected)
-{
-    SessionLog *log = logs[selected];
-    pc->uploadLog(log);
-}
-
 
 void Device::uploadLogs(PC *pc){
     for (int i = 0; i < logs.length(); i++){
