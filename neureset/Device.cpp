@@ -10,6 +10,7 @@
 
 Device::Device(QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g) : progress(progress), redlight(r), bluelight(b), greenlight(g){
     headset = new Headset(7,this);
+    currDate = new QDateTime(QDateTime::currentDateTime());
     batteryLife = 100; //stored as an int, should be a flloat once exact calculations are written
     powerState = 0;
     headsetConn = 0;
