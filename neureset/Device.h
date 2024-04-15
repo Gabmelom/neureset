@@ -72,6 +72,7 @@ private:
     bool greenlightOn;
     int batteryLife;
     bool powerState;
+    int sessionsDone;
 
     int offset;
     int rounds;

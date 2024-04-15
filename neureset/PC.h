@@ -21,6 +21,8 @@ public:
     // Setters
 
 private:
+    bool checkLogExist(SessionLog *log);
+
     QVector<SessionLog*> logs;
     SessionLog* selectedLog;
 };

@@ -28,6 +28,21 @@ void PC::uploadLog(SessionLog *log)
     //     qInfo() << row;
     // }
 
-    logs.push_back(log);
+    if (!checkLogExist(log))
+    {
+        logs.push_back(log);
+    }
 }
 
+bool PC::checkLogExist(SessionLog *log)
+{
+    for (int i = 0; i < logs.size(); i++)
+    {
+        if (log->getSessionNumber() == logs[i]->getSessionNumber())
+        {
+            return true;
+        }
+    }
+
+    return false;
+}

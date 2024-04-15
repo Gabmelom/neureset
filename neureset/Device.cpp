@@ -19,6 +19,7 @@ Device::Device(QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g) : progres
     turnOffRedlight();
     turnOffGreenlight();
     rounds = 0;
+    sessionsDone = 0;
       
     connect(&pauseTimer, &QTimer::timeout, this, &Device::pauseTimeout);
 }
@@ -167,6 +168,8 @@ void Device::treatmentPart2(){
 
 void Device::readEndBaseline(){
     if(ongoing && powerState){
+        sessionsDone++;
+
         sessionStage = READ_END_BASELINE;
         QVector<QVector<int>> endBaseline = headset->getDomFreq();
 
@@ -181,6 +184,7 @@ void Device::readEndBaseline(){
 
         currSession->endSession();
         currSession->consoleOut();
+        currSession->setSessionNumber(sessionsDone);
         logs.push_back(currSession);
 
         ongoing = false;
