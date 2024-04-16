@@ -31,7 +31,7 @@ class Device : public QObject
 {
     Q_OBJECT
 public:
-    Device(QProgressBar *progress, QLabel *redlight, QLabel *bluelight, QLabel *greenlight);
+    Device(QProgressBar *progress, QLabel *redlight, QLabel *bluelight, QLabel *greenlight, QProgressBar *battery);
     ~Device();
 
     void replaceBattery();
@@ -62,6 +62,7 @@ public:
     void uploadLogs(PC *pc);
 
     void connToPC();
+    void checkBatteryLevel();
 
 
 private:
@@ -86,6 +87,7 @@ private:
     Headset *headset;
 
     QProgressBar *progress; // TODO: Decouple ui from class
+    QProgressBar *batteryBar;
     SessionLog *currSession;    //the current treatment session, stored in the object so it can be accessed outside the startSession function
     QVector<SessionLog*> logs;
     QLabel* redlight;

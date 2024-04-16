@@ -42,7 +42,7 @@ void MainWindow::init()
     currentDeviceList = ui->HomeMenuList;
     currentDeviceList->setCurrentRow(0);
 
-    device = new Device(ui->sessionProgressBar, ui->redlight, ui->bluelight, ui->greenlight);
+    device = new Device(ui->sessionProgressBar, ui->redlight, ui->bluelight, ui->greenlight, ui->batteryBar);
     pc = new PC();
     // CRASHES AFTER MERGE CONFLICT
     // QTimer* timer = new QTimer(this);
@@ -293,7 +293,7 @@ void MainWindow::updateGui(){
     }
     device->getDate()->setTime(device->getDate()->time().addSecs(1));
     updateDate();
-    ui->currBattery->setText(QString::number(device->getBatteryLife()));
+    //ui->currBattery->setText(QString::number(device->getBatteryLife()));
 }
 
 void MainWindow::connToPC()
