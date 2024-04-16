@@ -45,6 +45,7 @@ void Device::replaceBattery(){
     } else {
         batteryLife = 100;
         batteryBar->setValue(batteryLife);
+        checkBatteryLevel();
         pauseTimer.stop();
     }
 
@@ -122,10 +123,12 @@ void Device::treatment(){
             qDebug() << "batttery life: " << batteryLife;
             if (batteryLife < 9) {     //19 is for quick testing, something liike 9 gives realistic test results for middle of sessionn. 10 could be used ofr start
                 qDebug()<<"Not enough power to continue";
+                checkBatteryLevel();
                 pauseSession();
                 return;
             } else if (batteryLife <= 20) {
                 qInfo()<<"battery low: "<<batteryLife<<", please pause and replace";
+                checkBatteryLevel();
                 //trigger light or different image on UI
             }
 //            else if (batteryLife < 10){
@@ -163,7 +166,7 @@ void Device::treatmentPart2(){
         }
         batteryLife -= 9;
         batteryBar->setValue(batteryLife);
-
+        checkBatteryLevel();
         rounds++;
 
         //update window: round i of r complete  (show as percent)
@@ -451,4 +454,20 @@ void Device::connToPC()
         qInfo("PC is disconnected");
     }
 
+}
+
+void Device::checkBatteryLevel()
+{
+    if(batteryLife > 20)
+    {
+        batteryBar->setStyleSheet("selection-background-color: rgb(38, 162, 105);");
+    }
+    else if (batteryLife <= 20 && batteryLife > 10)
+    {
+        batteryBar->setStyleSheet("selection-background-color: rgb(229, 165, 10);");
+    }
+    else
+    {
+        batteryBar->setStyleSheet("selection-background-color: rgb(192, 28, 40);");
+    }
 }

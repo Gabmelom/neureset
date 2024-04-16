@@ -533,10 +533,7 @@
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">bar.setStyleSheet(&quot;QProgressBar::chunk &quot;
-                  &quot;{&quot;
-                    &quot;background-color: yellow;&quot;
-                  &quot;}&quot;)</string>
+      <string notr="true">selection-background-color: rgb(38, 162, 105);</string>
      </property>
      <property name="value">
       <number>24</number>

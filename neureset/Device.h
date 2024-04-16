@@ -62,6 +62,7 @@ public:
     void uploadLogs(PC *pc);
 
     void connToPC();
+    void checkBatteryLevel();
 
 
 private:
