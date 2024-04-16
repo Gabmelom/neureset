@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->timeEdit,  SIGNAL(editingFinished()), this, SLOT(changeTime()));
     connect(ui->toggleHeadsetBtn, SIGNAL(pressed()), this, SLOT(toggleHeadset()));
     connect(ui->replaceBatteryBtn, SIGNAL(pressed()), this, SLOT(changeBattery()));
+    connect(ui->pcConnButton, SIGNAL(pressed()), this, SLOT(connToPC()));
 }
 
 MainWindow::~MainWindow()
@@ -285,7 +286,6 @@ void MainWindow::pcBackButtonPressed()
     ui->pcScreen->setCurrentIndex(0); // Switch to log list page
 }
 
-
 void MainWindow::updateGui(){
     if  (!device->getPower()){
         ui->DeviceScreen->setCurrentIndex(0);
@@ -294,4 +294,9 @@ void MainWindow::updateGui(){
     device->getDate()->setTime(device->getDate()->time().addSecs(1));
     updateDate();
     ui->currBattery->setText(QString::number(device->getBatteryLife()));
+}
+
+void MainWindow::connToPC()
+{
+    device->connToPC();
 }

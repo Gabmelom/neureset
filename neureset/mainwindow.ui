@@ -552,6 +552,19 @@
       <string>TextLabel</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="pcConnButton">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>570</y>
+       <width>121</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>pc connection</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QFrame" name="pcFrame">
     <property name="geometry">

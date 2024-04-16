@@ -20,6 +20,8 @@ Device::Device(QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g) : progres
     turnOffGreenlight();
     rounds = 0;
     sessionsDone = 0;
+    offset = 5;
+    pcConn = false;
       
     connect(&pauseTimer, &QTimer::timeout, this, &Device::pauseTimeout);
 }
@@ -41,6 +43,7 @@ void Device::replaceBattery(){
         qInfo("turrn off the device  before changing the battery");
     } else {
         batteryLife = 100;
+        pauseTimer.stop();
     }
 
 }
@@ -318,6 +321,7 @@ void Device::togglePower(){
     turnOffBluelight();
     turnOffRedlight();
     turnOffGreenlight();
+    pcConn = false;
     powerState = !powerState;
     if(!powerState) qInfo("Turn off device");
     else {
@@ -416,11 +420,32 @@ float Device::calcDomFreq(QVector<QVector<int>> baseFreqs){
 }
 
 void Device::uploadLogs(PC *pc){
-    for (int i = 0; i < logs.length(); i++){
-        pc->uploadLog(logs[i]);
+    if (pcConn)
+    {
+        for (int i = 0; i < logs.length(); i++){
+            pc->uploadLog(logs[i]);
+        }
+    }
+    else
+    {
+        qInfo("Please connection to PC");
     }
 }
 
 int readBaselineSig(){
     return 0;
+}
+
+void Device::connToPC()
+{
+    pcConn = !pcConn;
+    if (pcConn)
+    {
+        qInfo("PC is now connected");
+    }
+    else
+    {
+        qInfo("PC is disconnected");
+    }
+
 }
