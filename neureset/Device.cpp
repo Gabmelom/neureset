@@ -8,10 +8,11 @@
 
 
 
-Device::Device(QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g) : progress(progress), redlight(r), bluelight(b), greenlight(g){
+Device::Device(QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g, QProgressBar* batteryBar) : progress(progress), redlight(r), bluelight(b), greenlight(g), batteryBar(batteryBar){
     headset = new Headset(7,this);
     currDate = new QDateTime(QDateTime::currentDateTime());
     batteryLife = 100; //stored as an int, should be a flloat once exact calculations are written
+    batteryBar->setValue(100);
     powerState = 0;
     headsetConn = 0;
     sessionStage = NO_STAGE;
@@ -43,6 +44,7 @@ void Device::replaceBattery(){
         qInfo("turrn off the device  before changing the battery");
     } else {
         batteryLife = 100;
+        batteryBar->setValue(batteryLife);
         pauseTimer.stop();
     }
 
@@ -160,6 +162,7 @@ void Device::treatmentPart2(){
             return;
         }
         batteryLife -= 9;
+        batteryBar->setValue(batteryLife);
 
         rounds++;
 
