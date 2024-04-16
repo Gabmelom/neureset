@@ -44,6 +44,7 @@ private slots:
     void displayLogDetails(QListWidgetItem*);
     void uploadLogs();
     void pcBackButtonPressed();
+    void connToPC();
 
 
 private:

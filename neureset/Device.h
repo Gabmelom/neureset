@@ -61,6 +61,8 @@ public:
     int getSessionStage();
     void uploadLogs(PC *pc);
 
+    void connToPC();
+
 
 private:
     int sessionStage;
