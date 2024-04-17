@@ -15,25 +15,31 @@ public:
     explicit Headset(int nodes, QObject *parent = nullptr);
 
 //    void applyTreatment(int site, int baseline);
-    void applyTreatment(int freq);
+    void applyTreatment(float freq);
 //    int readEEGBaseline(int site);
-    QVector<int> readBase();
+    QVector<float> readBase();
     void readBaselineSlot();
-    QVector<QVector<int>> getDomFreq();
+    QVector<QVector<float>> getDomFreq();
 
-
+    QVector<QVector<QVector<float>>> readAllFreqs();    //this wouldn't be used in DFC, but would be useful ffor wave form creation
 
 //public slots:
 //    void readBaselineSlot();
 
 private:
     int numNodes;
-    QVector<int> readBaseAlpha();   //probablyy just the freq amp overall, not for each node
-    QVector<int> readBaseBeta();
-    QVector<int> readBaseDelta();
-    QVector<int> readBaseTheta();
+    QVector<float> readBaseAlpha();   //probablyy just the freq amp overall, not for each node
+    QVector<float> readBaseBeta();
+    QVector<float> readBaseDelta();
+    QVector<float> readBaseTheta();
+    //return a list  of length NODES of  frequency amplitude readings
+    QVector<QVector<float>> readBaseAlphaAll();
+    QVector<QVector<float>> readBaseBetaAll();
+    QVector<QVector<float>> readBaseDeltaAll();
+    QVector<QVector<float>> readBaseThetaAll();
 
     int currentNodeIndex;
+    float elapsedTime;
     int treatmentFreq;
 
 private slots:

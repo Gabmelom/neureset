@@ -6,7 +6,7 @@
 #include "QVector"
 #include "QThread"
 
-
+#include "cmath"
 
 Device::Device(QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g, QProgressBar* batteryBar) : progress(progress), redlight(r), bluelight(b), greenlight(g), batteryBar(batteryBar){
     headset = new Headset(7,this);
@@ -73,15 +73,17 @@ void Device::startSession(){
 
         progress->setValue(15);
 
-        QTimer::singleShot(1000, this, &Device::readStartBaseline);
+        //QTimer::singleShot(1000, this, &Device::readStartBaseline);
+        qInfo("calculating baseline");
+        QTimer::singleShot(5000, this, &Device::readTreatmentBaseline);
     }
     else qInfo("Cannot start session without headset connection");
 }
 
-void Device::readStartBaseline(){
+void Device::readStartBaseline(){   //this isn't necessary, the starting baseline should be usedin the treatments rather than calculating it twice
     if(ongoing && powerState){
         sessionStage = READ_START_BASELINE;
-        QVector<QVector<int>> startBaseline = headset->getDomFreq();
+        QVector<QVector<float>> startBaseline = headset->getDomFreq();
         startBaseFreq = calcDomFreq(startBaseline);
         currSession->addStartBaselines(startBaseline);
         currSession->setStartDomFreq(startBaseFreq);
@@ -102,20 +104,29 @@ void Device::readStartBaseline(){
 void Device::readTreatmentBaseline(){
     if(ongoing && powerState){
         sessionStage = READ_TREATMENT_BASELINE;
-        domFreq = calcDomFreq(headset->getDomFreq());
+        QVector<QVector<float>> baseline = headset->getDomFreq();
+        domFreq = calcDomFreq(baseline);
+        if (startBaseFreq == 0){
+            currSession->addStartBaselines(baseline);
+            currSession->setStartDomFreq(domFreq);
+        }
+        //domFreq = calcDomFreq(headset->getDomFreq());
+
         qDebug()<<"dom freq for treatment:"<<domFreq;
 
-        QTimer::singleShot(1000, this, &Device::treatment);
+        QTimer::singleShot(5000, this, &Device::treatment); //waits 5 seconds
     }
 }
 
-void Device::treatment(){
+void Device::treatment(){   //between rounds
     if(ongoing && powerState){
         turnOffGreenlight();
         sessionStage = TREATMENT;
         if (rounds >= ROUNDS)
         {
-            readEndBaseline();
+            qInfo("calculating baseline");
+            QTimer::singleShot(5000, this, &Device::readEndBaseline);
+
         }
         else
         {
@@ -138,24 +149,25 @@ void Device::treatment(){
 //            }
             currSession->setRound(1 + rounds);
 
-            QVector<QVector<int>> freqs = headset->getDomFreq();
+            //QVector<QVector<float>> freqs = headset->getDomFreq();
             //domFreq = calcDomFreq(freqs); //This might or might not be recalculated
             //currSession->pushTreatmentFreqs(freqs); //not sure if this one is necessary, but it is the freequency of each wave at the start of each treatment round
             //over 1 second, apply the domFreq+offset every 1/16 seconds on each node
 
             progress->setValue(40 + (rounds * 14));
 
+
             QTimer::singleShot(1000, this, &Device::treatmentPart2);
         }
     }
 }
 
-void Device::treatmentPart2(){
+void Device::treatmentPart2(){  //round bit
     if(ongoing && powerState){
         sessionStage = TREATMENT_PART_2;
 
         turnOnGreenlight();
-        headset->applyTreatment(domFreq + offset);
+        applyTherapy(domFreq + offset);
         currSession->pushOffset(domFreq + offset);
 
         offset+=5;
@@ -170,8 +182,8 @@ void Device::treatmentPart2(){
         rounds++;
 
         //update window: round i of r complete  (show as percent)
-
-        QTimer::singleShot((7 *150), this, &Device::treatment);
+        QTimer::singleShot((62*20), this, &Device::treatment);
+        //QTimer::singleShot((7 *150), this, &Device::treatment);   //old code
     }
 }
 
@@ -180,7 +192,7 @@ void Device::readEndBaseline(){
         sessionsDone++;
 
         sessionStage = READ_END_BASELINE;
-        QVector<QVector<int>> endBaseline = headset->getDomFreq();
+        QVector<QVector<float>> endBaseline = headset->getDomFreq();
 
         float endBaseFreq = calcDomFreq(endBaseline);
 
@@ -212,7 +224,7 @@ void Device::pauseSession(){
     qInfo("Session Paused");
     turnOffGreenlight();
     ongoing = false;
-    pauseTimer.start(15000);
+    pauseTimer.start(15000);    //15000 for testing (15 secoonds), should be 300000
 }
 
 void Device::resumeSession(){
@@ -236,7 +248,7 @@ void Device::resumeSession(){
         case TREATMENT:
             treatment();
             break;
-        case TREATMENT_PART_2:
+        case TREATMENT_PART_2:  //thse should return to the baseline reading, since a new baseline should be calculated after pausing (brain state has  changed)
             treatmentPart2();
             break;
         case READ_END_BASELINE:
@@ -306,21 +318,21 @@ void Device::flashRedlight(){
     }
 }
 
-QVector<int> Device::readBaseline(){
-    //function for the complicated baseline, to be implemented if it seeems necessary (still looking through Q/A for details)
-    QVector<float>  avg;
-    avg.fill(0,21);
-//    QThread *thread = new QThread();
+//QVector<int> Device::readBaseline(){
+//    //function for the complicated baseline, to be implemented if it seeems necessary (still looking through Q/A for details)
+//    QVector<float> avg;
 
-//    QTimer *timer = new QTimer();
+////    QThread *thread = new QThread();
 
-    QVector<int> baseline = headset->readBase();
+////    QTimer *timer = new QTimer();
+
+//    QVector<float> baseline = headset->readBase();
 
 
-    //process numbers
-    //maybe add them  to the log here, probably should be done in the maain process loop
-    return baseline;
-}
+//    //process numbers
+//    //maybe add them  to the log here, probably should be done in the maain process loop
+//    return baseline;
+//}
 
 
 void Device::togglePower(){
@@ -372,14 +384,9 @@ void Device::toggleHeadsetConn(){
     }
 }
 
-bool Device::applyTherapy(){
-    //might not be necessary since the device can call the headset functionn, this should be used if extra steps are necessary
-    //over all sites
-    //caall the headset to get the baselines
-    //use the baselines to get the incremented freq
-    //repeat over x intervals
-    //end of roound stuff (if it exists)
-    return true;    //if the treatment round was successful, not sure if there are  fail cases yet (maybe prelimitory safeety checking)
+void Device::applyTherapy(float freq){
+        headset->applyTreatment(freq);
+
 }
 
 QDateTime* Device::getDate(){
@@ -415,13 +422,24 @@ SessionLog* Device::getCurrSession(){
     return currSession;
 }
 
-float Device::calcDomFreq(QVector<QVector<int>> baseFreqs){
+float Device::calcDomFreq(QVector<QVector<int>> baseFreqs){ //remove this once the branch is done
     //baseFreqs is a nested vector of freq,amp for the 4 wave  lengths being read
     //caalculates the dominent frequency from the output of headset->getDomFreq
     //equation from the test doc
     qDebug("calculating the dominant frequency");
     int top = (baseFreqs[0][0] * (baseFreqs[0][1] * baseFreqs[0][1]) + baseFreqs[1][0] * (baseFreqs[1][1] * baseFreqs[1][1]) + baseFreqs[2][0] * (baseFreqs[2][1] * baseFreqs[2][1]) + baseFreqs[3][0] * (baseFreqs[3][1] * baseFreqs[3][1]));
     int bot = baseFreqs[0][1] + baseFreqs[1][1] + baseFreqs[2][1]  + baseFreqs[3][1];
+    return (top / bot);
+}
+
+float Device::calcDomFreq(QVector<QVector<float>> baseFreqs){
+    //baseFreqs is a nested vector of freq,amp for the 4 wave  lengths being read
+    //caalculates the dominent frequency from the output of headset->getDomFreq
+    //equation from the test doc
+    qDebug("calculating the dominant frequency");
+    float top = (baseFreqs[0][0] * pow(baseFreqs[0][1],2)) + (baseFreqs[1][0] * pow(baseFreqs[1][1],2)) + (baseFreqs[2][0] * pow(baseFreqs[2][1],2)) + (baseFreqs[3][0] * (baseFreqs[3][1] * baseFreqs[3][1]));
+    float bot = pow(baseFreqs[0][1],2) + pow(baseFreqs[1][1],2) + pow(baseFreqs[2][1],2)  + pow(baseFreqs[3][1],2);
+    qDebug()<<"dom freq: " << (top/bot);
     return (top / bot);
 }
 

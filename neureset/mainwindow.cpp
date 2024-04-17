@@ -154,7 +154,7 @@ void MainWindow::selectPressed()
         //  1 - Session log page
         //  2 - Time & date page
         int optionSelected = currentDeviceList->currentRow();
-        if(optionSelected == 0 && !device->getHeadsetConn()) return; // Device needs a headset connection to start a new session
+        if(optionSelected == 0 && !device->getHeadsetConn()) return; // Device needs a headset connection to start a new session (device should check for this instead?)
         ui->DeviceScreen->setCurrentIndex(optionSelected+2);
     }
     else if(currentDeviceScreen == 2){ // Session log page

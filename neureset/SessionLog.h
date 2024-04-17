@@ -13,11 +13,11 @@ public:
     SessionLog(int sn);
     ~SessionLog();
 
-    void addStartBaselines(QVector<QVector<int>> baseline);
-    void addEndBaselines(QVector<QVector<int>> baseline);
+    void addStartBaselines(QVector<QVector<float>> baseline);
+    void addEndBaselines(QVector<QVector<float>> baseline);
 
     void consoleOut();
-    void pushTreatmentFreqs(QVector<QVector<int>>);
+    void pushTreatmentFreqs(QVector<QVector<float>>);
     void pushOffset(float);
 
     void startSession();
@@ -25,8 +25,8 @@ public:
     
 
     // Getters
-    QVector<QVector<int>> getStartBaseline() const { return startBaselines; }
-    QVector<QVector<int>> getEndBaseline() const { return endBaselines; }
+    QVector<QVector<float>> getStartBaseline() const { return startBaselines; }
+    QVector<QVector<float>> getEndBaseline() const { return endBaselines; }
     QDateTime getStartDateTime() const { return startDateTime; }
     QDateTime getEndDateTime() const { return endDateTime; }
     int getSessionNumber() const { return sessionNumber; }
@@ -40,9 +40,8 @@ public:
     void setSessionNumber(int n) { sessionNumber = n; }
 
 private:
-
-    QVector<QVector<int>> startBaselines;
-    QVector<QVector<int>> endBaselines;
+    QVector<QVector<float>> startBaselines;
+    QVector<QVector<float>> endBaselines;
 
     QDateTime startDateTime;
     QDateTime endDateTime;
@@ -51,7 +50,7 @@ private:
     int sessionNumber;
     float startDomFreq;
     float endDomFreq;
-    QVector<QVector<QVector<int>>> treatmentFreqs;  //collection of frequencies throughout the treatments
+    QVector<QVector<QVector<float>>> treatmentFreqs;  //collection of frequencies throughout the treatments
     QVector<float> offsetFreqs;
 
 };

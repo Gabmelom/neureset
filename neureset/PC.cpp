@@ -14,8 +14,8 @@ PC::~PC()
 
 void PC::uploadLog(SessionLog *log)
 {
-    QVector<QVector<int>> startBaseline = log->getStartBaseline();
-    QVector<QVector<int>> endBaseline = log->getEndBaseline();
+    QVector<QVector<float>> startBaseline = log->getStartBaseline();
+    QVector<QVector<float>> endBaseline = log->getEndBaseline();
 
     
     // qInfo() << "Start baseline data:";

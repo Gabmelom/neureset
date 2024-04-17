@@ -22,13 +22,13 @@ void SessionLog::endSession()
     qInfo()<<"Session "<<sessionNumber<<" ended";
 }
 
-void SessionLog::addStartBaselines(QVector<QVector<int>> baseline)
+void SessionLog::addStartBaselines(QVector<QVector<float>> baseline)
 {
     startBaselines = baseline;
     qInfo()<<"store start baseline";
 }
 
-void SessionLog::addEndBaselines(QVector<QVector<int>> baseline)
+void SessionLog::addEndBaselines(QVector<QVector<float>> baseline)
 {
     endBaselines = baseline;
     qInfo()<<"store end baseline";
@@ -48,7 +48,7 @@ void SessionLog::consoleOut(){
 
 }
 
-void SessionLog::pushTreatmentFreqs(QVector<QVector<int>> freqs){    //4 pairs of freq amp for each wavelength
+void SessionLog::pushTreatmentFreqs(QVector<QVector<float>> freqs){    //4 pairs of freq amp for each wavelength
     treatmentFreqs.push_back(freqs);
 }
 void SessionLog::pushOffset(float freq){

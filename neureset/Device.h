@@ -20,7 +20,7 @@ class Headset;
 enum E_SESSION_STAGE{
     NO_STAGE,
     START_SESSION,
-    READ_START_BASELINE,
+    READ_START_BASELINE,    //redundent since it''s included in read trreatment baseline
     TREATMENT,
     READ_TREATMENT_BASELINE,
     TREATMENT_PART_2,
@@ -41,7 +41,6 @@ public:
     void resumeSession();
     void stopSession();
     QVector<int> readBaseline();    //test version before thread stuff is implemented
-    bool applyTherapy();
 
 
     QDateTime* getDate();
@@ -98,6 +97,7 @@ private:
     QTimer pauseTimer;
 
     float calcDomFreq(QVector<QVector<int>>);
+    float calcDomFreq(QVector<QVector<float>>); //floaats for better "accuracy"
     void turnOnBluelight();
     void turnOffBluelight();
     void turnOffRedlight();
@@ -116,6 +116,8 @@ private slots:
     void readEndBaseline();
     void pauseTimeout();
     void flashRedlight();
+    void applyTherapy(float);
+
     //void toggleHeadsetConn();
 };
 
