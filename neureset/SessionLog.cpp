@@ -3,6 +3,7 @@
 
 SessionLog::SessionLog(int sn) : sessionNumber(sn)
 {
+    startDomFreq = 0;
 }
 
 SessionLog::~SessionLog()

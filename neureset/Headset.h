@@ -40,7 +40,7 @@ private:
 
     int currentNodeIndex;
     float elapsedTime;
-    int treatmentFreq;
+    float treatmentFreq;
 
 private slots:
     void applyTreatmentToCurrNode();

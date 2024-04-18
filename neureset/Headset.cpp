@@ -31,7 +31,7 @@ void Headset::applyTreatmentToCurrNode(){
         qDebug()<<"round  complete";
         return;
     }
-    qDebug() << "Applying treatment of" << treatmentFreq << "to nodes";
+    qDebug() << "Applying treatment of" << treatmentFreq << "Hz to patient";
     //currentNodeIndex++;
     elapsedTime+=62;
     QTimer::singleShot(62, this, &Headset::applyTreatmentToCurrNode);
@@ -58,6 +58,7 @@ QVector<QVector<float>> Headset::getDomFreq(){
 
 QVector<QVector<QVector<float>>> Headset::readAllFreqs(){
     //returns a qvecor of each of the recorded bands, each haaving the freq,amp pairs of each node
+    //will be usefull for waveform display
     QVector<QVector<QVector<float>>> out;
     out << readBaseAlphaAll() << readBaseBetaAll() << readBaseDeltaAll() << readBaseThetaAll();
     return out;
@@ -68,23 +69,16 @@ QVector<float> Headset::readBaseAlpha(){
     QVector<float> out;
     //since it sounds like the implementation is up to our interpretation, individual node values might not be necessary
     //if it is, use the loop, need to add the amplitude after the values are generated (not sure what the expected values look like)
-//    for (int i = 0; i < numNodes; i++){
-//        out[i] = (rand() % 4) + 8;      //gives range 8-12
-//    }
+
     float freq;
     float amp;
     freq = (rand() % 3) + 8;      //gives range 8-12
     freq += (float(rand())/float((RAND_MAX)));
     freq = (freq * 100 + 0.5) / 100;
-    qDebug() <<"Alpha freq: "<< freq;
     out  << freq;
     amp = (float(rand())/float((RAND_MAX))) * 10 + 20;  //gives values from 20 - 30
-    qDebug() <<"Alpha amp: "<< amp;
+    qDebug()<<"Baseline calculated for Alpha wavelength: "<<freq<<"Hz, "<<amp<<"microvolts";
     out << amp;
-
-//    out << (rand() % 4) + 8;      //gives range 8-12
-//    out << 1;
-
 
     return out;
 }
@@ -92,23 +86,15 @@ QVector<float> Headset::readBaseAlpha(){
 QVector<float> Headset::readBaseBeta(){
     QVector<float> out;
 
-//    for (int i = 0; i < numNodes; i++){
-//        out[i] = (rand() % 18) + 12;      //gives range 12-30
-//    }
     float freq;
     float amp;
     freq = (rand() % 18) + 12;      //gives range 12-30
-    freq += (float(rand())/float((RAND_MAX)));
-    freq = (freq * 100 + 0.5) / 100;
-    qDebug() <<"Beta freq: "<< freq;
+    freq += (float(rand())/float((RAND_MAX)));  //adds decimal bit.  ddefinatly could find a better way to do this
+    //freq = (freq * 100 + 0.5) / 100;
     out  << freq;
     amp = (float(rand())/float((RAND_MAX))) * 10 + 10;  //gives values from 10 - 20
-    qDebug() <<"Beta amp: "<< amp;
+    qDebug()<<"Baseline calculated for Beta wavelength: "<<freq<<"Hz, "<<amp<<"microvolts";
     out << amp;
-
-//    out << (rand() % 18) + 12;      //gives range 12-30
-//    out << 1;
-
 
     return out;
 }
@@ -116,45 +102,31 @@ QVector<float> Headset::readBaseBeta(){
 QVector<float> Headset::readBaseDelta(){
     QVector<float> out;
 
-//    for (int i = 0; i < numNodes; i++){
-//        out[i] = (rand() % 3) + 1;      //gives range 1-4
-//    }
-
     float freq;
     float amp;
     freq = (rand() % 3) + 1;      //gives range 1-4
     freq += (float(rand())/float((RAND_MAX)));
     freq = (freq * 100 + 0.5) / 100;
-    qDebug() <<"Delta freq: "<< freq;
     out  << freq;
     amp = (float(rand())/float((RAND_MAX))) * 10 + 40;  //gives values from 40 - 50
-    qDebug() <<"Delta amp: "<< amp;
+    qDebug()<<"Baseline calculated for Delta wavelength: "<<freq<<"Hz, "<<amp<<"microvolts";
     out << amp;
 
-//    out << (rand() % 3) + 1;      //gives range 1-4
-//    out << 1;
     return out;
 }
 
 QVector<float> Headset::readBaseTheta(){
     QVector<float> out;
 
-//    for (int i = 0; i < numNodes; i++){
-//        out[i] = (rand() % 4) + 4;      //gives range 4-8
-//    }
     float freq;
     float amp;
     freq = (rand() % 4) + 4;      //gives range 4-8
     freq += (float(rand())/float((RAND_MAX)));
     freq = (freq * 100 + 0.5) / 100;
-    qDebug() <<"Theta freq: "<< freq;
     out  << freq;
     amp = (float(rand())/float((RAND_MAX))) * 10 + 30;  //gives values from 30 - 40
-    qDebug() <<"Theta amp: "<< amp;
     out << amp;
-
-    out << (rand() % 4) + 4;      //gives range 4-8
-    out << 1;
+    qDebug()<<"Baseline calculated for Theta wavelength: "<<freq<<"Hz, "<<amp<<"microvolts";
     return out;
 }
 

@@ -20,6 +20,7 @@ Device::Device(QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g, QProgress
     turnOffRedlight();
     turnOffGreenlight();
     rounds = 0;
+    startBaseFreq = 0;
     sessionsDone = 0;
     offset = 5;
     pcConn = false;
@@ -106,7 +107,9 @@ void Device::readTreatmentBaseline(){
         sessionStage = READ_TREATMENT_BASELINE;
         QVector<QVector<float>> baseline = headset->getDomFreq();
         domFreq = calcDomFreq(baseline);
-        if (startBaseFreq == 0){
+        if (startBaseFreq == 0){    //first time the baseline has been calculated for the session
+            startBaseFreq = domFreq;
+            qDebug()<<"setting  starting baseline";
             currSession->addStartBaselines(baseline);
             currSession->setStartDomFreq(domFreq);
         }
@@ -246,10 +249,12 @@ void Device::resumeSession(){
             readTreatmentBaseline();
             break;
         case TREATMENT:
-            treatment();
+            readTreatmentBaseline();
+            //treatment();
             break;
         case TREATMENT_PART_2:  //thse should return to the baseline reading, since a new baseline should be calculated after pausing (brain state has  changed)
-            treatmentPart2();
+            readTreatmentBaseline();
+            //treatmentPart2();
             break;
         case READ_END_BASELINE:
             readEndBaseline();
@@ -436,10 +441,10 @@ float Device::calcDomFreq(QVector<QVector<float>> baseFreqs){
     //baseFreqs is a nested vector of freq,amp for the 4 wave  lengths being read
     //caalculates the dominent frequency from the output of headset->getDomFreq
     //equation from the test doc
-    qDebug("calculating the dominant frequency");
+    //qDebug("calculating the dominant frequency");
     float top = (baseFreqs[0][0] * pow(baseFreqs[0][1],2)) + (baseFreqs[1][0] * pow(baseFreqs[1][1],2)) + (baseFreqs[2][0] * pow(baseFreqs[2][1],2)) + (baseFreqs[3][0] * (baseFreqs[3][1] * baseFreqs[3][1]));
     float bot = pow(baseFreqs[0][1],2) + pow(baseFreqs[1][1],2) + pow(baseFreqs[2][1],2)  + pow(baseFreqs[3][1],2);
-    qDebug()<<"dom freq: " << (top/bot);
+    //qDebug()<<"dom freq: " << (top/bot);
     return (top / bot);
 }
 
