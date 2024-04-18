@@ -38,7 +38,7 @@ private:
     QVector<QVector<float>> readBaseDeltaAll();
     QVector<QVector<float>> readBaseThetaAll();
 
-    int currentNodeIndex;
+    //int currentNodeIndex;
     float elapsedTime;
     float treatmentFreq;
 

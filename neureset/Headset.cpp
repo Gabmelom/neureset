@@ -24,17 +24,14 @@ void Headset::applyTreatment(float freq){
 }
 
 void Headset::applyTreatmentToCurrNode(){
-//    if (currentNodeIndex >= numNodes) {
-//        return;
-//    }
     if (elapsedTime >= 1000){
         qDebug()<<"round  complete";
         return;
     }
     qDebug() << "Applying treatment of" << treatmentFreq << "Hz to patient";
     //currentNodeIndex++;
-    elapsedTime+=62;
-    QTimer::singleShot(62, this, &Headset::applyTreatmentToCurrNode);
+    elapsedTime+=63;
+    QTimer::singleShot(63, this, &Headset::applyTreatmentToCurrNode);
 }
 
 //int Headset::readEEGBaseline(int site){
