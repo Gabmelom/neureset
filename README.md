@@ -32,6 +32,19 @@ Spencer:
 Gabriel Melo:
 - Don't be lazy, look at the commit history, filter by contributor
 
+Josiah Mak:
+- Sequence diagram for view session history
+- Use case 3, 4 (with Briana)
+- Class diagram (group effort)
+- Implemented storing the baseline to session log
+- Implemented connection to PC
+- Implemented sending session log to PC
+- Implemented displaying the battery levels
+- Implemented showing the progress of the session
+- Fixed bugs on main session after big merge conflicts
+- Modify to use QTimer instead of threads (with Briana)
+- Initial implmentation for PC
+
 ## Submission contents
 ```
 root
