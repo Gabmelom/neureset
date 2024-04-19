@@ -44,6 +44,7 @@ Josiah Mak:
 - Fixed bugs on main session after big merge conflicts
 - Modify to use QTimer instead of threads (with Briana)
 - Initial implmentation for PC
+- Tracability Matrix (with Briana)
 
 ## Submission contents
 ```
