@@ -88,7 +88,7 @@ private:
     
     float calcDomFreq(QVector<WaveForm>);
     float avgDomFreq(QVector<float>);
-    QVector<float> readBaselines();
+    QVector<float> readBaselines(bool graph=false);
     QString bandToString(FREQ_BAND band); // TODO: Move to own enum class
     
     // TODO : Decouple ui from class
@@ -108,6 +108,8 @@ private:
 signals:
     void updateProgressBar(int percentage);
     void updateProgressMessage(QString message);
+    // void updateBatteryLevel(int level); // TODO
+    void updateTreatmentGraph(QVector<WaveForm> waveforms, int site);
 
 private slots:
     void readStartBaseline();

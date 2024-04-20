@@ -2,7 +2,6 @@
 #include "ui_mainwindow.h"
 
 #include <QDebug>
-#include <cmath>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -47,40 +46,60 @@ void MainWindow::init()
     pc = new PC();
 
     connect(device, SIGNAL(updateProgressMessage(QString)), this, SLOT(updateProgressMessage(QString)));
+    connect(device, SIGNAL(updateTreatmentGraph(QVector<WaveForm>, int)), this, SLOT(updateTreatmentGraph(QVector<WaveForm>, int)));
     initWaveformGraph();
 }
 
 void MainWindow::initWaveformGraph(){
     using namespace QtCharts;
-    auto series = new QSplineSeries();
-    auto chart = new QChart();
+
+    chart = new QChart();
     chart->legend()->hide();
-    chart->addSeries(series);
 
-    // auto axisX = new QValueAxis;
-    // axisX->setRange(0, 10);
-    // axisX->setLabelFormat("%g");
+    waveformChart = new QChartView(chart);
+    waveformChart->setRenderHint(QPainter::Antialiasing);
+    waveformChart->setParent(ui->graphFrame);
+    waveformChart->resize(ui->graphFrame->size());
 
-    chart->createDefaultAxes();
-    chart->setTitle("Waveform");
-    chart->axisX()->setRange(0, 4*M_PI);
-    chart->axisY()->setRange(-10, 10);
-
-
-    auto chartView = new QChartView(chart);
-    chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->setParent(ui->testFrame);
-    chartView->resize(ui->testFrame->size());
-
-    // Test data
-    // float amp = 10.12;
-    // float freq = 6.65431;
-    // for (float i = 0; i < 100; i++){
-    //     float y = amp * sin(freq * i);
-    //     qDebug() << "x: " << i << "y: " << y;
-    //     series->append(i, y);
-    // }
 }
+
+// TODO: Double check if still needed at the end
+QtCharts::QSplineSeries* MainWindow::graphWaveform(WaveForm waveform){
+    
+    auto series = new QtCharts::QSplineSeries();
+
+    for (float i = 0; i < GRAPH_X_MAX; i++){
+        float y = waveform.amplitude * sin(waveform.frequency * i);
+        series->append(i, y);
+    }
+
+    return series;
+}
+
+QtCharts::QSplineSeries* MainWindow::graphMergedWaveform(QVector<WaveForm> waveforms){
+    auto series = new QtCharts::QSplineSeries();
+
+    for (float i = 0; i < GRAPH_X_MAX; i++){
+        float y = 0;
+        for (auto waveform : waveforms){
+            y += waveform.amplitude * sin(waveform.frequency * i);
+        }
+        series->append(i, y);
+    }
+
+    return series;
+}
+
+void MainWindow::updateTreatmentGraph(QVector<WaveForm> waveforms, int site){
+    chart->removeAllSeries();
+
+    auto series = graphMergedWaveform(waveforms);
+    chart->addSeries(series);
+    
+    chart->createDefaultAxes();
+    chart->setTitle(QString("EEG Site %1").arg(site+1));
+}
+
 
 void MainWindow::devicePageChanged(int index)
 {

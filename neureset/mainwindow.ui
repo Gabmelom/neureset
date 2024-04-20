@@ -315,7 +315,7 @@
       <enum>QFrame::Raised</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="powerOffPage">
       <property name="enabled">
@@ -330,22 +330,6 @@
       <property name="styleSheet">
        <string notr="true">background-color:rgb(184, 184, 184);</string>
       </property>
-      <widget class="QFrame" name="testFrame">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>80</y>
-         <width>341</width>
-         <height>231</height>
-        </rect>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::StyledPanel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
-      </widget>
      </widget>
      <widget class="QWidget" name="HomePage">
       <property name="styleSheet">
@@ -447,10 +431,10 @@
       <widget class="QFrame" name="graphFrame">
        <property name="geometry">
         <rect>
-         <x>20</x>
+         <x>0</x>
          <y>140</y>
-         <width>361</width>
-         <height>201</height>
+         <width>401</width>
+         <height>221</height>
         </rect>
        </property>
        <property name="frameShape">

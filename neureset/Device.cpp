@@ -148,16 +148,20 @@ float Device::avgDomFreq(QVector<float> dominantFrequencies){
 }
 
 // For each site, calculate the dominant frequency and store it in a vector
-QVector<float> Device::readBaselines(){
+// Optionally graph the waveforms of a random site, default is false
+QVector<float> Device::readBaselines(bool graph){
     FREQ_BAND omittedBand = (FREQ_BAND)(rand() % 5); // Omit a random frequency band
+    int siteGraphed = rand() % headset->getNumNodes(); // Random site to graph
     QVector<float> dominantFrequencies;
 
     for (int i = 0; i < headset->getNumNodes(); i++){
         QVector<WaveForm> siteWaveforms = headset->getSiteWaveForms(omittedBand);
-
-        // TODO: Signal for the graph here, or store chosen site to graph
         float domFreq = calcDomFreq(siteWaveforms);
         dominantFrequencies.push_back(domFreq);
+
+        if (i == siteGraphed && graph){
+            emit updateTreatmentGraph(siteWaveforms, i);
+        }
     }
 
     return dominantFrequencies;
@@ -190,7 +194,7 @@ void Device::readTreatmentBaseline(){
 
         updateProgressMessage("Calculating treatment baseline...");
 
-        QVector<float> treatmentBaselines = readBaselines();
+        QVector<float> treatmentBaselines = readBaselines(true);
         treatmentFrequency = avgDomFreq(treatmentBaselines);
 
         // Log information

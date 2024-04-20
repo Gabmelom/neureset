@@ -5,11 +5,11 @@
 #include <QListWidget>
 #include <QtCharts/QSplineSeries>
 #include <QtCharts/QChartView>
-#include <Device.h>
-#include "Device.h"
-
-//#include "Device.h"
 #include <QDebug>
+
+#include <cmath>
+
+#include "Device.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -48,7 +48,7 @@ private slots:
     void pcBackButtonPressed();
     void connToPC();
     void updateProgressMessage(QString message);
-    void graphWaveform(float freq, float amp);
+    void updateTreatmentGraph(QVector<WaveForm> waveforms, int site);
     
 
 private:
@@ -65,7 +65,16 @@ private:
 
     void displayDeviceLogs();
     void displayPCLogs();
+
+    // Charting
+    QtCharts::QChartView* waveformChart;
+    QtCharts::QChart* chart;
     void initWaveformGraph();
+    QtCharts::QSplineSeries* graphWaveform(WaveForm waveform);
+    QtCharts::QSplineSeries* graphMergedWaveform(QVector<WaveForm> waveforms);
+
+    const float GRAPH_X_MAX = 80*M_PI;
+    const float GRAPH_Y_MAX = 50;
 
 };
 #endif // MAINWINDOW_H
