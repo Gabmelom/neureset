@@ -44,6 +44,7 @@ void Device::startSession(){
     }
     if(batteryLife < (ROUNDS * 9)){
         qInfo("Device does not have enough battery to complete a session.");
+        updateProgressMessage("Replace the battery to start session.");
         return;
     }
     if(headsetConn){
