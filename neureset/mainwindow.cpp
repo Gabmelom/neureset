@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     init();
 
-    connect(ui->power, SIGNAL(pressed()), this, SLOT(powerPressed()));
+    connect(ui->power, SIGNAL(pressed()), this, SLOT(powerPressed())); // TODO: Decouple, handle no battery event
     connect(ui->home, SIGNAL(pressed()), this, SLOT(homePressed()));
     connect(ui->up, SIGNAL(pressed()), this, SLOT(upPressed()));
     connect(ui->down, SIGNAL(pressed()), this, SLOT(downPressed()));
@@ -25,9 +25,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pcBackButton, SIGNAL(pressed()), this, SLOT(pcBackButtonPressed()));
     connect(ui->dateEdit, SIGNAL(editingFinished()), this, SLOT(changeDate()));
     connect(ui->timeEdit,  SIGNAL(editingFinished()), this, SLOT(changeTime()));
-    connect(ui->toggleHeadsetBtn, SIGNAL(pressed()), this, SLOT(toggleHeadset()));
+    
     connect(ui->replaceBatteryBtn, SIGNAL(pressed()), this, SLOT(changeBattery()));
-    connect(ui->pcConnButton, SIGNAL(pressed()), this, SLOT(connToPC()));
+    
 }
 
 MainWindow::~MainWindow()
@@ -37,17 +37,37 @@ MainWindow::~MainWindow()
 
 void MainWindow::init()
 {
+    // Initialize device UI elements
     currentDeviceScreen = 0;
     ui->DeviceScreen->setCurrentIndex(currentDeviceScreen);
     currentDeviceList = ui->HomeMenuList;
     currentDeviceList->setCurrentRow(0);
+    updateBatteryLife(100);
+    toggleBluelight(false);
+    toggleRedlight(false);
+    toggleGreenlight(false);
 
-    device = new Device(ui->sessionProgressBar, ui->redlight, ui->bluelight, ui->greenlight, ui->batteryBar);
+    // Main singleton objects
+    device = new Device();
     pc = new PC();
-
-    connect(device, SIGNAL(updateProgressMessage(QString)), this, SLOT(updateProgressMessage(QString)));
-    connect(device, SIGNAL(updateTreatmentGraph(QVector<WaveForm>, int)), this, SLOT(updateTreatmentGraph(QVector<WaveForm>, int)));
     initWaveformGraph();
+
+    // UI -> Device signals
+    connect(ui->pcConnButton, SIGNAL(pressed()), device, SLOT(togglePC()));
+    connect(ui->toggleHeadsetBtn, SIGNAL(pressed()), device, SLOT(toggleHeadset()));
+
+    // Device -> UI signals
+    connect(device, SIGNAL(updateBatteryLevel(int)), this, SLOT(updateBatteryLife(int)));
+    connect(device, SIGNAL(uiTogglePC(bool)), this, SLOT(updatePCToggle(bool)));
+    connect(device, SIGNAL(uiToggleHeadset(bool)), this, SLOT(updateHeadsetToggle(bool)));
+    connect(device, SIGNAL(uiToggleBluelight(bool)), this, SLOT(toggleBluelight(bool)));
+    connect(device, SIGNAL(uiToggleRedlight(bool)), this, SLOT(toggleRedlight(bool)));
+    connect(device, SIGNAL(uiToggleGreenlight(bool)), this, SLOT(toggleGreenlight(bool)));
+    connect(device, SIGNAL(updateProgressMessage(QString)), this, SLOT(updateProgressMessage(QString)));
+    connect(device, SIGNAL(updateProgressBar(int)), this, SLOT(updateProgressBar(int)));
+    connect(device, SIGNAL(updateTreatmentGraph(QVector<WaveForm>, int)), this, SLOT(updateTreatmentGraph(QVector<WaveForm>, int)));
+
+    
 }
 
 void MainWindow::initWaveformGraph(){
@@ -215,10 +235,7 @@ void MainWindow::stopPressed()
 }
 
 
-void MainWindow::updateProgressMessage(QString message)
-{
-    ui->sessionProgressLabel->setText(message);
-}
+
 
 
 void MainWindow::changeDate(){
@@ -247,11 +264,7 @@ void MainWindow::changeBattery()
     device->replaceBattery();
 }
 
-void MainWindow::toggleHeadset()
-{
-    qDebug() << "ADMIN: toggle heeadset";
-    device->toggleHeadsetConn();
-}
+
 
 
 void MainWindow::uploadLogs()
@@ -325,17 +338,64 @@ void MainWindow::pcBackButtonPressed()
     ui->pcScreen->setCurrentIndex(0); // Switch to log list page
 }
 
-void MainWindow::updateGui(){
-    if  (!device->getPower()){
-        ui->DeviceScreen->setCurrentIndex(0);
-        devicePageChanged(0);
-    }
-    device->getDate()->setTime(device->getDate()->time().addSecs(1));
-    updateDate();
-    //ui->currBattery->setText(QString::number(device->getBatteryLife()));
+// Methods to update UI based on device state
+
+void MainWindow::updatePCToggle(bool pcConn)
+{
+    pcConn? qInfo("Computer: ON") : qInfo("Computer: OFF");
+    pcConn? ui->pcConnButton->setText("Computer: ON") : ui->pcConnButton->setText("Computer: OFF");
 }
 
-void MainWindow::connToPC()
+void MainWindow::updateHeadsetToggle(bool headsetConn)
 {
-    device->connToPC();
+    headsetConn? qInfo("Headset: ON") : qInfo("Headset: OFF");
+    headsetConn? ui->toggleHeadsetBtn->setText("Headset: ON") : ui->toggleHeadsetBtn->setText("Headset: OFF");
+}
+
+void MainWindow::updateBatteryLife(int level)
+{
+    ui->batteryBar->setValue(level);
+
+    auto lowBattery = QString("rgb(229, 10, 10)");
+    auto mediumBattery = QString("rbg(229, 165, 10)");
+    auto highBattery = QString("rgb(10, 229, 10)");
+
+    QString batteryColor;
+    if (level < 10) batteryColor = lowBattery;
+    else if (level < 20) batteryColor = mediumBattery;
+    else batteryColor = highBattery;
+
+    QString style = QString("selection-background-color: %1;").arg(batteryColor);
+
+}
+
+void MainWindow::toggleRedlight(bool state)
+{
+    state? 
+        ui->redlight->setStyleSheet("QLabel { background-color : red;}") : 
+        ui->redlight->setStyleSheet("QLabel { background-color : white;}");
+}
+
+void MainWindow::toggleGreenlight(bool state)
+{
+    state? 
+        ui->greenlight->setStyleSheet("QLabel { background-color : green;}") : 
+        ui->greenlight->setStyleSheet("QLabel { background-color : white;}");
+}
+
+void MainWindow::toggleBluelight(bool state)
+{
+    state? 
+        ui->bluelight->setStyleSheet("QLabel { background-color : blue;}") : 
+        ui->bluelight->setStyleSheet("QLabel { background-color : white;}");
+}
+
+void MainWindow::updateProgressMessage(QString message)
+{
+    ui->sessionProgressLabel->setText(message);
+}
+
+void MainWindow::updateProgressBar(int percentage)
+{
+    ui->sessionProgressBar->setValue(percentage);
 }

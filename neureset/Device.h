@@ -31,11 +31,10 @@ class Device : public QObject
 {
     Q_OBJECT
 public:
-    Device(QProgressBar *progress, QLabel *redlight, QLabel *bluelight, QLabel *greenlight, QProgressBar *battery);
+    Device();
     ~Device();
 
     void replaceBattery();
-    void toggleHeadsetConn();
     void startSession();
     void pauseSession();
     void resumeSession();
@@ -54,23 +53,18 @@ public:
     QVector<SessionLog*> getLogs() { return logs; }
 
     void uploadSessionLog();
-    void togglePower();
+    void togglePower(); // TODO: decouple, send signal if battery runs out
     void uploadLogs(PC *pc);
-
-    void connToPC();
-    void checkBatteryLevel();
 
 
 private:
     bool ongoing;
     bool headsetConn;
     bool pcConn;
-    bool bluelightOn;
-    bool redlightOn;
-    bool greenlightOn;
     bool powerState;
     
     int sessionStage;
+    int progress;
     int batteryLife;
     int sessionsDone;
 
@@ -89,27 +83,26 @@ private:
     float calcDomFreq(QVector<WaveForm>);
     float avgDomFreq(QVector<float>);
     QVector<float> readBaselines(bool graph=false);
-    QString bandToString(FREQ_BAND band); // TODO: Move to own enum class
     
-    // TODO : Decouple ui from class
-    QProgressBar *progress;
-    QProgressBar *batteryBar; // Could consider this to be part of object model
-    QLabel* redlight;
-    QLabel* bluelight;
-    QLabel* greenlight;
-
-    // TODO: Change these to signals
-    void turnOnBluelight();
-    void turnOffBluelight();
-    void turnOffRedlight();
-    void turnOffGreenlight();
-    void turnOnGreenlight();
+    // Device LEDs
+    bool redlightOn;
+    bool greenlightOn;
+    bool bluelightOn;
+    void toggleRedlight(bool);
+    void toggleGreenlight(bool);
+    void toggleBluelight(bool);
+    void flashRedlight();
 
 signals:
     void updateProgressBar(int percentage);
     void updateProgressMessage(QString message);
-    // void updateBatteryLevel(int level); // TODO
     void updateTreatmentGraph(QVector<WaveForm> waveforms, int site);
+    void updateBatteryLevel(int level);
+    void uiToggleHeadset(bool);
+    void uiTogglePC(bool);
+    void uiToggleBluelight(bool);
+    void uiToggleRedlight(bool);
+    void uiToggleGreenlight(bool);
 
 private slots:
     void readStartBaseline();
@@ -118,10 +111,10 @@ private slots:
     void treatment();
     void treatmentPart2();
     void pauseTimeout();
-    void flashRedlight();
     void applyTherapy(float);
 
-    //void toggleHeadsetConn();
+    void toggleHeadset();
+    void togglePC();
 };
 
 #endif // DEVICE_H
