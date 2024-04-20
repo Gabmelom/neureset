@@ -46,7 +46,47 @@ void MainWindow::init()
     pc = new PC();
 
     connect(device, SIGNAL(updateProgressMessage(QString)), this, SLOT(updateProgressMessage(QString)));
+    connect(device, SIGNAL(updateTreatmentGraph(QVector<WaveForm>, int)), this, SLOT(updateTreatmentGraph(QVector<WaveForm>, int)));
+    initWaveformGraph();
 }
+
+void MainWindow::initWaveformGraph(){
+    using namespace QtCharts;
+
+    chart = new QChart();
+    chart->legend()->hide();
+
+    waveformChart = new QChartView(chart);
+    waveformChart->setRenderHint(QPainter::Antialiasing);
+    waveformChart->setParent(ui->graphFrame);
+    waveformChart->resize(ui->graphFrame->size());
+
+}
+
+QtCharts::QSplineSeries* MainWindow::graphWaveform(QVector<WaveForm> waveforms){
+    auto series = new QtCharts::QSplineSeries();
+
+    for (float i = 0; i < GRAPH_X_MAX; i++){
+        float y = 0;
+        for (auto waveform : waveforms){
+            y += waveform.amplitude * sin(waveform.frequency * i);
+        }
+        series->append(i, y);
+    }
+
+    return series;
+}
+
+void MainWindow::updateTreatmentGraph(QVector<WaveForm> waveforms, int site){
+    chart->removeAllSeries();
+
+    auto series = graphWaveform(waveforms);
+    chart->addSeries(series);
+    
+    chart->createDefaultAxes();
+    chart->setTitle(QString("EEG Site %1").arg(site+1));
+}
+
 
 void MainWindow::devicePageChanged(int index)
 {

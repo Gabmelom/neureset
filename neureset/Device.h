@@ -4,14 +4,14 @@
 #include <QDateTime>
 #include <QTimer>
 #include <QListWidget>
-#include <Headset.h>
-#include <QListWidget>
 #include <QProgressBar>
 #include <QLabel>
+#include <QVector>
+
+#include "Headset.h"
 #include "SessionLog.h"
 #include "PC.h"
 
-#include "QVector"
 
 class Headset;
 
@@ -20,7 +20,7 @@ class Headset;
 enum E_SESSION_STAGE{
     NO_STAGE,
     START_SESSION,
-    READ_START_BASELINE,    //redundent since it''s included in read trreatment baseline
+    READ_START_BASELINE,
     TREATMENT,
     READ_TREATMENT_BASELINE,
     TREATMENT_PART_2,
@@ -40,7 +40,6 @@ public:
     void pauseSession();
     void resumeSession();
     void stopSession();
-    QVector<int> readBaseline();    //test version before thread stuff is implemented
 
 
     // Getters
@@ -89,7 +88,7 @@ private:
     
     float calcDomFreq(QVector<WaveForm>);
     float avgDomFreq(QVector<float>);
-    QVector<float> readBaselines();
+    QVector<float> readBaselines(bool graph=false);
     QString bandToString(FREQ_BAND band); // TODO: Move to own enum class
     
     // TODO : Decouple ui from class
@@ -109,6 +108,8 @@ private:
 signals:
     void updateProgressBar(int percentage);
     void updateProgressMessage(QString message);
+    // void updateBatteryLevel(int level); // TODO
+    void updateTreatmentGraph(QVector<WaveForm> waveforms, int site);
 
 private slots:
     void readStartBaseline();
