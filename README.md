@@ -46,6 +46,19 @@ Josiah Mak:
 - Initial implmentation for PC
 - Tracability Matrix (with Briana)
 
+Briana Lee:
+- Traceability Matrix
+- Use Cases #3 and #4 (with Josiah)
+- UML Class diagram (group effort)
+- Creation of device and headset classes
+- Modified device and headset classes to use QTimer instead of QThreads (with Josiah)
+- Implemented session pause/resume functionality
+- Implemented session stop functionality
+- Implemented headset losing/re-establishing connection during session
+- Implemented session timeout after pausing or losing headset connection for too long
+- Implemented light functionalities during session (blue, green, red lights)
+- Implemented starting session only once device is turned on, headset is connected, and device has enough battery
+
 ## Submission contents
 ```
 root
