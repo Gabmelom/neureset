@@ -13,45 +13,41 @@ public:
     SessionLog(int sn);
     ~SessionLog();
 
-    void addStartBaselines(QVector<QVector<float>> baseline);
-    void addEndBaselines(QVector<QVector<float>> baseline);
-
-    void consoleOut();
-    void pushTreatmentFreqs(QVector<QVector<float>>);
-    void pushOffset(float);
-
     void startSession();
     void endSession();
-    
+    void addTreatmentFreq(float);
+    void consoleOut();
 
     // Getters
-    QVector<QVector<float>> getStartBaseline() const { return startBaselines; }
-    QVector<QVector<float>> getEndBaseline() const { return endBaselines; }
+    QVector<float> getStartBaselines() const { return startBaselines; }
+    QVector<float> getEndBaselines() const { return endBaselines; }
     QDateTime getStartDateTime() const { return startDateTime; }
     QDateTime getEndDateTime() const { return endDateTime; }
     int getSessionNumber() const { return sessionNumber; }
-    float getStartDomFreq() { return startDomFreq; }
-    float getEndDomFreq() { return endDomFreq; }
+    float getStartDomFreq() const { return startDomFreq; }
+    float getEndDomFreq() const { return endDomFreq; }
+    float getBaseTreatmentFreq() const { return baseTreatmentFreq; }
 
     // Setters
     void setStartDomFreq(float f) { startDomFreq = f; }
+    void setBaseTreatmentFreq(float f) { baseTreatmentFreq = f; }
     void setEndDomFreq(float f) { endDomFreq = f; }
-    void setRound(int r) { currentRound = r; }
     void setSessionNumber(int n) { sessionNumber = n; }
+    void setStartBaselines(QVector<float> b) { startBaselines = b; }
+    void setEndBaselines(QVector<float> b) { endBaselines = b; }
 
 private:
-    QVector<QVector<float>> startBaselines;
-    QVector<QVector<float>> endBaselines;
+    QVector<float> startBaselines;
+    QVector<float> endBaselines;
+    QVector<float> treatmentFreqs;
 
     QDateTime startDateTime;
     QDateTime endDateTime;
 
-    int currentRound;
     int sessionNumber;
     float startDomFreq;
+    float baseTreatmentFreq;
     float endDomFreq;
-    QVector<QVector<QVector<float>>> treatmentFreqs;  //collection of frequencies throughout the treatments
-    QVector<float> offsetFreqs;
 
 };
 

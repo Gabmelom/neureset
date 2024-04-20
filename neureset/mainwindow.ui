@@ -303,7 +303,7 @@
       <string notr="true">border: solid 1px;</string>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="powerOffPage">
       <property name="enabled">
@@ -387,6 +387,30 @@
        </property>
        <property name="textDirection">
         <enum>QProgressBar::BottomToTop</enum>
+       </property>
+      </widget>
+      <widget class="QLabel" name="sessionProgressLabel">
+       <property name="geometry">
+        <rect>
+         <x>21</x>
+         <y>100</y>
+         <width>361</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>16</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </widget>
@@ -638,7 +662,7 @@
         </rect>
        </property>
        <property name="text">
-        <string/>
+        <string>Session #X</string>
        </property>
       </widget>
       <widget class="QPushButton" name="pcBackButton">
@@ -703,9 +727,9 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>170</y>
+         <y>200</y>
          <width>521</width>
-         <height>361</height>
+         <height>331</height>
         </rect>
        </property>
       </widget>
@@ -734,6 +758,19 @@
          </widget>
         </item>
        </layout>
+      </widget>
+      <widget class="QLabel" name="treatDomFreqLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>160</y>
+         <width>169</width>
+         <height>39</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>BaseTreatmentFreqLabel</string>
+       </property>
       </widget>
      </widget>
     </widget>

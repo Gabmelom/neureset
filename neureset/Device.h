@@ -43,21 +43,19 @@ public:
     QVector<int> readBaseline();    //test version before thread stuff is implemented
 
 
-    QDateTime* getDate();
-    bool getPower();
-    bool getHeadsetConn();
-    int getBatteryLife();
-    bool getPowerState();
-    QVector<SessionLog*> getLogs();
-    SessionLog* getCurrSession();
-
-    //void setPower(bool value);
+    // Getters
+    int getBatteryLife() { return batteryLife; }
+    int getSessionStage() { return sessionStage; }
+    bool getPower() { return powerState; }
+    bool getHeadsetConn() { return headsetConn; }
+    bool getPowerState() { return powerState; }
+    bool isOngoing() { return ongoing; }
+    QDateTime* getDate() { return currDate; }
+    SessionLog* getCurrSession() { return currSession; }
+    QVector<SessionLog*> getLogs() { return logs; }
 
     void uploadSessionLog();
-
     void togglePower();
-    bool isOngoing();
-    int getSessionStage();
     void uploadLogs(PC *pc);
 
     void connToPC();
@@ -65,39 +63,43 @@ public:
 
 
 private:
-    int sessionStage;
     bool ongoing;
     bool headsetConn;
     bool pcConn;
     bool bluelightOn;
     bool redlightOn;
     bool greenlightOn;
-    int batteryLife;
     bool powerState;
+    
+    int sessionStage;
+    int batteryLife;
     int sessionsDone;
 
     int offset;
     int rounds;
-    float domFreq;
-    float startBaseFreq;
+    float treatmentFrequency;
 
+    Headset *headset;
+    SessionLog *currSession;
+    QVector<SessionLog*> logs;
+    
     QDateTime *currDate;
     QTimer sessionTimer;
-    Headset *headset;
-
-    QProgressBar *progress; // TODO: Decouple ui from class
-    QProgressBar *batteryBar;
-    SessionLog *currSession;    //the current treatment session, stored in the object so it can be accessed outside the startSession function
-    QVector<SessionLog*> logs;
+    QTimer pauseTimer;
+    
+    float calcDomFreq(QVector<WaveForm>);
+    float avgDomFreq(QVector<float>);
+    QVector<float> readBaselines();
+    QString bandToString(FREQ_BAND band); // TODO: Move to own enum class
+    
+    // TODO : Decouple ui from class
+    QProgressBar *progress;
+    QProgressBar *batteryBar; // Could consider this to be part of object model
     QLabel* redlight;
     QLabel* bluelight;
     QLabel* greenlight;
 
-
-    QTimer pauseTimer;
-
-    float calcDomFreq(QVector<QVector<int>>);
-    float calcDomFreq(QVector<QVector<float>>); //floaats for better "accuracy"
+    // TODO: Change these to signals
     void turnOnBluelight();
     void turnOffBluelight();
     void turnOffRedlight();
@@ -106,14 +108,14 @@ private:
 
 signals:
     void updateProgressBar(int percentage);
-    int readBaselineSig();
+    void updateProgressMessage(QString message);
 
 private slots:
     void readStartBaseline();
     void readTreatmentBaseline();
+    void readEndBaseline();
     void treatment();
     void treatmentPart2();
-    void readEndBaseline();
     void pauseTimeout();
     void flashRedlight();
     void applyTherapy(float);
