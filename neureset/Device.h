@@ -31,7 +31,7 @@ class Device : public QObject
 {
     Q_OBJECT
 public:
-    Device(QProgressBar *progress);
+    Device();
     ~Device();
 
     void replaceBattery();
@@ -53,7 +53,7 @@ public:
     QVector<SessionLog*> getLogs() { return logs; }
 
     void uploadSessionLog();
-    void togglePower();
+    void togglePower(); // TODO: decouple, send signal if battery runs out
     void uploadLogs(PC *pc);
 
 
@@ -61,12 +61,10 @@ private:
     bool ongoing;
     bool headsetConn;
     bool pcConn;
-    bool bluelightOn;
-    bool redlightOn;
-    bool greenlightOn;
     bool powerState;
     
     int sessionStage;
+    int progress;
     int batteryLife;
     int sessionsDone;
 
@@ -86,18 +84,19 @@ private:
     float avgDomFreq(QVector<float>);
     QVector<float> readBaselines(bool graph=false);
     
-    // TODO : Decouple ui from class
-    QProgressBar *progress;
-
-    void toggleBluelight(bool);
+    // Device LEDs
+    bool redlightOn;
+    bool greenlightOn;
+    bool bluelightOn;
     void toggleRedlight(bool);
     void toggleGreenlight(bool);
+    void toggleBluelight(bool);
+    void flashRedlight();
 
 signals:
     void updateProgressBar(int percentage);
     void updateProgressMessage(QString message);
     void updateTreatmentGraph(QVector<WaveForm> waveforms, int site);
-
     void updateBatteryLevel(int level);
     void uiToggleHeadset(bool);
     void uiTogglePC(bool);
@@ -112,13 +111,10 @@ private slots:
     void treatment();
     void treatmentPart2();
     void pauseTimeout();
-    void flashRedlight();
     void applyTherapy(float);
 
     void toggleHeadset();
     void togglePC();
-
-    //void toggleHeadsetConn();
 };
 
 #endif // DEVICE_H

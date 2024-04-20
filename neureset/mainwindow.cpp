@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     init();
 
-    connect(ui->power, SIGNAL(pressed()), this, SLOT(powerPressed())); // Decouple
+    connect(ui->power, SIGNAL(pressed()), this, SLOT(powerPressed())); // TODO: Decouple, handle no battery event
     connect(ui->home, SIGNAL(pressed()), this, SLOT(homePressed()));
     connect(ui->up, SIGNAL(pressed()), this, SLOT(upPressed()));
     connect(ui->down, SIGNAL(pressed()), this, SLOT(downPressed()));
@@ -48,7 +48,7 @@ void MainWindow::init()
     toggleGreenlight(false);
 
     // Main singleton objects
-    device = new Device(ui->sessionProgressBar);
+    device = new Device();
     pc = new PC();
     initWaveformGraph();
 
@@ -64,6 +64,7 @@ void MainWindow::init()
     connect(device, SIGNAL(uiToggleRedlight(bool)), this, SLOT(toggleRedlight(bool)));
     connect(device, SIGNAL(uiToggleGreenlight(bool)), this, SLOT(toggleGreenlight(bool)));
     connect(device, SIGNAL(updateProgressMessage(QString)), this, SLOT(updateProgressMessage(QString)));
+    connect(device, SIGNAL(updateProgressBar(int)), this, SLOT(updateProgressBar(int)));
     connect(device, SIGNAL(updateTreatmentGraph(QVector<WaveForm>, int)), this, SLOT(updateTreatmentGraph(QVector<WaveForm>, int)));
 
     
@@ -392,4 +393,9 @@ void MainWindow::toggleBluelight(bool state)
 void MainWindow::updateProgressMessage(QString message)
 {
     ui->sessionProgressLabel->setText(message);
+}
+
+void MainWindow::updateProgressBar(int percentage)
+{
+    ui->sessionProgressBar->setValue(percentage);
 }

@@ -8,7 +8,7 @@
 
 #include <cmath>
 
-Device::Device(QProgressBar* progress) : progress(progress) {
+Device::Device() {
     headset = new Headset(7,this);
     currDate = new QDateTime(QDateTime::currentDateTime());
     batteryLife = 100;
@@ -19,6 +19,7 @@ Device::Device(QProgressBar* progress) : progress(progress) {
     toggleRedlight(false);
     toggleGreenlight(false);
     updateBatteryLevel(batteryLife);
+    progress = 0;
     rounds = 0;
     sessionsDone = 0;
     offset = 5;
@@ -60,7 +61,8 @@ void Device::startSession(){
         currSession = new SessionLog(logs.length() + 1);
         currSession->startSession();
 
-        progress->setValue(15); // TODO: Extract to signal instead
+        progress = 15;
+        updateProgressBar(progress);
 
         QTimer::singleShot(1000, this, &Device::readStartBaseline);
     }
@@ -96,7 +98,8 @@ void Device::treatment(){   //between rounds
                 qInfo()<<"battery low: "<<batteryLife<<", please pause and replace";
             }
 
-            progress->setValue(40 + (rounds * 14)); // TODO: extract to MainWindow
+            progress = 40 + (rounds * 14);
+            updateProgressBar(progress);
 
             QTimer::singleShot(1000, this, &Device::treatmentPart2);
         }
@@ -184,7 +187,8 @@ void Device::readStartBaseline(){
         currSession->setStartBaselines(startBaselines);
 
         qDebug() << "Average starting baseline: " << dominantFrequency;
-        progress->setValue(28);
+        progress = 28;
+        updateProgressBar(progress);
 
         QTimer::singleShot(1000, this, &Device::readTreatmentBaseline);
     }
@@ -203,7 +207,8 @@ void Device::readTreatmentBaseline(){
         currSession->setBaseTreatmentFreq(treatmentFrequency);
 
         qDebug() << "Treatment frequency: " << treatmentFrequency;
-        progress->setValue(30);
+        progress = 30;
+        updateProgressBar(progress);
 
         QTimer::singleShot(5000, this, &Device::treatment); //waits 5 seconds
     }
@@ -225,8 +230,10 @@ void Device::readEndBaseline(){
         }
         float endBaseFreq = avgDomFreq(endBaselines);
 
+        progress = 100;
+        updateProgressBar(progress);
+
         // Log information
-        progress->setValue(100);
         updateProgressMessage("Session complete");
         qInfo() << "Therapy session #" << sessionsDone << " complete";
         currSession->setSessionNumber(sessionsDone);
