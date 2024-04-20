@@ -2,11 +2,11 @@
 #include "Headset.h"
 #include "SessionLog.h"
 
-#include "QDebug"
-#include "QVector"
-#include "QThread"
+#include <QDebug>
+#include <QVector>
+#include <QThread>
 
-#include "cmath"
+#include <cmath>
 
 Device::Device(QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g, QProgressBar* batteryBar) : progress(progress), redlight(r), bluelight(b), greenlight(g), batteryBar(batteryBar){
     headset = new Headset(7,this);

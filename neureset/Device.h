@@ -4,14 +4,14 @@
 #include <QDateTime>
 #include <QTimer>
 #include <QListWidget>
-#include <Headset.h>
-#include <QListWidget>
 #include <QProgressBar>
 #include <QLabel>
+#include <QVector>
+
+#include "Headset.h"
 #include "SessionLog.h"
 #include "PC.h"
 
-#include "QVector"
 
 class Headset;
 
@@ -20,7 +20,7 @@ class Headset;
 enum E_SESSION_STAGE{
     NO_STAGE,
     START_SESSION,
-    READ_START_BASELINE,    //redundent since it''s included in read trreatment baseline
+    READ_START_BASELINE,
     TREATMENT,
     READ_TREATMENT_BASELINE,
     TREATMENT_PART_2,
@@ -40,7 +40,6 @@ public:
     void pauseSession();
     void resumeSession();
     void stopSession();
-    QVector<int> readBaseline();    //test version before thread stuff is implemented
 
 
     // Getters

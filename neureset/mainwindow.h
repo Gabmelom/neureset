@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QListWidget>
+#include <QtCharts/QSplineSeries>
+#include <QtCharts/QChartView>
 #include <Device.h>
 #include "Device.h"
 
@@ -46,7 +48,8 @@ private slots:
     void pcBackButtonPressed();
     void connToPC();
     void updateProgressMessage(QString message);
-
+    void graphWaveform(float freq, float amp);
+    
 
 private:
     Ui::MainWindow *ui;
@@ -62,6 +65,7 @@ private:
 
     void displayDeviceLogs();
     void displayPCLogs();
+    void initWaveformGraph();
 
 };
 #endif // MAINWINDOW_H

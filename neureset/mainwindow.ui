@@ -33,7 +33,7 @@
      <enum>QFrame::StyledPanel</enum>
     </property>
     <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
+     <enum>QFrame::Plain</enum>
     </property>
     <widget class="QPushButton" name="power">
      <property name="geometry">
@@ -132,6 +132,9 @@
         <property name="styleSheet">
          <string notr="true">background-color:red; opacity:1;</string>
         </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -155,6 +158,9 @@
         <property name="styleSheet">
          <string notr="true">background-color:forestgreen; opacity:1;</string>
         </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -177,6 +183,9 @@
        <widget class="QLabel" name="bluelight">
         <property name="styleSheet">
          <string notr="true">background-color:blue; opacity:0.1;</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
         </property>
         <property name="text">
          <string/>
@@ -299,11 +308,14 @@
        <height>361</height>
       </rect>
      </property>
-     <property name="styleSheet">
-      <string notr="true">border: solid 1px;</string>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="powerOffPage">
       <property name="enabled">
@@ -316,8 +328,24 @@
        </size>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color:rgb(0, 0, 0);</string>
+       <string notr="true">background-color:rgb(184, 184, 184);</string>
       </property>
+      <widget class="QFrame" name="testFrame">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>80</y>
+         <width>341</width>
+         <height>231</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+      </widget>
      </widget>
      <widget class="QWidget" name="HomePage">
       <property name="styleSheet">
@@ -336,6 +364,9 @@
         <font>
          <pointsize>15</pointsize>
         </font>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
        </property>
        <property name="spacing">
         <number>2</number>
@@ -365,7 +396,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>160</y>
+         <y>80</y>
          <width>361</width>
          <height>51</height>
         </rect>
@@ -392,8 +423,8 @@
       <widget class="QLabel" name="sessionProgressLabel">
        <property name="geometry">
         <rect>
-         <x>21</x>
-         <y>100</y>
+         <x>20</x>
+         <y>20</y>
          <width>361</width>
          <height>41</height>
         </rect>
@@ -413,6 +444,22 @@
         <bool>true</bool>
        </property>
       </widget>
+      <widget class="QFrame" name="graphFrame">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>140</y>
+         <width>361</width>
+         <height>201</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+      </widget>
      </widget>
      <widget class="QWidget" name="SessionLogPage">
       <property name="styleSheet">
@@ -424,21 +471,21 @@
          <x>10</x>
          <y>10</y>
          <width>381</width>
-         <height>311</height>
+         <height>301</height>
         </rect>
        </property>
       </widget>
       <widget class="QPushButton" name="uploadLogsButton">
        <property name="geometry">
         <rect>
-         <x>150</x>
-         <y>330</y>
-         <width>121</width>
+         <x>160</x>
+         <y>320</y>
+         <width>101</width>
          <height>31</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">border: 1px solid black;</string>
+        <string notr="true">border: 1px solid black; border-radius:5px;</string>
        </property>
        <property name="text">
         <string>Upload logs</string>
@@ -477,7 +524,7 @@
          <x>90</x>
          <y>180</y>
          <width>211</width>
-         <height>21</height>
+         <height>27</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -590,6 +637,9 @@
      </property>
      <property name="styleSheet">
       <string notr="true">border: solid 1px;</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <widget class="QWidget" name="sessionHistoryPage">
       <widget class="QListWidget" name="pcLogList">
