@@ -42,6 +42,10 @@ void Device::startSession(){
         qInfo("Device is off");
         return;
     }
+    if(batteryLife < (ROUNDS * 9)){
+        qInfo("Device does not have enough battery to complete a session.");
+        return;
+    }
     if(headsetConn){
         if (sessionStage != 0){
             resumeSession();
@@ -267,11 +271,9 @@ void Device::resumeSession(){
             break;
         case TREATMENT:
             readTreatmentBaseline();
-            //treatment();
             break;
-        case TREATMENT_PART_2:  //thse should return to the baseline reading, since a new baseline should be calculated after pausing (brain state has  changed)
+        case TREATMENT_PART_2:  //these should return to the baseline reading, since a new baseline should be calculated after pausing (brain state has  changed)
             readTreatmentBaseline();
-            //treatmentPart2();
             break;
         case READ_END_BASELINE:
             readEndBaseline();
@@ -291,6 +293,7 @@ void Device::pauseTimeout(){
 void Device::stopSession(){
     qInfo("Session Stopped");
     sessionStage = NO_STAGE;
+    rounds = 0;
     turnOffGreenlight();
     turnOffBluelight();
     ongoing = false;
