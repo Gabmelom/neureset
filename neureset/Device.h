@@ -31,7 +31,7 @@ class Device : public QObject
 {
     Q_OBJECT
 public:
-    Device(QProgressBar *progress, QLabel *redlight, QLabel *bluelight, QLabel *greenlight);
+    Device(QProgressBar *progress);
     ~Device();
 
     void replaceBattery();
@@ -85,20 +85,13 @@ private:
     float calcDomFreq(QVector<WaveForm>);
     float avgDomFreq(QVector<float>);
     QVector<float> readBaselines(bool graph=false);
-    QString bandToString(FREQ_BAND band); // TODO: Move to own enum class
     
     // TODO : Decouple ui from class
     QProgressBar *progress;
-    QLabel* redlight;
-    QLabel* bluelight;
-    QLabel* greenlight;
 
-    // TODO: Change these to signals
-    void turnOnBluelight();
-    void turnOffBluelight();
-    void turnOffRedlight();
-    void turnOffGreenlight();
-    void turnOnGreenlight();
+    void toggleBluelight(bool);
+    void toggleRedlight(bool);
+    void toggleGreenlight(bool);
 
 signals:
     void updateProgressBar(int percentage);
@@ -108,6 +101,9 @@ signals:
     void updateBatteryLevel(int level);
     void uiToggleHeadset(bool);
     void uiTogglePC(bool);
+    void uiToggleBluelight(bool);
+    void uiToggleRedlight(bool);
+    void uiToggleGreenlight(bool);
 
 private slots:
     void readStartBaseline();

@@ -51,6 +51,9 @@ private slots:
     void updateBatteryLife(int);
     void updateProgressMessage(QString message);
     void updateTreatmentGraph(QVector<WaveForm> waveforms, int site);
+    void toggleRedlight(bool);
+    void toggleGreenlight(bool);
+    void toggleBluelight(bool);
     
 
 private:

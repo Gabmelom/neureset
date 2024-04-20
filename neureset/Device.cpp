@@ -8,16 +8,16 @@
 
 #include <cmath>
 
-Device::Device(QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g) : progress(progress), redlight(r), bluelight(b), greenlight(g){
+Device::Device(QProgressBar* progress) : progress(progress) {
     headset = new Headset(7,this);
     currDate = new QDateTime(QDateTime::currentDateTime());
     batteryLife = 100;
     powerState = 0;
     headsetConn = 0;
     sessionStage = NO_STAGE;
-    turnOffBluelight();
-    turnOffRedlight();
-    turnOffGreenlight();
+    toggleBluelight(false);
+    toggleRedlight(false);
+    toggleGreenlight(false);
     updateBatteryLevel(batteryLife);
     rounds = 0;
     sessionsDone = 0;
@@ -53,7 +53,7 @@ void Device::startSession(){
             return;
         }
         updateProgressMessage("Starting session...");
-        turnOnBluelight();
+        toggleBluelight(true);
         ongoing = true;
 
         sessionStage = START_SESSION;
@@ -77,7 +77,7 @@ void Device::applyTherapy(float freq){
 
 void Device::treatment(){   //between rounds
     if(ongoing && powerState){
-        turnOffGreenlight();
+        toggleGreenlight(false);
         sessionStage = TREATMENT;
         if (rounds >= ROUNDS)
         {
@@ -107,7 +107,7 @@ void Device::treatmentPart2(){  //round bit
     if(ongoing && powerState){
         sessionStage = TREATMENT_PART_2;
 
-        turnOnGreenlight();
+        toggleGreenlight(true);
         updateProgressMessage("Applying therapy...");
         applyTherapy(treatmentFrequency + offset);
         currSession->addTreatmentFreq(treatmentFrequency + offset);
@@ -248,7 +248,7 @@ void Device::pauseSession(){
     //pause the timer
     //pause any calls to the headset
     qInfo("Session Paused");
-    turnOffGreenlight();
+    toggleGreenlight(false);
     ongoing = false;
     pauseTimer.start(15000);    //15000 for testing (15 secoonds), should be 300000
 }
@@ -287,8 +287,8 @@ void Device::pauseTimeout(){
     qInfo("Session Timeout after 15 seconds");
     // turn off lights
     sessionStage = NO_STAGE;
-    turnOffGreenlight();
-    turnOffBluelight();
+    toggleGreenlight(false);
+    toggleBluelight(false);
     togglePower();
 }
 
@@ -296,8 +296,8 @@ void Device::stopSession(){
     qInfo("Session Stopped");
     sessionStage = NO_STAGE;
     rounds = 0;
-    turnOffGreenlight();
-    turnOffBluelight();
+    toggleGreenlight(false);
+    toggleBluelight(false);
     ongoing = false;
     pauseTimer.stop();
 }
@@ -317,9 +317,9 @@ void Device::replaceBattery(){
 }
 
 void Device::togglePower(){
-    turnOffBluelight();
-    turnOffRedlight();
-    turnOffGreenlight();
+    toggleBluelight(false);
+    toggleRedlight(false);
+    toggleGreenlight(false);
     pcConn = false;
     powerState = !powerState;
     if(!powerState) qInfo("Turn off device");
@@ -327,7 +327,7 @@ void Device::togglePower(){
         qInfo("Turn on device");
         sessionStage = NO_STAGE;    
         if (headsetConn){
-            turnOnBluelight();
+            toggleBluelight(true);
         }
     }    
 }
@@ -340,10 +340,10 @@ void Device::toggleHeadset(){
 
         if (sessionStage != 0){
             qInfo("Device stops beeping");
-            turnOffRedlight();
+            toggleRedlight(false);
             resumeSession();
         } 
-        turnOnBluelight();
+        toggleBluelight(true);
     }
     // if it is now unconnected, device beeps, red light flashes, current session is paused
     else{
@@ -352,7 +352,7 @@ void Device::toggleHeadset(){
             flashRedlight();
             pauseSession();
         } 
-        turnOffBluelight();
+        toggleBluelight(false);
     }
 }
 
@@ -375,81 +375,29 @@ void Device::uploadLogs(PC *pc){
     }
 }
 
-
-
-
-
-
-
-
-
-
-// TODO: Decouple UI from class
-void Device::turnOffBluelight(){
-    bluelightOn = false;
-    bluelight->setStyleSheet("QLabel { background-color : white;}");
+void Device::toggleRedlight(bool state){
+    redlightOn = state;
+    uiToggleRedlight(state);
 }
 
-void Device::turnOnBluelight(){
-    bluelightOn = true;
-    bluelight->setStyleSheet("QLabel { background-color : blue;}");
+void Device::toggleGreenlight(bool state){
+    greenlightOn = state;
+    uiToggleGreenlight(state);
 }
 
-void Device::turnOffGreenlight(){
-    greenlightOn = false;
-    greenlight->setStyleSheet("QLabel { background-color : white;}");
-}
-
-void Device::turnOnGreenlight(){
-    greenlightOn = true;
-    greenlight->setStyleSheet("QLabel { background-color : green;}");
-}
-
-void Device::turnOffRedlight(){
-    redlightOn = false;
-    redlight->setStyleSheet("QLabel { background-color : white;}");
-}
+void Device::toggleBluelight(bool state){
+    bluelightOn = state;
+    uiToggleBluelight(state);
+} 
 
 void Device::flashRedlight(){
     if(!headsetConn && powerState){
-        if(redlightOn){
-            redlightOn = false;
-            redlight->setStyleSheet("QLabel { background-color : white;}");
-            QTimer::singleShot(200, this, &Device::flashRedlight);
-        }
-        else{
-            redlightOn = true;
-            redlight->setStyleSheet("QLabel { background-color : red;}");
-            QTimer::singleShot(200, this, &Device::flashRedlight);
-        }
+        redlightOn = !redlightOn;
+        toggleRedlight(redlightOn);
+        QTimer::singleShot(200, this, &Device::flashRedlight);
     }
     else{
-        redlight->setStyleSheet("QLabel { background-color : white;}");
-    }
-}
-
-
-
-
-
-
-
-
-
-// TODO: Move to own enum class
-QString Device::bandToString(FREQ_BAND band){
-    switch(band){
-        case ALPHA:
-            return "Alpha";
-        case BETA:
-            return "Beta";
-        case DELTA:
-            return "Delta";
-        case THETA:
-            return "Theta";
-        case GAMMA:
-            return "Gamma";
-        default:
-            return "Unknown";
+        redlightOn = false;
+        toggleRedlight(false);
     }
 }

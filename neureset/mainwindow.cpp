@@ -37,14 +37,18 @@ MainWindow::~MainWindow()
 
 void MainWindow::init()
 {
+    // Initialize device UI elements
     currentDeviceScreen = 0;
     ui->DeviceScreen->setCurrentIndex(currentDeviceScreen);
     currentDeviceList = ui->HomeMenuList;
     currentDeviceList->setCurrentRow(0);
-    ui->batteryBar->setValue(100);
+    updateBatteryLife(100);
+    toggleBluelight(false);
+    toggleRedlight(false);
+    toggleGreenlight(false);
 
-    // Objects
-    device = new Device(ui->sessionProgressBar, ui->redlight, ui->bluelight, ui->greenlight);
+    // Main singleton objects
+    device = new Device(ui->sessionProgressBar);
     pc = new PC();
     initWaveformGraph();
 
@@ -56,6 +60,9 @@ void MainWindow::init()
     connect(device, SIGNAL(updateBatteryLevel(int)), this, SLOT(updateBatteryLife(int)));
     connect(device, SIGNAL(uiTogglePC(bool)), this, SLOT(updatePCToggle(bool)));
     connect(device, SIGNAL(uiToggleHeadset(bool)), this, SLOT(updateHeadsetToggle(bool)));
+    connect(device, SIGNAL(uiToggleBluelight(bool)), this, SLOT(toggleBluelight(bool)));
+    connect(device, SIGNAL(uiToggleRedlight(bool)), this, SLOT(toggleRedlight(bool)));
+    connect(device, SIGNAL(uiToggleGreenlight(bool)), this, SLOT(toggleGreenlight(bool)));
     connect(device, SIGNAL(updateProgressMessage(QString)), this, SLOT(updateProgressMessage(QString)));
     connect(device, SIGNAL(updateTreatmentGraph(QVector<WaveForm>, int)), this, SLOT(updateTreatmentGraph(QVector<WaveForm>, int)));
 
@@ -361,13 +368,28 @@ void MainWindow::updateBatteryLife(int level)
 
 }
 
+void MainWindow::toggleRedlight(bool state)
+{
+    state? 
+        ui->redlight->setStyleSheet("QLabel { background-color : red;}") : 
+        ui->redlight->setStyleSheet("QLabel { background-color : white;}");
+}
+
+void MainWindow::toggleGreenlight(bool state)
+{
+    state? 
+        ui->greenlight->setStyleSheet("QLabel { background-color : green;}") : 
+        ui->greenlight->setStyleSheet("QLabel { background-color : white;}");
+}
+
+void MainWindow::toggleBluelight(bool state)
+{
+    state? 
+        ui->bluelight->setStyleSheet("QLabel { background-color : blue;}") : 
+        ui->bluelight->setStyleSheet("QLabel { background-color : white;}");
+}
+
 void MainWindow::updateProgressMessage(QString message)
 {
     ui->sessionProgressLabel->setText(message);
 }
-
-// void MainWindow::toggleBlueLight(bool on)
-// {
-//     // on? qInfo("Blue light: ON") : qInfo("Blue light: OFF");
-//     // on? ui->bluelight->setText("Blue light: ON") : ui->bluelight->setText("Blue light: OFF");
-// }
