@@ -39,14 +39,16 @@ private slots:
     void changeDate();
     void changeTime();
     void changeBattery();
-    void toggleHeadset();
-    void updateGui();
     void devicePageChanged(int index);
     void pcPageChanged(int index);
     void displayLogDetails(QListWidgetItem*);
     void uploadLogs();
     void pcBackButtonPressed();
-    void connToPC();
+
+    // Update UI based on device state
+    void updatePCToggle(bool);
+    void updateHeadsetToggle(bool);
+    void updateBatteryLife(int);
     void updateProgressMessage(QString message);
     void updateTreatmentGraph(QVector<WaveForm> waveforms, int site);
     

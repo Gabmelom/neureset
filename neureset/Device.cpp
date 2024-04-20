@@ -8,17 +8,17 @@
 
 #include <cmath>
 
-Device::Device(QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g, QProgressBar* batteryBar) : progress(progress), redlight(r), bluelight(b), greenlight(g), batteryBar(batteryBar){
+Device::Device(QProgressBar* progress,QLabel *r, QLabel *b, QLabel *g) : progress(progress), redlight(r), bluelight(b), greenlight(g){
     headset = new Headset(7,this);
     currDate = new QDateTime(QDateTime::currentDateTime());
-    batteryLife = 100; //stored as an int, should be a flloat once exact calculations are written
-    batteryBar->setValue(100);
+    batteryLife = 100;
     powerState = 0;
     headsetConn = 0;
     sessionStage = NO_STAGE;
     turnOffBluelight();
     turnOffRedlight();
     turnOffGreenlight();
+    updateBatteryLevel(batteryLife);
     rounds = 0;
     sessionsDone = 0;
     offset = 5;
@@ -90,12 +90,10 @@ void Device::treatment(){   //between rounds
 
             if (batteryLife < 9) {     //19 is for quick testing, something liike 9 gives realistic test results for middle of sessionn. 10 could be used ofr start
                 qDebug()<<"Not enough power to continue";
-                checkBatteryLevel();
                 pauseSession();
                 return;
             } else if (batteryLife <= 20) {
                 qInfo()<<"battery low: "<<batteryLife<<", please pause and replace";
-                checkBatteryLevel();
             }
 
             progress->setValue(40 + (rounds * 14)); // TODO: extract to MainWindow
@@ -121,8 +119,7 @@ void Device::treatmentPart2(){  //round bit
             return;
         }
         batteryLife -= 9;
-        batteryBar->setValue(batteryLife);
-        checkBatteryLevel();
+        updateBatteryLevel(batteryLife); // UI update
         rounds++;
 
         //update window: round i of r complete  (show as percent)
@@ -313,8 +310,7 @@ void Device::replaceBattery(){
         qInfo("turrn off the device  before changing the battery");
     } else {
         batteryLife = 100;
-        batteryBar->setValue(batteryLife);
-        checkBatteryLevel();
+        updateBatteryLevel(batteryLife);
         pauseTimer.stop();
     }
 
@@ -336,67 +332,34 @@ void Device::togglePower(){
     }    
 }
 
-void Device::toggleHeadsetConn(){
-    //qDebug() << headsetConn;
+void Device::toggleHeadset(){
     headsetConn = !headsetConn;
+    uiToggleHeadset(headsetConn);
     // if it is now connected, device stops beeping, turn red light off and resume session if it was paused
-    //qDebug() << sessionStage;
     if(headsetConn){
-        qInfo("Headset connected");
 
-//        if(bluelightOn){
         if (sessionStage != 0){
             qInfo("Device stops beeping");
             turnOffRedlight();
             resumeSession();
-        } /*else {
-            turnOnBluelight();
-        }*/
+        } 
         turnOnBluelight();
     }
     // if it is now unconnected, device beeps, red light flashes, current session is paused
     else{
-        qInfo("Headset NOT connected");
         if (sessionStage != 0){
-//        if(bluelightOn){
             qInfo("Device start beeping");
             flashRedlight();
             pauseSession();
-        } /*else {
-            turnOffBluelight();
-        }*/
+        } 
         turnOffBluelight();
     }
 }
 
-void Device::connToPC()
+void Device::togglePC()
 {
     pcConn = !pcConn;
-    if (pcConn)
-    {
-        qInfo("PC is now connected");
-    }
-    else
-    {
-        qInfo("PC is disconnected");
-    }
-
-}
-
-void Device::checkBatteryLevel()
-{
-    if(batteryLife > 20)
-    {
-        batteryBar->setStyleSheet("selection-background-color: rgb(38, 162, 105);");
-    }
-    else if (batteryLife <= 20 && batteryLife > 10)
-    {
-        batteryBar->setStyleSheet("selection-background-color: rgb(229, 165, 10);");
-    }
-    else
-    {
-        batteryBar->setStyleSheet("selection-background-color: rgb(192, 28, 40);");
-    }
+    uiTogglePC(pcConn);
 }
 
 void Device::uploadLogs(PC *pc){

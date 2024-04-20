@@ -31,11 +31,10 @@ class Device : public QObject
 {
     Q_OBJECT
 public:
-    Device(QProgressBar *progress, QLabel *redlight, QLabel *bluelight, QLabel *greenlight, QProgressBar *battery);
+    Device(QProgressBar *progress, QLabel *redlight, QLabel *bluelight, QLabel *greenlight);
     ~Device();
 
     void replaceBattery();
-    void toggleHeadsetConn();
     void startSession();
     void pauseSession();
     void resumeSession();
@@ -56,9 +55,6 @@ public:
     void uploadSessionLog();
     void togglePower();
     void uploadLogs(PC *pc);
-
-    void connToPC();
-    void checkBatteryLevel();
 
 
 private:
@@ -93,7 +89,6 @@ private:
     
     // TODO : Decouple ui from class
     QProgressBar *progress;
-    QProgressBar *batteryBar; // Could consider this to be part of object model
     QLabel* redlight;
     QLabel* bluelight;
     QLabel* greenlight;
@@ -108,8 +103,11 @@ private:
 signals:
     void updateProgressBar(int percentage);
     void updateProgressMessage(QString message);
-    // void updateBatteryLevel(int level); // TODO
     void updateTreatmentGraph(QVector<WaveForm> waveforms, int site);
+
+    void updateBatteryLevel(int level);
+    void uiToggleHeadset(bool);
+    void uiTogglePC(bool);
 
 private slots:
     void readStartBaseline();
@@ -120,6 +118,9 @@ private slots:
     void pauseTimeout();
     void flashRedlight();
     void applyTherapy(float);
+
+    void toggleHeadset();
+    void togglePC();
 
     //void toggleHeadsetConn();
 };

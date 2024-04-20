@@ -536,7 +536,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>toggle headset</string>
+      <string>Headset: OFF</string>
      </property>
     </widget>
     <widget class="QLabel" name="BatteryLbl">
@@ -555,19 +555,6 @@
     <widget class="QPushButton" name="replaceBatteryBtn">
      <property name="geometry">
       <rect>
-       <x>150</x>
-       <y>570</y>
-       <width>121</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>replace Battery</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pcConnButton">
-     <property name="geometry">
-      <rect>
        <x>280</x>
        <y>570</y>
        <width>121</width>
@@ -575,7 +562,20 @@
       </rect>
      </property>
      <property name="text">
-      <string>pc connection</string>
+      <string>Replace battery</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pcConnButton">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>570</y>
+       <width>121</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Computer: OFF</string>
      </property>
     </widget>
     <widget class="QProgressBar" name="batteryBar">
