@@ -18,8 +18,6 @@ public:
     // Getters
     QVector<SessionLog*> getLogs() const { return logs; }
 
-    // Setters
-
 private:
     bool checkLogExist(SessionLog *log);
 

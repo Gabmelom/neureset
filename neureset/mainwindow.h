@@ -45,6 +45,7 @@ private slots:
     void uploadLogs();
     void pcBackButtonPressed();
     void connToPC();
+    void updateProgressMessage(QString message);
 
 
 private:

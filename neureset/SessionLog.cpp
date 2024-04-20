@@ -3,6 +3,7 @@
 
 SessionLog::SessionLog(int sn) : sessionNumber(sn)
 {
+    startDomFreq = 0;
 }
 
 SessionLog::~SessionLog()
@@ -13,44 +14,34 @@ SessionLog::~SessionLog()
 void SessionLog::startSession()
 {
     startDateTime = QDateTime::currentDateTime();
-    qInfo()<<"Session "<<sessionNumber<<" started";
 }
 
 void SessionLog::endSession()
 {
     endDateTime = QDateTime::currentDateTime();
-    qInfo()<<"Session "<<sessionNumber<<" ended";
 }
 
-void SessionLog::addStartBaselines(QVector<QVector<int>> baseline)
-{
-    startBaselines = baseline;
-    qInfo()<<"store start baseline";
-}
-
-void SessionLog::addEndBaselines(QVector<QVector<int>> baseline)
-{
-    endBaselines = baseline;
-    qInfo()<<"store end baseline";
+void SessionLog::addTreatmentFreq(float freq){
+    treatmentFreqs.push_back(freq);
 }
 
 void SessionLog::consoleOut(){
-    qInfo()<<"outputting log";
-    qInfo()<<"startDomFreq: "<<startDomFreq;
-    qInfo()<<"endDomFreq: "<<endDomFreq;
-    //qInfo()<<"treatments:";
-    //treatmentFreqs.toStdVector();
-    qInfo()<<"offset treatments:    "<<offsetFreqs;
-//    for (int i = 0; i < offsetFreqs.length(); i++){
-//        qInfo()<<"\r   "<<offsetFreqs[i];
-//    }
-    //qInfo()<<"";
-
-}
-
-void SessionLog::pushTreatmentFreqs(QVector<QVector<int>> freqs){    //4 pairs of freq amp for each wavelength
-    treatmentFreqs.push_back(freqs);
-}
-void SessionLog::pushOffset(float freq){
-    offsetFreqs.push_back(freq);
+    qDebug()<<"Session "<<sessionNumber<<" log: ";
+    qDebug()<<"Start datetime "<<startDateTime.toString();
+    qDebug()<<"End datetime "<<endDateTime.toString();
+    qDebug()<<"Start dominant frequency: "<<startDomFreq<<" Hz";
+    qDebug()<<"End dominant frequency: "<<endDomFreq<<" Hz";
+    qDebug()<<"Base treatment frequency: " << baseTreatmentFreq;
+    qDebug()<<"Start baselines: ";
+    for (int i = 0; i < startBaselines.size(); i++){
+        qDebug()<<"Site "<<i+1<<": "<<startBaselines[i];
+    }
+    qDebug()<<"End baselines: ";
+    for (int i = 0; i < endBaselines.size(); i++){
+        qDebug()<<"Site "<<i+1<<": "<<endBaselines[i];
+    }
+    qDebug()<<"Offset treatment frequencies: ";
+    for (int i = 0; i < treatmentFreqs.size(); i++){
+        qDebug()<<"Round "<<i+1<<": "<<treatmentFreqs[i] << " Hz";
+    }    
 }

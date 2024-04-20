@@ -14,19 +14,8 @@ PC::~PC()
 
 void PC::uploadLog(SessionLog *log)
 {
-    QVector<QVector<int>> startBaseline = log->getStartBaseline();
-    QVector<QVector<int>> endBaseline = log->getEndBaseline();
-
-    
-    // qInfo() << "Start baseline data:";
-    // for (const auto& row : startBaseline) {
-    //     qInfo() << row;
-    // }
-
-    // qInfo() << "End baseline data:";
-    // for (const auto& row : startBaseline) {
-    //     qInfo() << row;
-    // }
+    QVector<float> startBaseline = log->getStartBaselines();
+    QVector<float> endBaseline = log->getEndBaselines();
 
     if (!checkLogExist(log))
     {

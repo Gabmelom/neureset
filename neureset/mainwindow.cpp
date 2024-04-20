@@ -44,10 +44,8 @@ void MainWindow::init()
 
     device = new Device(ui->sessionProgressBar, ui->redlight, ui->bluelight, ui->greenlight, ui->batteryBar);
     pc = new PC();
-    // CRASHES AFTER MERGE CONFLICT
-    // QTimer* timer = new QTimer(this);
-    // connect(timer, &QTimer::timeout,this, &MainWindow::updateGui);
-    // timer->start(1000);
+
+    connect(device, SIGNAL(updateProgressMessage(QString)), this, SLOT(updateProgressMessage(QString)));
 }
 
 void MainWindow::devicePageChanged(int index)
@@ -113,7 +111,6 @@ void MainWindow::pcPageChanged(int index)
 void MainWindow::powerPressed()
 {
     device->togglePower();
-    //qDebug () <<device->getPower();
     if (device->getPower()){    //power  on
         ui->DeviceScreen->setCurrentIndex(1);
         devicePageChanged(1);
@@ -154,7 +151,7 @@ void MainWindow::selectPressed()
         //  1 - Session log page
         //  2 - Time & date page
         int optionSelected = currentDeviceList->currentRow();
-        if(optionSelected == 0 && !device->getHeadsetConn()) return; // Device needs a headset connection to start a new session
+        if(optionSelected == 0 && !device->getHeadsetConn()) return; // Device needs a headset connection to start a new session (device should check for this instead?)
         ui->DeviceScreen->setCurrentIndex(optionSelected+2);
     }
     else if(currentDeviceScreen == 2){ // Session log page
@@ -177,6 +174,12 @@ void MainWindow::playPausePressed()
 void MainWindow::stopPressed()
 {
     if(device->getPowerState()) device->stopSession();
+}
+
+
+void MainWindow::updateProgressMessage(QString message)
+{
+    ui->sessionProgressLabel->setText(message);
 }
 
 
@@ -250,6 +253,7 @@ void MainWindow::displayPCLogs()
 
 void MainWindow::displayLogDetails(QListWidgetItem *item)
 {
+    ui->siteBaselineList->clear();
     int logIndex = ui->pcLogList->row(item);
     auto log = pc->getLogs()[logIndex];
     
@@ -262,22 +266,19 @@ void MainWindow::displayLogDetails(QListWidgetItem *item)
     auto duration = log->getStartDateTime().secsTo(log->getEndDateTime());
     ui->sessionDurationLabel->setText(QString("Duration: %1 minutes").arg(duration/60));
 
-    ui->startDomFreqLabel->setText(QString("Start Dominant Frequency: %1").arg(log->getStartDomFreq()));
-    ui->endDomFreqLabel->setText(QString("End Dominant Frequency: %1").arg(log->getEndDomFreq()));
+    ui->startDomFreqLabel->setText(QString("Average start baseline: %1 Hz").arg(log->getStartDomFreq()));
+    ui->endDomFreqLabel->setText(QString("Average end baseline: %1 Hz").arg(log->getEndDomFreq()));
+    ui->treatDomFreqLabel->setText(QString("Treatment baseline: %1 Hz").arg(log->getBaseTreatmentFreq()));
 
     // Display treatment frequencies for each EEG site
-    auto startBaselines = log->getStartBaseline();
-    auto endBaselines = log->getEndBaseline();
+    auto startBaselines = log->getStartBaselines();
+    auto endBaselines = log->getEndBaselines();
     for (int site = 0; site < startBaselines.size(); site++) {
-        auto startFrequency = startBaselines[site][0];
-        auto startAmplitude = startBaselines[site][1];
-        auto endFrequency = endBaselines[site][0];
-        auto endAmplitude = endBaselines[site][1];
+        auto startBaseline = startBaselines[site];
+        auto endBaseline = endBaselines[site];
 
-
-        // Add entry to ui->siteBaselineList
-        ui->siteBaselineList->addItem(QString("Site %1: Start Freq: %2, Start Amp: %3, End Freq: %4, End Amp: %5")
-            .arg(site).arg(startFrequency).arg(startAmplitude).arg(endFrequency).arg(endAmplitude));
+        auto item = new QListWidgetItem(QString("Site %1: %2 Hz -> %3 Hz").arg(site).arg(startBaseline).arg(endBaseline));
+        ui->siteBaselineList->addItem(item);
     }
 }
 

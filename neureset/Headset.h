@@ -6,6 +6,18 @@
 #include <QThread>
 #include <QTimer>
 
+enum FREQ_BAND{
+    ALPHA,
+    BETA,
+    DELTA,
+    THETA,
+    GAMMA
+};
+
+struct WaveForm{
+    float frequency;
+    float amplitude;
+};
 
 
 class Headset : public QObject
@@ -13,28 +25,20 @@ class Headset : public QObject
     Q_OBJECT
 public:
     explicit Headset(int nodes, QObject *parent = nullptr);
+    void applyTreatment(float freq);
+    void applyTreatment(int site, float freq);
+    QVector<WaveForm> getSiteWaveForms(FREQ_BAND bandOmitted);
 
-//    void applyTreatment(int site, int baseline);
-    void applyTreatment(int freq);
-//    int readEEGBaseline(int site);
-    QVector<int> readBase();
-    void readBaselineSlot();
-    QVector<QVector<int>> getDomFreq();
+    // Getters
+    int getNumNodes() { return numNodes; }
 
-
-
-//public slots:
-//    void readBaselineSlot();
 
 private:
     int numNodes;
-    QVector<int> readBaseAlpha();   //probablyy just the freq amp overall, not for each node
-    QVector<int> readBaseBeta();
-    QVector<int> readBaseDelta();
-    QVector<int> readBaseTheta();
-
-    int currentNodeIndex;
-    int treatmentFreq;
+    WaveForm generateWaveForm(FREQ_BAND band);
+    float randomFloat(float min, float max);
+    float elapsedTime;
+    float treatmentFreq;
 
 private slots:
     void applyTreatmentToCurrNode();
