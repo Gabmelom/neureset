@@ -70,8 +70,7 @@ private:
     QtCharts::QChartView* waveformChart;
     QtCharts::QChart* chart;
     void initWaveformGraph();
-    QtCharts::QSplineSeries* graphWaveform(WaveForm waveform);
-    QtCharts::QSplineSeries* graphMergedWaveform(QVector<WaveForm> waveforms);
+    QtCharts::QSplineSeries* graphWaveform(QVector<WaveForm> waveforms);
 
     const float GRAPH_X_MAX = 80*M_PI;
     const float GRAPH_Y_MAX = 50;

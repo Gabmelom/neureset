@@ -63,20 +63,7 @@ void MainWindow::initWaveformGraph(){
 
 }
 
-// TODO: Double check if still needed at the end
-QtCharts::QSplineSeries* MainWindow::graphWaveform(WaveForm waveform){
-    
-    auto series = new QtCharts::QSplineSeries();
-
-    for (float i = 0; i < GRAPH_X_MAX; i++){
-        float y = waveform.amplitude * sin(waveform.frequency * i);
-        series->append(i, y);
-    }
-
-    return series;
-}
-
-QtCharts::QSplineSeries* MainWindow::graphMergedWaveform(QVector<WaveForm> waveforms){
+QtCharts::QSplineSeries* MainWindow::graphWaveform(QVector<WaveForm> waveforms){
     auto series = new QtCharts::QSplineSeries();
 
     for (float i = 0; i < GRAPH_X_MAX; i++){
@@ -93,7 +80,7 @@ QtCharts::QSplineSeries* MainWindow::graphMergedWaveform(QVector<WaveForm> wavef
 void MainWindow::updateTreatmentGraph(QVector<WaveForm> waveforms, int site){
     chart->removeAllSeries();
 
-    auto series = graphMergedWaveform(waveforms);
+    auto series = graphWaveform(waveforms);
     chart->addSeries(series);
     
     chart->createDefaultAxes();
