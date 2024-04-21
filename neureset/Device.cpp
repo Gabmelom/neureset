@@ -59,7 +59,7 @@ void Device::startSession(){
 
         sessionStage = START_SESSION;
         currSession = new SessionLog(logs.length() + 1);
-        currSession->startSession();
+        currSession->startSession(currDate);
 
         progress = 15;
         updateProgressBar(progress);
@@ -239,7 +239,7 @@ void Device::readEndBaseline(){
         currSession->setSessionNumber(sessionsDone);
         currSession->setEndBaselines(endBaselines);
         currSession->setEndDomFreq(endBaseFreq);
-        currSession->endSession();
+        currSession->endSession(currDate);
         currSession->consoleOut();
 
         logs.push_back(currSession);

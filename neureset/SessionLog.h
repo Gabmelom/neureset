@@ -13,8 +13,8 @@ public:
     SessionLog(int sn);
     ~SessionLog();
 
-    void startSession();
-    void endSession();
+    void startSession(QDateTime *date);
+    void endSession(QDateTime *date);
     void addTreatmentFreq(float);
     void consoleOut();
 

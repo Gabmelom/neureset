@@ -1,5 +1,6 @@
 #include "SessionLog.h"
 #include <QDebug>
+#include <QDateTime>
 
 SessionLog::SessionLog(int sn) : sessionNumber(sn)
 {
@@ -11,14 +12,14 @@ SessionLog::~SessionLog()
 
 }
 
-void SessionLog::startSession()
+void SessionLog::startSession(QDateTime *date)
 {
-    startDateTime = QDateTime::currentDateTime();
+    startDateTime = *date;
 }
 
-void SessionLog::endSession()
+void SessionLog::endSession(QDateTime *date)
 {
-    endDateTime = QDateTime::currentDateTime();
+    endDateTime = *date;
 }
 
 void SessionLog::addTreatmentFreq(float freq){

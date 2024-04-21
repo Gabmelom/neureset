@@ -242,7 +242,7 @@ void MainWindow::changeDate(){
     qInfo("changing the date");
     //ui->dateEdit->setDate(device->getDate()->date());
     device->getDate()->setDate(ui->dateEdit->date());
-    //qDebug() << device->getDate()->date();
+    qDebug() << device->getDate()->date();
 }
 
 void MainWindow::changeTime(){
