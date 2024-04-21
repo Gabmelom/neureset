@@ -44,9 +44,9 @@ void Device::startSession(){
         qInfo("Device is off");
         return;
     }
-    if(batteryLife < (ROUNDS * 9)){
+    if(batteryLife < 25){
         qInfo("Device does not have enough battery to complete a session.");
-        updateProgressMessage("Replace the battery to start session.");
+        updateProgressMessage("Replace the battery to start a new session.");
         return;
     }
     if(headsetConn){
@@ -85,30 +85,34 @@ void Device::treatment(){   //between rounds
         endTime = endTime.addSecs(300);
         if (rounds >= ROUNDS)
         {
+            batteryLife -= 3;
+            updateBatteryLevel(batteryLife);
+            updateProgressMessage("Calculating final baselines...");
             QTimer::singleShot(5000, this, &Device::readEndBaseline);
         }
         else
         {
-            // qDebug() << "Batttery life: " << batteryLife;
-            qDebug() << "Starting round " << 1 + rounds;
-
-            if (batteryLife < 9) {     //19 is for quick testing, something liike 9 gives realistic test results for middle of sessionn. 10 could be used ofr start
-                qDebug()<<"Not enough power to continue";
+            qInfo() << "Starting round " << (1 + rounds) << " of " << ROUNDS;
+            updateProgressMessage("Starting round " + QString::number(1 + rounds) + " of " + QString::number(ROUNDS));
+            if (batteryLife < 1) {
+                updateProgressMessage("Low battery, please replace...");
                 pauseSession();
                 return;
-            } else if (batteryLife <= 20) {
-                qInfo()<<"battery low: "<<batteryLife<<", please pause and replace";
             }
 
+            // Update UI
             progress = 40 + (rounds * 14);
+            batteryLife -= 3;
+
             updateProgressBar(progress);
+            updateBatteryLevel(batteryLife);
 
             QTimer::singleShot(1000, this, &Device::treatmentPart2);
         }
     }
 }
 
-void Device::treatmentPart2(){  //round bit
+void Device::treatmentPart2(){  // treatment application
     if(ongoing && powerState){
         sessionStage = TREATMENT_PART_2;
 
@@ -118,16 +122,16 @@ void Device::treatmentPart2(){  //round bit
         currSession->addTreatmentFreq(treatmentFrequency + offset);
 
         offset+=5;
-        if (batteryLife < 9){
-            qDebug()<<"Not enough power to continue";
-            stopSession();
+        if (batteryLife <= 10){
+            updateProgressMessage("Low battery, please replace...");
+            pauseSession();
             return;
         }
-        batteryLife -= 9;
-        updateBatteryLevel(batteryLife); // UI update
+        // batteryLife -= 9;
+        // updateBatteryLevel(batteryLife); // UI update
         rounds++;
 
-        //update window: round i of r complete  (show as percent)
+        qInfo() << "Round " << rounds << " complete";
         updateProgressMessage("Round " + QString::number(rounds) + " of " + QString::number(ROUNDS) + " complete");
         QTimer::singleShot((62*20), this, &Device::treatment);
 
@@ -197,12 +201,15 @@ void Device::readStartBaseline(){
         // Log information
         currSession->setStartDomFreq(dominantFrequency);
         currSession->setStartBaselines(startBaselines);
+        endTime = currDate->addSecs(60);
 
         qDebug() << "Average starting baseline: " << dominantFrequency;
-        progress = 28;
-        updateProgressBar(progress);
 
-        endTime = currDate->addSecs(60);
+        // Update UI
+        progress = 28;
+        batteryLife -= 5;
+        updateProgressBar(progress);
+        updateBatteryLevel(batteryLife);
 
         QTimer::singleShot(1000, this, &Device::readTreatmentBaseline);
     }
@@ -221,8 +228,12 @@ void Device::readTreatmentBaseline(){
         currSession->setBaseTreatmentFreq(treatmentFrequency);
 
         qDebug() << "Treatment frequency: " << treatmentFrequency;
+
+        // Update UI
         progress = 30;
+        batteryLife -= 5;
         updateProgressBar(progress);
+        updateBatteryLevel(batteryLife);
 
         endTime = endTime.addSecs(60);
 
@@ -237,8 +248,6 @@ void Device::readEndBaseline(){
         endTime = endTime.addSecs(300);
 
         sessionStage = READ_END_BASELINE;
-        
-        updateProgressMessage("Calculating final baselines...");
 
         // Add random offsets to starting waveforms, calculate end dominant frequency
         QVector<float> endBaselines;
@@ -256,8 +265,11 @@ void Device::readEndBaseline(){
 
         float endBaseFreq = avgDomFreq(endBaselines);
 
+        // Update UI
+        batteryLife -= 5;
         progress = 100;
         updateProgressBar(progress);
+        updateBatteryLevel(batteryLife);
 
         // Log information
         updateProgressMessage("Session complete");
@@ -281,6 +293,7 @@ void Device::pauseSession(){
     //pause the timer
     //pause any calls to the headset
     qInfo("Session Paused");
+    updateProgressMessage("Session Paused");
     toggleGreenlight(false);
     ongoing = false;
     pauseTimer.start(15000);    //15000 for testing (15 secoonds), should be 300000
@@ -305,10 +318,10 @@ void Device::resumeSession(){
             readTreatmentBaseline();
             break;
         case TREATMENT:
-            readTreatmentBaseline();
+            treatment();
             break;
-        case TREATMENT_PART_2:  //these should return to the baseline reading, since a new baseline should be calculated after pausing (brain state has  changed)
-            readTreatmentBaseline();
+        case TREATMENT_PART_2: 
+            treatmentPart2();
             break;
         case READ_END_BASELINE:
             readEndBaseline();
@@ -335,19 +348,7 @@ void Device::stopSession(){
     pauseTimer.stop();
 }
 
-//admin functions that simmulate  hardware managament
-
-void Device::replaceBattery(){
-    qDebug() << "Changing the battery, was at " << batteryLife;
-    if (powerState){
-        qInfo("turrn off the device  before changing the battery");
-    } else {
-        batteryLife = 100;
-        updateBatteryLevel(batteryLife);
-        pauseTimer.stop();
-    }
-
-}
+// Admin functions that simulate hardware management
 
 void Device::togglePower(){
     toggleBluelight(false);
@@ -403,7 +404,7 @@ void Device::uploadLogs(PC *pc){
     }
     else
     {
-        qInfo("Please connection to PC");
+        qInfo("Please connect to PC");
     }
 }
 
@@ -432,4 +433,9 @@ void Device::flashRedlight(){
         redlightOn = false;
         toggleRedlight(false);
     }
+}
+
+void Device::setBatteryLevel(int level){
+    batteryLife = level;
+    updateBatteryLevel(level); // UI update
 }

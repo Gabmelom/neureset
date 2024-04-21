@@ -34,7 +34,6 @@ public:
     Device();
     ~Device();
 
-    void replaceBattery();
     void startSession();
     void pauseSession();
     void resumeSession();
@@ -52,6 +51,7 @@ public:
     SessionLog* getCurrSession() { return currSession; }
     QVector<SessionLog*> getLogs() { return logs; }
 
+    // Setters
     void setDate(QDateTime* date) {currDate = date; }
 
     void uploadSessionLog();
@@ -118,6 +118,7 @@ private slots:
 
     void toggleHeadset();
     void togglePC();
+    void setBatteryLevel(int level); // Setter as a slot for battery replacement
 };
 
 #endif // DEVICE_H
