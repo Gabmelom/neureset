@@ -52,6 +52,8 @@ public:
     SessionLog* getCurrSession() { return currSession; }
     QVector<SessionLog*> getLogs() { return logs; }
 
+    void setDate(QDateTime* date) {currDate = date; }
+
     void uploadSessionLog();
     void togglePower(); // TODO: decouple, send signal if battery runs out
     void uploadLogs(PC *pc);
@@ -77,6 +79,7 @@ private:
     QVector<SessionLog*> logs;
     
     QDateTime *currDate;
+    QDateTime endTime;
     QTimer sessionTimer;
     QTimer pauseTimer;
     
