@@ -100,6 +100,7 @@ private:
 signals:
     void updateProgressBar(int percentage);
     void updateProgressMessage(QString message);
+    void updateETALabel(QString message);
     void updateTreatmentGraph(QVector<WaveForm> waveforms, int site);
     void updateBatteryLevel(int level);
     void uiTogglePower(bool);

@@ -69,6 +69,7 @@ void MainWindow::init()
     connect(device, SIGNAL(uiToggleGreenlight(bool)), this, SLOT(toggleGreenlight(bool)));
     connect(device, SIGNAL(updateProgressMessage(QString)), this, SLOT(updateProgressMessage(QString)));
     connect(device, SIGNAL(updateProgressBar(int)), this, SLOT(updateProgressBar(int)));
+    connect(device, SIGNAL(updateETALabel(QString)), this, SLOT(updateETALabel(QString)));
     connect(device, SIGNAL(updateTreatmentGraph(QVector<WaveForm>, int)), this, SLOT(updateTreatmentGraph(QVector<WaveForm>, int)));
 
 }
@@ -435,6 +436,10 @@ void MainWindow::showPopup(QString message)
 void MainWindow::hidePopup()
 {
     ui->popup->hide();
+}
+
+void MainWindow::updateETALabel(QString eta){
+    ui->etaLabel->setText(eta);
 }
 
 void MainWindow::toggleRedlight(bool state)
