@@ -662,12 +662,12 @@
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
-    <widget class="QFrame" name="batteryPopup">
+    <widget class="QFrame" name="popup">
      <property name="geometry">
       <rect>
-       <x>210</x>
+       <x>190</x>
        <y>210</y>
-       <width>161</width>
+       <width>191</width>
        <height>91</height>
       </rect>
      </property>
@@ -680,12 +680,12 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <widget class="QLabel" name="BatteryWarningLabel">
+     <widget class="QLabel" name="popupLabel">
       <property name="geometry">
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>139</width>
+        <width>171</width>
         <height>36</height>
        </rect>
       </property>
@@ -702,7 +702,7 @@
      <widget class="QPushButton" name="dismissBtn">
       <property name="geometry">
        <rect>
-        <x>40</x>
+        <x>60</x>
         <y>50</y>
         <width>80</width>
         <height>25</height>

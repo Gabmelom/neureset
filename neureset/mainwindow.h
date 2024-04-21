@@ -28,7 +28,6 @@ public:
 
     Ui::MainWindow* getUi() { return ui; }
 private slots:
-    void powerPressed();
     void homePressed();
     void upPressed();
     void downPressed();
@@ -38,7 +37,6 @@ private slots:
     void updateDate();
     void changeDate();
     void changeTime();
-    void changeBattery();
     void devicePageChanged(int index);
     void pcPageChanged(int index);
     void displayLogDetails(QListWidgetItem*);
@@ -46,6 +44,7 @@ private slots:
     void pcBackButtonPressed();
 
     // Update UI based on device state
+    void togglePower(bool);
     void updatePCToggle(bool);
     void updateHeadsetToggle(bool);
     void updateBatteryLife(int);
@@ -55,6 +54,8 @@ private slots:
     void toggleRedlight(bool);
     void toggleGreenlight(bool);
     void toggleBluelight(bool);
+    void showPopup(QString message);
+    void hidePopup();
     
 
 private:

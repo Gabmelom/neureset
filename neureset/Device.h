@@ -39,6 +39,8 @@ public:
     void resumeSession();
     void stopSession();
 
+    void uploadSessionLog();
+    void uploadLogs(PC *pc);
 
     // Getters
     int getBatteryLife() { return batteryLife; }
@@ -54,9 +56,6 @@ public:
     // Setters
     void setDate(QDateTime* date) {currDate = date; }
 
-    void uploadSessionLog();
-    void togglePower(); // TODO: decouple, send signal if battery runs out
-    void uploadLogs(PC *pc);
 
 
 private:
@@ -64,6 +63,7 @@ private:
     bool headsetConn;
     bool pcConn;
     bool powerState;
+    bool warningPopupShown;
     
     int progress;
     int batteryLife;
@@ -82,6 +82,7 @@ private:
     QDateTime endTime;
     QTimer sessionTimer;
     QTimer pauseTimer;
+    int pauseTimerCount;
     
     float calcDomFreq(QVector<WaveForm>);
     float avgDomFreq(QVector<float>);
@@ -101,11 +102,14 @@ signals:
     void updateProgressMessage(QString message);
     void updateTreatmentGraph(QVector<WaveForm> waveforms, int site);
     void updateBatteryLevel(int level);
+    void uiTogglePower(bool);
     void uiToggleHeadset(bool);
     void uiTogglePC(bool);
     void uiToggleBluelight(bool);
     void uiToggleRedlight(bool);
     void uiToggleGreenlight(bool);
+    void uiShowPopup(QString message);
+    void uiHidePopup();
 
 private slots:
     void readStartBaseline();
@@ -116,9 +120,11 @@ private slots:
     void pauseTimeout();
     void applyTherapy(float);
 
+    // UI -> Device signal handlers
+    void togglePower();
     void toggleHeadset();
     void togglePC();
-    void setBatteryLevel(int level); // Setter as a slot for battery replacement
+    void setBatteryLevel(int level);
 };
 
 #endif // DEVICE_H

@@ -26,7 +26,6 @@ class Headset : public QObject
 public:
     explicit Headset(int nodes, QObject *parent = nullptr);
     void applyTreatment(float freq);
-    void applyTreatment(int site, float freq);
     QVector<WaveForm> getSiteWaveForms(FREQ_BAND bandOmitted);
 
     // Getters
