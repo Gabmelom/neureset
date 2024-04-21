@@ -11,6 +11,7 @@
 Device::Device() {
     headset = new Headset(7,this);
     currDate = new QDateTime(QDateTime::currentDateTime());
+    endTime = *currDate;
     batteryLife = 100;
     powerState = 0;
     headsetConn = 0;
@@ -81,6 +82,7 @@ void Device::treatment(){   //between rounds
     if(ongoing && powerState){
         toggleGreenlight(false);
         sessionStage = TREATMENT;
+        endTime = endTime.addSecs(300);
         if (rounds >= ROUNDS)
         {
             QTimer::singleShot(5000, this, &Device::readEndBaseline);
@@ -190,6 +192,8 @@ void Device::readStartBaseline(){
         progress = 28;
         updateProgressBar(progress);
 
+        endTime = currDate->addSecs(60);
+
         QTimer::singleShot(1000, this, &Device::readTreatmentBaseline);
     }
 }
@@ -210,6 +214,8 @@ void Device::readTreatmentBaseline(){
         progress = 30;
         updateProgressBar(progress);
 
+        endTime = endTime.addSecs(60);
+
         QTimer::singleShot(5000, this, &Device::treatment); //waits 5 seconds
     }
 }
@@ -217,6 +223,8 @@ void Device::readTreatmentBaseline(){
 void Device::readEndBaseline(){
     if(ongoing && powerState){
         sessionsDone++;
+
+        endTime = endTime.addSecs(300);
 
         sessionStage = READ_END_BASELINE;
         
@@ -239,7 +247,7 @@ void Device::readEndBaseline(){
         currSession->setSessionNumber(sessionsDone);
         currSession->setEndBaselines(endBaselines);
         currSession->setEndDomFreq(endBaseFreq);
-        currSession->endSession(currDate);
+        currSession->endSession(&endTime);
         currSession->consoleOut();
 
         logs.push_back(currSession);

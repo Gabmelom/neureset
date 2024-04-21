@@ -79,6 +79,7 @@ private:
     QVector<SessionLog*> logs;
     
     QDateTime *currDate;
+    QDateTime endTime;
     QTimer sessionTimer;
     QTimer pauseTimer;
     
