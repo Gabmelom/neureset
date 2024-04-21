@@ -25,6 +25,7 @@ Device::Device() {
     sessionsDone = 0;
     offset = 5;
     pcConn = false;
+    ongoing = false;
       
     connect(&pauseTimer, &QTimer::timeout, this, &Device::pauseTimeout);
 }
@@ -88,6 +89,7 @@ void Device::treatment(){   //between rounds
         {
             setBatteryLevel(batteryLife -3);
             updateProgressMessage("Calculating final baselines...");
+            updateETALabel("ETA: 60 s");
             // 'Calculate' for 5 seconds
             int step = (95 - progress) / 5; 
             while (progress < 95)
@@ -127,6 +129,7 @@ void Device::treatmentPart2(){  // treatment application
 
         qInfo() << "Round " << rounds << " complete";
         updateProgressMessage("Round " + QString::number(rounds) + " of " + QString::number(ROUNDS) + " complete");
+        updateETALabel("ETA: " + QString::number(20 - 2*rounds) + " mins");
         QTimer::singleShot((62*20), this, &Device::treatment);
 
     }
@@ -202,6 +205,7 @@ void Device::readStartBaseline(){
         // Update UI
         progress = 28;
         updateProgressBar(progress);
+        updateETALabel("ETA: 25 mins");
         setBatteryLevel(batteryLife - 5);
 
         QTimer::singleShot(1000, this, &Device::readTreatmentBaseline);
@@ -225,6 +229,7 @@ void Device::readTreatmentBaseline(){
         // Update UI
         progress = 30;
         updateProgressBar(progress);
+        updateETALabel("ETA: 24 mins");
         setBatteryLevel(batteryLife - 5);
 
         endTime = endTime.addSecs(60);
@@ -260,6 +265,7 @@ void Device::readEndBaseline(){
         // Update UI
         progress = 100;
         updateProgressBar(progress);
+        updateETALabel("ETA: -");
         setBatteryLevel(batteryLife - 5);
         
 
