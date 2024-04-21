@@ -73,10 +73,18 @@ private:
     void displayPCLogs();
 
     // Charting
-    QtCharts::QChartView* waveformChart;
-    QtCharts::QChart* chart;
-    void initWaveformGraph();
+    QtCharts::QChartView* treatmentGraphView;
+    QtCharts::QChart* treatmentGraph;
+
+    QtCharts::QChartView* pcStartGraphView;
+    QtCharts::QChart* pcStartGraph;
+
+    QtCharts::QChartView* pcEndGraphView;
+    QtCharts::QChart* pcEndGraph;
+
+    void initWaveformGraphs();
     QtCharts::QSplineSeries* graphWaveform(QVector<WaveForm> waveforms);
+    QVector<WaveForm> averageWaveforms(QVector<QVector<WaveForm>> waveforms);
 
     const float GRAPH_X_MAX = 80*M_PI;
     const float GRAPH_Y_MAX = 50;

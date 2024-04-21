@@ -50,7 +50,7 @@ void Device::startSession(){
         return;
     }
     if(headsetConn){
-        if (sessionStage != 0){
+        if (sessionStage != NO_STAGE){
             resumeSession();
             return;
         }
@@ -155,18 +155,28 @@ float Device::avgDomFreq(QVector<float> dominantFrequencies){
 }
 
 // For each site, calculate the dominant frequency and store it in a vector
-// Optionally graph the waveforms of a random site, default is false
-QVector<float> Device::readBaselines(bool graph){
+// Optionally graph the waveforms of a random site
+QVector<float> Device::readBaselines(E_SESSION_STAGE stage){
+    
     FREQ_BAND omittedBand = (FREQ_BAND)(rand() % 5); // Omit a random frequency band
     int siteGraphed = rand() % headset->getNumNodes(); // Random site to graph
+    
     QVector<float> dominantFrequencies;
 
     for (int i = 0; i < headset->getNumNodes(); i++){
         QVector<WaveForm> siteWaveforms = headset->getSiteWaveForms(omittedBand);
+        
+        // Determine the dominant frequency for the site
         float domFreq = calcDomFreq(siteWaveforms);
         dominantFrequencies.push_back(domFreq);
 
-        if (i == siteGraphed && graph){
+        // Store starting waveforms in the session log
+        if (stage == READ_START_BASELINE){
+            currSession->addStartWaveForms(siteWaveforms);
+        }
+
+        // Graph a sample waveform during the treatment
+        if (i == siteGraphed && stage == READ_TREATMENT_BASELINE){
             emit updateTreatmentGraph(siteWaveforms, i);
         }
     }
@@ -181,7 +191,7 @@ void Device::readStartBaseline(){
 
         updateProgressMessage("Calculating starting baselines...");
 
-        QVector<float> startBaselines = readBaselines();
+        QVector<float> startBaselines = readBaselines(READ_START_BASELINE);
         float dominantFrequency = avgDomFreq(startBaselines);
 
         // Log information
@@ -204,7 +214,7 @@ void Device::readTreatmentBaseline(){
 
         updateProgressMessage("Calculating treatment baseline...");
 
-        QVector<float> treatmentBaselines = readBaselines(true);
+        QVector<float> treatmentBaselines = readBaselines(READ_TREATMENT_BASELINE);
         treatmentFrequency = avgDomFreq(treatmentBaselines);
 
         // Log information
@@ -230,12 +240,20 @@ void Device::readEndBaseline(){
         
         updateProgressMessage("Calculating final baselines...");
 
-        // Add random offsets to starting baselines
+        // Add random offsets to starting waveforms, calculate end dominant frequency
         QVector<float> endBaselines;
-        for (int i = 0; i < currSession->getStartBaselines().length(); i++){
-            float offset = (float(rand())/float((RAND_MAX))) * 5 - 2.5;
-            endBaselines.push_back(currSession->getStartBaselines()[i] + (rand() % 5));
+        for (int i = 0; i < currSession->getStartWaveForms().length(); i++){
+            QVector<WaveForm> endWaveForms;
+            for (int j = 0; j < currSession->getStartWaveForms()[i].length(); j++){
+                WaveForm currWave = currSession->getStartWaveForms()[i][j];
+                currWave.frequency += (rand() % 1);
+                endWaveForms.push_back(currWave);
+            }
+            float domFreq = calcDomFreq(endWaveForms);
+            endBaselines.push_back(domFreq);
+            currSession->addEndWaveForms(endWaveForms);
         }
+
         float endBaseFreq = avgDomFreq(endBaselines);
 
         progress = 100;
@@ -335,7 +353,6 @@ void Device::togglePower(){
     toggleBluelight(false);
     toggleRedlight(false);
     toggleGreenlight(false);
-    pcConn = false;
     powerState = !powerState;
     if(!powerState) qInfo("Turn off device");
     else {
@@ -353,7 +370,7 @@ void Device::toggleHeadset(){
     // if it is now connected, device stops beeping, turn red light off and resume session if it was paused
     if(headsetConn){
 
-        if (sessionStage != 0){
+        if (sessionStage != NO_STAGE){
             qInfo("Device stops beeping");
             toggleRedlight(false);
             resumeSession();
@@ -362,7 +379,7 @@ void Device::toggleHeadset(){
     }
     // if it is now unconnected, device beeps, red light flashes, current session is paused
     else{
-        if (sessionStage != 0){
+        if (sessionStage != NO_STAGE){
             qInfo("Device start beeping");
             flashRedlight();
             pauseSession();

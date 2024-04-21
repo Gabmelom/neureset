@@ -5,6 +5,8 @@
 #include <QDateTime>
 #include <QString>
 
+#include "Headset.h"
+
 using namespace std;
 
 class SessionLog
@@ -16,11 +18,16 @@ public:
     void startSession(QDateTime *date);
     void endSession(QDateTime *date);
     void addTreatmentFreq(float);
+    void addStartWaveForms(QVector<WaveForm>);
+    void addEndWaveForms(QVector<WaveForm>);
     void consoleOut();
 
     // Getters
+
     QVector<float> getStartBaselines() const { return startBaselines; }
     QVector<float> getEndBaselines() const { return endBaselines; }
+    QVector<QVector<WaveForm>> getStartWaveForms() const { return startWaveForms; }
+    QVector<QVector<WaveForm>> getEndWaveForms() const { return endWaveForms; }
     QDateTime getStartDateTime() const { return startDateTime; }
     QDateTime getEndDateTime() const { return endDateTime; }
     int getSessionNumber() const { return sessionNumber; }
@@ -40,6 +47,9 @@ private:
     QVector<float> startBaselines;
     QVector<float> endBaselines;
     QVector<float> treatmentFreqs;
+
+    QVector<QVector<WaveForm>> startWaveForms;
+    QVector<QVector<WaveForm>> endWaveForms;
 
     QDateTime startDateTime;
     QDateTime endDateTime;
