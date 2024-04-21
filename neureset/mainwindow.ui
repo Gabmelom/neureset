@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1222</width>
-    <height>658</height>
+    <width>1225</width>
+    <height>655</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,6 +57,9 @@
        <height>30</height>
       </size>
      </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QWidget" name="horizontalLayoutWidget">
      <property name="geometry">
@@ -82,6 +85,9 @@
           <width>25</width>
           <height>25</height>
          </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -112,6 +118,9 @@
           <width>25</width>
           <height>25</height>
          </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -216,13 +225,16 @@
        <height>30</height>
       </size>
      </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QWidget" name="verticalLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>490</x>
+       <x>511</x>
        <y>200</y>
-       <width>82</width>
+       <width>41</width>
        <height>151</height>
       </rect>
      </property>
@@ -234,9 +246,6 @@
         </property>
         <property name="autoFillBackground">
          <bool>false</bool>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
         </property>
         <property name="text">
          <string/>
@@ -251,6 +260,9 @@
           <height>30</height>
          </size>
         </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -259,9 +271,6 @@
          <font>
           <pointsize>15</pointsize>
          </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
         </property>
         <property name="text">
          <string>OK</string>
@@ -272,13 +281,13 @@
           <height>30</height>
          </size>
         </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="down">
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
         <property name="text">
          <string/>
         </property>
@@ -291,6 +300,9 @@
           <width>30</width>
           <height>30</height>
          </size>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -315,7 +327,7 @@
       <enum>QFrame::Raised</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="powerOffPage">
       <property name="enabled">
@@ -526,19 +538,6 @@
       </widget>
      </widget>
     </widget>
-    <widget class="QPushButton" name="toggleHeadsetBtn">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>570</y>
-       <width>121</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Headset: OFF</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="BatteryLbl">
      <property name="geometry">
       <rect>
@@ -550,32 +549,6 @@
      </property>
      <property name="text">
       <string>Battery: </string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="replaceBatteryBtn">
-     <property name="geometry">
-      <rect>
-       <x>280</x>
-       <y>570</y>
-       <width>121</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Replace battery</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pcConnButton">
-     <property name="geometry">
-      <rect>
-       <x>150</x>
-       <y>570</y>
-       <width>121</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Computer: OFF</string>
      </property>
     </widget>
     <widget class="QProgressBar" name="batteryBar">
@@ -592,6 +565,87 @@
      </property>
      <property name="value">
       <number>24</number>
+     </property>
+    </widget>
+    <widget class="QWidget" name="horizontalLayoutWidget_7">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>560</y>
+       <width>341</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QPushButton" name="toggleHeadsetBtn">
+        <property name="text">
+         <string>Headset: OFF</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_6">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pcConnButton">
+        <property name="text">
+         <string>Computer: OFF</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_7">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="replaceBatteryBtn">
+        <property name="text">
+         <string>Replace battery</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>530</y>
+       <width>161</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Hardware controls</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </widget>
@@ -613,26 +667,23 @@
     <widget class="QStackedWidget" name="pcScreen">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>40</y>
-       <width>541</width>
-       <height>541</height>
+       <x>10</x>
+       <y>10</y>
+       <width>581</width>
+       <height>591</height>
       </rect>
      </property>
-     <property name="styleSheet">
-      <string notr="true">border: solid 1px;</string>
-     </property>
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <widget class="QWidget" name="sessionHistoryPage">
       <widget class="QListWidget" name="pcLogList">
        <property name="geometry">
         <rect>
-         <x>20</x>
+         <x>10</x>
          <y>40</y>
-         <width>501</width>
-         <height>491</height>
+         <width>561</width>
+         <height>541</height>
         </rect>
        </property>
       </widget>
@@ -647,10 +698,7 @@
        </property>
        <property name="font">
         <font>
-         <family>Noto Sans Adlam</family>
-         <pointsize>20</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
+         <pointsize>16</pointsize>
         </font>
        </property>
        <property name="styleSheet">
@@ -667,20 +715,14 @@
         <rect>
          <x>50</x>
          <y>0</y>
-         <width>221</width>
+         <width>151</width>
          <height>41</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <family>Noto Sans Adlam</family>
-         <pointsize>20</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
+         <pointsize>16</pointsize>
         </font>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">border: none;</string>
        </property>
        <property name="text">
         <string>Detailed view:</string>
@@ -689,11 +731,16 @@
       <widget class="QLabel" name="sessionNumberLabel">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>40</y>
-         <width>521</width>
+         <x>210</x>
+         <y>0</y>
+         <width>331</width>
          <height>41</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>16</pointsize>
+        </font>
        </property>
        <property name="text">
         <string>Session #X</string>
@@ -711,15 +758,6 @@
          <height>31</height>
         </rect>
        </property>
-       <property name="autoFillBackground">
-        <bool>false</bool>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
        <property name="icon">
         <iconset resource="resources.qrc">
          <normaloff>:/icons/left-from-bracket.svg</normaloff>:/icons/left-from-bracket.svg</iconset>
@@ -730,14 +768,17 @@
          <height>30</height>
         </size>
        </property>
+       <property name="flat">
+        <bool>true</bool>
+       </property>
       </widget>
       <widget class="QWidget" name="horizontalLayoutWidget_5">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>80</y>
-         <width>521</width>
-         <height>41</height>
+         <y>40</y>
+         <width>561</width>
+         <height>21</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="dateDurationLayout">
@@ -757,23 +798,13 @@
         </item>
        </layout>
       </widget>
-      <widget class="QListWidget" name="siteBaselineList">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>200</y>
-         <width>521</width>
-         <height>331</height>
-        </rect>
-       </property>
-      </widget>
       <widget class="QWidget" name="horizontalLayoutWidget_6">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>120</y>
-         <width>521</width>
-         <height>41</height>
+         <y>60</y>
+         <width>561</width>
+         <height>22</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="DomFreqLayout">
@@ -784,6 +815,19 @@
           </property>
          </widget>
         </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
         <item alignment="Qt::AlignRight">
          <widget class="QLabel" name="endDomFreqLabel">
           <property name="text">
@@ -791,20 +835,132 @@
           </property>
          </widget>
         </item>
+        <item>
+         <spacer name="horizontalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="treatDomFreqLabel">
+          <property name="text">
+           <string>BaseTreatmentFreqLabel</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
-      <widget class="QLabel" name="treatDomFreqLabel">
+      <widget class="QLabel" name="label">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>160</y>
-         <width>169</width>
-         <height>39</height>
+         <y>250</y>
+         <width>561</width>
+         <height>21</height>
         </rect>
        </property>
        <property name="text">
-        <string>BaseTreatmentFreqLabel</string>
+        <string>Final average waveform</string>
        </property>
+      </widget>
+      <widget class="QLabel" name="label_2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>80</y>
+         <width>561</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Starting average waveform</string>
+       </property>
+      </widget>
+      <widget class="QFrame" name="startFrame">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>100</y>
+         <width>581</width>
+         <height>151</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+      </widget>
+      <widget class="QFrame" name="endFrame">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>270</y>
+         <width>581</width>
+         <height>161</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_3">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>430</y>
+         <width>561</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Dominant frequencies (DF) per site</string>
+       </property>
+      </widget>
+      <widget class="QTableWidget" name="pcTable">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>450</y>
+         <width>581</width>
+         <height>141</height>
+        </rect>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <attribute name="horizontalHeaderCascadingSectionResizes">
+        <bool>true</bool>
+       </attribute>
+       <attribute name="horizontalHeaderDefaultSectionSize">
+        <number>190</number>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>Site</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Start DF (Hz)</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>End DF (Hz)</string>
+        </property>
+       </column>
       </widget>
      </widget>
     </widget>
@@ -815,7 +971,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1222</width>
+     <width>1225</width>
      <height>22</height>
     </rect>
    </property>

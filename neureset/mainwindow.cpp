@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     init();
 
-    connect(ui->power, SIGNAL(pressed()), this, SLOT(powerPressed())); // TODO: Decouple, handle no battery event
+    connect(ui->power, SIGNAL(pressed()), this, SLOT(powerPressed()));
     connect(ui->home, SIGNAL(pressed()), this, SLOT(homePressed()));
     connect(ui->up, SIGNAL(pressed()), this, SLOT(upPressed()));
     connect(ui->down, SIGNAL(pressed()), this, SLOT(downPressed()));
@@ -50,7 +50,7 @@ void MainWindow::init()
     // Main singleton objects
     device = new Device();
     pc = new PC();
-    initWaveformGraph();
+    initWaveformGraphs();
 
     // UI -> Device signals
     connect(ui->pcConnButton, SIGNAL(pressed()), device, SLOT(togglePC()));
@@ -70,23 +70,41 @@ void MainWindow::init()
     
 }
 
-void MainWindow::initWaveformGraph(){
+void MainWindow::initWaveformGraphs(){
     using namespace QtCharts;
 
-    chart = new QChart();
-    chart->legend()->hide();
+    // Session treatment graph
+    treatmentGraph = new QChart();
+    treatmentGraph->legend()->hide();
 
-    waveformChart = new QChartView(chart);
-    waveformChart->setRenderHint(QPainter::Antialiasing);
-    waveformChart->setParent(ui->graphFrame);
-    waveformChart->resize(ui->graphFrame->size());
+    treatmentGraphView = new QChartView(treatmentGraph);
+    treatmentGraphView->setRenderHint(QPainter::Antialiasing);
+    treatmentGraphView->setParent(ui->graphFrame);
+    treatmentGraphView->resize(ui->graphFrame->size());
 
+    // PC log details page, start graph
+    pcStartGraph = new QChart();
+    pcStartGraph->legend()->hide();
+
+    pcStartGraphView = new QChartView(pcStartGraph);
+    pcStartGraphView->setRenderHint(QPainter::Antialiasing);
+    pcStartGraphView->setParent(ui->startFrame);
+    pcStartGraphView->resize(ui->startFrame->size());
+
+    // PC log details page, end graph
+    pcEndGraph = new QChart();
+    pcEndGraph->legend()->hide();
+
+    pcEndGraphView = new QChartView(pcEndGraph);
+    pcEndGraphView->setRenderHint(QPainter::Antialiasing);
+    pcEndGraphView->setParent(ui->endFrame);
+    pcEndGraphView->resize(ui->endFrame->size()); 
 }
 
 QtCharts::QSplineSeries* MainWindow::graphWaveform(QVector<WaveForm> waveforms){
     auto series = new QtCharts::QSplineSeries();
 
-    for (float i = 0; i < GRAPH_X_MAX; i++){
+    for (int i = 0; i < GRAPH_X_MAX; i++){
         float y = 0;
         for (auto waveform : waveforms){
             y += waveform.amplitude * sin(waveform.frequency * i);
@@ -98,13 +116,13 @@ QtCharts::QSplineSeries* MainWindow::graphWaveform(QVector<WaveForm> waveforms){
 }
 
 void MainWindow::updateTreatmentGraph(QVector<WaveForm> waveforms, int site){
-    chart->removeAllSeries();
+    treatmentGraph->removeAllSeries();
 
     auto series = graphWaveform(waveforms);
-    chart->addSeries(series);
+    treatmentGraph->addSeries(series);
     
-    chart->createDefaultAxes();
-    chart->setTitle(QString("EEG Site %1").arg(site+1));
+    treatmentGraph->createDefaultAxes();
+    treatmentGraph->setTitle(QString("EEG Site %1").arg(site+1));
 }
 
 
@@ -182,7 +200,7 @@ void MainWindow::powerPressed()
 
 void MainWindow::homePressed()
 {
-    // TODO: Stop any ongoing session?
+    if (currentDeviceScreen == 0) return;
     ui->DeviceScreen->setCurrentIndex(1);
 }
 
@@ -234,9 +252,13 @@ void MainWindow::stopPressed()
     if(device->getPowerState()) device->stopSession();
 }
 
+void MainWindow::pcBackButtonPressed()
+{
+    ui->pcScreen->setCurrentIndex(0); // Switch to log list page
+}
 
 
-
+// UI methods for time and date settings
 
 void MainWindow::changeDate(){
     qInfo("changing the date");
@@ -267,6 +289,9 @@ void MainWindow::changeBattery()
 
 
 
+// UI methods for PC session history and device logs
+
+// Upload logs from device to PC
 void MainWindow::uploadLogs()
 {
     device->uploadLogs(pc);
@@ -302,41 +327,79 @@ void MainWindow::displayPCLogs()
     }
 }
 
+// Display log details for a selected log in the PC session history
 void MainWindow::displayLogDetails(QListWidgetItem *item)
 {
-    ui->siteBaselineList->clear();
+    ui->pcTable->clearContents();
+    pcStartGraph->removeAllSeries();
+    pcEndGraph->removeAllSeries();
+
     int logIndex = ui->pcLogList->row(item);
     auto log = pc->getLogs()[logIndex];
     
     qInfo("Displaying log details for session %d", log->getSessionNumber());
     ui->pcScreen->setCurrentIndex(1); // Switch to log details page
 
-    // Display log details
+    // Session details
     ui->sessionNumberLabel->setText(QString("Session %1").arg(log->getSessionNumber()));
     ui->sessionDateLabel->setText(log->getStartDateTime().toString());
     auto duration = log->getStartDateTime().secsTo(log->getEndDateTime());
-    ui->sessionDurationLabel->setText(QString("Duration: %1 minutes").arg(duration/60));
-
-    ui->startDomFreqLabel->setText(QString("Average start baseline: %1 Hz").arg(log->getStartDomFreq()));
-    ui->endDomFreqLabel->setText(QString("Average end baseline: %1 Hz").arg(log->getEndDomFreq()));
-    ui->treatDomFreqLabel->setText(QString("Treatment baseline: %1 Hz").arg(log->getBaseTreatmentFreq()));
+    ui->sessionDurationLabel->setText(QString("Duration: %1 minutes %2 seconds").arg(duration/60).arg(duration%60));
+    
+    // Format labels for dominant frequencies
+    ui->startDomFreqLabel->setText(QString("Avg. start baseline: %1 Hz").arg(log->getStartDomFreq(), 0, 'f', 2));
+    ui->endDomFreqLabel->setText(QString("Avg. end baseline: %1 Hz").arg(log->getEndDomFreq(), 0, 'f', 2));
+    ui->treatDomFreqLabel->setText(QString("Base treatment: %1 Hz").arg(log->getBaseTreatmentFreq(), 0, 'f', 2));
 
     // Display treatment frequencies for each EEG site
     auto startBaselines = log->getStartBaselines();
     auto endBaselines = log->getEndBaselines();
+    ui->pcTable->setRowCount(startBaselines.size());
+    ui->pcTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     for (int site = 0; site < startBaselines.size(); site++) {
-        auto startBaseline = startBaselines[site];
-        auto endBaseline = endBaselines[site];
-
-        auto item = new QListWidgetItem(QString("Site %1: %2 Hz -> %3 Hz").arg(site).arg(startBaseline).arg(endBaseline));
-        ui->siteBaselineList->addItem(item);
+        ui->pcTable->setItem(site, 0, new QTableWidgetItem(QString("Site %1").arg(site+1)));
+        ui->pcTable->setItem(site, 1, new QTableWidgetItem(QString("%1 Hz").arg(startBaselines[site])));
+        ui->pcTable->setItem(site, 2, new QTableWidgetItem(QString("%1 Hz").arg(endBaselines[site])));
     }
+
+    // Create before and after average waveform graphs
+    auto startWaveforms = log->getStartWaveForms();
+    auto endWaveforms = log->getEndWaveForms();
+
+    auto startAverages = averageWaveforms(startWaveforms);
+    auto endAverages = averageWaveforms(endWaveforms);
+
+    auto startSeries = graphWaveform(startAverages);
+    auto endSeries = graphWaveform(endAverages);
+
+    pcStartGraph->addSeries(startSeries);
+    pcStartGraph->createDefaultAxes();
+    pcStartGraphView->resize(ui->startFrame->size());
+    
+    pcEndGraph->addSeries(endSeries);
+    pcEndGraph->createDefaultAxes();
+    pcEndGraphView->resize(ui->endFrame->size());
+
 }
 
-void MainWindow::pcBackButtonPressed()
-{
-    ui->pcScreen->setCurrentIndex(0); // Switch to log list page
+// Returns a vector of waveforms averaged across sites
+QVector<WaveForm> MainWindow::averageWaveforms(QVector<QVector<WaveForm>> waveforms){
+    QVector<WaveForm> averages = QVector<WaveForm>();
+    for (int i = 0; i < waveforms[0].size(); i++){ // For each waveform
+        auto averageWaveform = WaveForm();
+        for (int j = 0; j < waveforms.size(); j++){ // For each site
+            averageWaveform.amplitude += waveforms[j][i].amplitude;
+            averageWaveform.frequency += waveforms[j][i].frequency;
+        }
+        averageWaveform.amplitude /= waveforms.size();
+        averageWaveform.frequency /= waveforms.size();
+
+        averages.push_back(averageWaveform);
+    }
+    return averages;
 }
+
+
 
 // Methods to update UI based on device state
 

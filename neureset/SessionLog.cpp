@@ -25,20 +25,28 @@ void SessionLog::addTreatmentFreq(float freq){
     treatmentFreqs.push_back(freq);
 }
 
+void SessionLog::addStartWaveForms(QVector<WaveForm> waveForms){
+    startWaveForms.push_back(waveForms);
+}
+
+void SessionLog::addEndWaveForms(QVector<WaveForm> waveForms){
+    endWaveForms.push_back(waveForms);
+}
+
 void SessionLog::consoleOut(){
     qDebug()<<"Session "<<sessionNumber<<" log: ";
     qDebug()<<"Start datetime "<<startDateTime.toString();
     qDebug()<<"End datetime "<<endDateTime.toString();
     qDebug()<<"Start dominant frequency: "<<startDomFreq<<" Hz";
     qDebug()<<"End dominant frequency: "<<endDomFreq<<" Hz";
-    qDebug()<<"Base treatment frequency: " << baseTreatmentFreq;
+    qDebug()<<"Base treatment frequency: " << baseTreatmentFreq << " Hz";
     qDebug()<<"Start baselines: ";
     for (int i = 0; i < startBaselines.size(); i++){
-        qDebug()<<"Site "<<i+1<<": "<<startBaselines[i];
+        qDebug()<<"Site "<<i+1<<": "<<startBaselines[i] << " Hz";
     }
     qDebug()<<"End baselines: ";
     for (int i = 0; i < endBaselines.size(); i++){
-        qDebug()<<"Site "<<i+1<<": "<<endBaselines[i];
+        qDebug()<<"Site "<<i+1<<": "<<endBaselines[i] << " Hz";
     }
     qDebug()<<"Offset treatment frequencies: ";
     for (int i = 0; i < treatmentFreqs.size(); i++){

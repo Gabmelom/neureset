@@ -43,11 +43,11 @@ public:
 
     // Getters
     int getBatteryLife() { return batteryLife; }
-    int getSessionStage() { return sessionStage; }
     bool getPower() { return powerState; }
     bool getHeadsetConn() { return headsetConn; }
     bool getPowerState() { return powerState; }
     bool isOngoing() { return ongoing; }
+    E_SESSION_STAGE getSessionStage() { return sessionStage; }
     QDateTime* getDate() { return currDate; }
     SessionLog* getCurrSession() { return currSession; }
     QVector<SessionLog*> getLogs() { return logs; }
@@ -63,10 +63,10 @@ private:
     bool pcConn;
     bool powerState;
     
-    int sessionStage;
     int progress;
     int batteryLife;
     int sessionsDone;
+    E_SESSION_STAGE sessionStage;
 
     int offset;
     int rounds;
@@ -82,7 +82,7 @@ private:
     
     float calcDomFreq(QVector<WaveForm>);
     float avgDomFreq(QVector<float>);
-    QVector<float> readBaselines(bool graph=false);
+    QVector<float> readBaselines(E_SESSION_STAGE stage);
     
     // Device LEDs
     bool redlightOn;
