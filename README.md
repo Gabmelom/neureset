@@ -4,7 +4,7 @@
 https://drive.google.com/drive/folders/1KfQnQHPvCLlNU4ujRyucGFC7S9DHbaLv?usp=sharing
 
 ## Requirements
-- Use COMP3004's virtual machine to install qt charts with `sudo apt install clang-8 libqt5charts5-dev`
+- Use COMP3004's virtual machine to install qt charts with `sudo apt install libqt5charts5-dev`
 
 ## Team 30 members:
 - Josiah Mak
