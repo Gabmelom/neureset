@@ -11,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     init();
 
-    connect(ui->power, SIGNAL(pressed()), this, SLOT(powerPressed()));
     connect(ui->home, SIGNAL(pressed()), this, SLOT(homePressed()));
     connect(ui->up, SIGNAL(pressed()), this, SLOT(upPressed()));
     connect(ui->down, SIGNAL(pressed()), this, SLOT(downPressed()));
@@ -25,8 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pcBackButton, SIGNAL(pressed()), this, SLOT(pcBackButtonPressed()));
     connect(ui->dateEdit, SIGNAL(editingFinished()), this, SLOT(changeDate()));
     connect(ui->timeEdit,  SIGNAL(editingFinished()), this, SLOT(changeTime()));
-    
-    connect(ui->replaceBatteryBtn, SIGNAL(pressed()), this, SLOT(changeBattery()));
+    connect(ui->dismissBtn, SIGNAL(pressed()), ui->popup, SLOT(hide()));
     
 }
 
@@ -46,6 +44,7 @@ void MainWindow::init()
     toggleBluelight(false);
     toggleRedlight(false);
     toggleGreenlight(false);
+    ui->popup->hide();
 
     // Main singleton objects
     device = new Device();
@@ -55,9 +54,14 @@ void MainWindow::init()
     // UI -> Device signals
     connect(ui->pcConnButton, SIGNAL(pressed()), device, SLOT(togglePC()));
     connect(ui->toggleHeadsetBtn, SIGNAL(pressed()), device, SLOT(toggleHeadset()));
+    connect(ui->batteryControl, SIGNAL(valueChanged(int)), device, SLOT(setBatteryLevel(int)));
+    connect(ui->power, SIGNAL(pressed()), device, SLOT(togglePower()));
 
     // Device -> UI signals
     connect(device, SIGNAL(updateBatteryLevel(int)), this, SLOT(updateBatteryLife(int)));
+    connect(device, SIGNAL(uiShowPopup(QString)), this, SLOT(showPopup(QString)));
+    connect(device, SIGNAL(uiHidePopup()), this, SLOT(hidePopup()));
+    connect(device, SIGNAL(uiTogglePower(bool)), this, SLOT(togglePower(bool)));
     connect(device, SIGNAL(uiTogglePC(bool)), this, SLOT(updatePCToggle(bool)));
     connect(device, SIGNAL(uiToggleHeadset(bool)), this, SLOT(updateHeadsetToggle(bool)));
     connect(device, SIGNAL(uiToggleBluelight(bool)), this, SLOT(toggleBluelight(bool)));
@@ -67,7 +71,6 @@ void MainWindow::init()
     connect(device, SIGNAL(updateProgressBar(int)), this, SLOT(updateProgressBar(int)));
     connect(device, SIGNAL(updateTreatmentGraph(QVector<WaveForm>, int)), this, SLOT(updateTreatmentGraph(QVector<WaveForm>, int)));
 
-    
 }
 
 void MainWindow::initWaveformGraphs(){
@@ -145,6 +148,9 @@ void MainWindow::devicePageChanged(int index)
             currentDeviceList->setCurrentRow(0);
             break;
         case 2:
+            updateProgressBar(0);
+            treatmentGraph->removeAllSeries();
+            if (device->isOngoing()) return;
             device->startSession();
             break;
 
@@ -185,22 +191,21 @@ void MainWindow::pcPageChanged(int index)
 }
 
 
-void MainWindow::powerPressed()
+void MainWindow::togglePower(bool state)
 {
-    device->togglePower();
-    if (device->getPower()){    //power  on
+    if (state){ // Power on
         ui->DeviceScreen->setCurrentIndex(1);
         devicePageChanged(1);
     } else {
         ui->DeviceScreen->setCurrentIndex(0);
         devicePageChanged(0);
     }
-
 }
 
 void MainWindow::homePressed()
 {
     if (currentDeviceScreen == 0) return;
+    if (currentDeviceScreen == 2 && device->isOngoing()) return;
     ui->DeviceScreen->setCurrentIndex(1);
 }
 
@@ -229,9 +234,6 @@ void MainWindow::selectPressed()
         //  2 - Time & date page
         int optionSelected = currentDeviceList->currentRow();
         ui->DeviceScreen->setCurrentIndex(optionSelected+2);
-    }
-    else if(currentDeviceScreen == 2){ // Session log page
-        // TODO: upload session log?
     }
 }
 
@@ -279,15 +281,6 @@ void MainWindow::updateDate(){
     ui->dateEdit->setDate(device->getDate()->date());
     ui->timeEdit->setTime(device->getDate()->time());
 }
-
-void MainWindow::changeBattery()
-{
-    qDebug() << "ADMIN: replacing battery";
-    device->replaceBattery();
-}
-
-
-
 
 // UI methods for PC session history and device logs
 
@@ -418,18 +411,30 @@ void MainWindow::updateHeadsetToggle(bool headsetConn)
 void MainWindow::updateBatteryLife(int level)
 {
     ui->batteryBar->setValue(level);
+    ui->batteryControl->setValue(level);
 
-    auto lowBattery = QString("rgb(229, 10, 10)");
-    auto mediumBattery = QString("rbg(229, 165, 10)");
-    auto highBattery = QString("rgb(10, 229, 10)");
+    auto lowBattery = QString("rgb(225, 36, 77)");
+    auto mediumBattery = QString("rgb(255, 212, 5)");
+    auto highBattery = QString("rgb(38, 162, 105)");
 
     QString batteryColor;
-    if (level < 10) batteryColor = lowBattery;
-    else if (level < 20) batteryColor = mediumBattery;
+    if (level <= 10) batteryColor = lowBattery;
+    else if (level <= 20) batteryColor = mediumBattery;
     else batteryColor = highBattery;
 
     QString style = QString("selection-background-color: %1;").arg(batteryColor);
+    ui->batteryBar->setStyleSheet(style);
+}
 
+void MainWindow::showPopup(QString message)
+{
+    ui->popupLabel->setText(message);
+    ui->popup->show();
+}
+
+void MainWindow::hidePopup()
+{
+    ui->popup->hide();
 }
 
 void MainWindow::toggleRedlight(bool state)
