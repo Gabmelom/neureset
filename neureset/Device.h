@@ -48,6 +48,7 @@ public:
     bool getHeadsetConn() { return headsetConn; }
     bool getPowerState() { return powerState; }
     bool isOngoing() { return ongoing; }
+    bool isPaused() { return pauseTimer.isActive(); }
     E_SESSION_STAGE getSessionStage() { return sessionStage; }
     QDateTime* getDate() { return currDate; }
     SessionLog* getCurrSession() { return currSession; }

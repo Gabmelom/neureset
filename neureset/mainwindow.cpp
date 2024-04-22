@@ -240,14 +240,17 @@ void MainWindow::selectPressed()
 
 void MainWindow::playPausePressed()
 {
-    if(device->getSessionStage() != NO_STAGE && device->getPowerState()){
-        if(device->isOngoing()){
-            device->pauseSession();
-        }
-        else{
-            device->resumeSession();
-        }
+    if (!device->getPowerState()) return; // Power off
+    if (device->getSessionStage() == NO_STAGE) return; // No session ongoing
+    if (!device->isOngoing()) return; // Session not started
+
+    if(device->isPaused()){
+        device->resumeSession();
     }
+    else{
+        device->pauseSession();
+    }
+    
 }
 
 void MainWindow::stopPressed()
