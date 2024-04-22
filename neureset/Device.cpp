@@ -262,6 +262,10 @@ void Device::readEndBaseline(){
 
         float endBaseFreq = avgDomFreq(endBaselines);
 
+        ongoing = false;
+        sessionStage = NO_STAGE;
+        rounds = 0;
+
         // Update UI
         progress = 100;
         updateProgressBar(progress);
@@ -279,10 +283,6 @@ void Device::readEndBaseline(){
         currSession->consoleOut();
 
         logs.push_back(currSession);
-
-        ongoing = false;
-        sessionStage = NO_STAGE;
-        rounds = 0;
     }
 
 }
@@ -353,10 +353,10 @@ void Device::pauseTimeout(){
 void Device::stopSession(){
     pauseTimer.stop();
     qInfo("Session stopped");
+    updateProgressMessage("Session stopped");
     sessionStage = NO_STAGE;
     rounds = 0;
     toggleGreenlight(false);
-    toggleBluelight(false);
     ongoing = false;
 }
 
